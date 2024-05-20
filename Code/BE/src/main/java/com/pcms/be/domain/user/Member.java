@@ -39,6 +39,9 @@ public class Member implements Serializable {
     @Column(name = "updated_at")
     public OffsetDateTime updatedAt;
 
+    @Column(name = "status", columnDefinition = "BOOLEAN DEFAULT FALSE", nullable = false)
+    private boolean status;
+
     // Getters, setters, constructors, etc.
 
     public enum MemberRole {
