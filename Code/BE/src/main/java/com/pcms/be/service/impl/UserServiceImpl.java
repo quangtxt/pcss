@@ -28,6 +28,8 @@ public class UserServiceImpl implements UserService {
     private final EncryptionService encryptionService;
     private final JWTService jwtService;
     private final TokenService tokenService;
+
+
     @Autowired
     ConfigurableApplicationContext applicationContext;
     public Keycloak keycloak() {
