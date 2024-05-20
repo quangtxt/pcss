@@ -53,8 +53,9 @@ public class User implements UserDetails, Serializable {
     private Set<Role> roles = new HashSet<>();
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "specificMajor_code", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "specificMajor_code", referencedColumnName = "id")
     public SpecificMajor specificMajor;
+
     @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private Group ownedGroup;
 

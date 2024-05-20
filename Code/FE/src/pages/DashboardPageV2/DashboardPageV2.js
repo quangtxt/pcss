@@ -2,6 +2,7 @@ import {
   FileTextOutlined,
   LeftOutlined,
   RightOutlined,
+  QuestionOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -15,6 +16,9 @@ import {
   Tabs,
   Tooltip,
   Typography,
+  Space,
+  Table,
+  Tag,
 } from "antd";
 import axios from "axios";
 import { runInAction, toJS } from "mobx";
@@ -60,7 +64,12 @@ const DashboardPageV2 = (props) => {
     exited: { padding: 0, maxHeight: 0, opacity: 0 },
   };
 
-  const { history, location, authenticationStore } = props;
+  const {
+    history,
+    location,
+    authenticationStore,
+    loadingAnimationStore,
+  } = props;
 
   const { currentUser, isAccountAdmin, isSuperAdmin } = authenticationStore;
   // const { statistic } = statisticStore
@@ -74,7 +83,7 @@ const DashboardPageV2 = (props) => {
   const [isLoadingTinTuc, setIsLoadingTinTuc] = useState(false);
   //
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [, setShowDialog] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
 
   const handleOk = async (values) => {
     setConfirmLoading(true);
@@ -89,7 +98,7 @@ const DashboardPageV2 = (props) => {
       }
     } catch (err) {
       console.log(err);
-      message.error(err.vi || "Login failed response status!");
+      message.error(err.en || "Login failed response status!");
     } finally {
       setConfirmLoading(false);
     }
@@ -143,7 +152,77 @@ const DashboardPageV2 = (props) => {
       </LoginWrapper>
     </>
   );
-
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <a>{text}</a>,
+    },
+    {
+      title: "Age",
+      dataIndex: "age",
+      key: "age",
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+    },
+    {
+      title: "Tags",
+      key: "tags",
+      dataIndex: "tags",
+      render: (_, { tags }) => (
+        <>
+          {tags.map((tag) => {
+            let color = tag.length > 5 ? "geekblue" : "green";
+            if (tag === "loser") {
+              color = "volcano";
+            }
+            return (
+              <Tag color={color} key={tag}>
+                {tag.toUpperCase()}
+              </Tag>
+            );
+          })}
+        </>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <a>Invite {record.name}</a>
+          <a>Delete</a>
+        </Space>
+      ),
+    },
+  ];
+  const data = [
+    {
+      key: "1",
+      name: "John Brown",
+      age: 32,
+      address: "New York No. 1 Lake Park",
+      tags: ["nice", "developer"],
+    },
+    {
+      key: "2",
+      name: "Jim Green",
+      age: 42,
+      address: "London No. 1 Lake Park",
+      tags: ["loser"],
+    },
+    {
+      key: "3",
+      name: "Joe Black",
+      age: 32,
+      address: "Sydney No. 1 Lake Park",
+      tags: ["cool", "teacher"],
+    },
+  ];
   return (
     <div>
       {currentUser != null ? (
@@ -154,7 +233,8 @@ const DashboardPageV2 = (props) => {
           <Helmet>
             <title>Dashboard</title>
           </Helmet>
-          hihi
+
+          <Table columns={columns} dataSource={data} />
         </DashboardLayout>
       ) : (
         loginPage

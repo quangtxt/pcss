@@ -26,6 +26,6 @@ public class Major implements Serializable {
     public String description;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "major_code", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "major_code", referencedColumnName = "id")
     public List<SpecificMajor> specificMajorList;
 }

@@ -44,18 +44,7 @@ public class WebConfigSecurity {
                 .addFilterBefore(jwtRequestFilter, AuthorizationFilter.class)
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers(
-                                        "/product",
-                                        "/product/c",
-                                        "/category",
-                                        "/category/*",
-                                        "/api/v1/auth/register",
-                                        "/cart",
-                                        "/api/v1/users/current-user",
-                                        "/api/v1/auth/token",
-                                        "/api/v1/auth/signup").permitAll()
-                                .anyRequest().authenticated());
-
+                                .anyRequest().permitAll());
         return http.build();
     }
 }

@@ -27,11 +27,11 @@ public class SpecificMajor implements Serializable {
 
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "major_code", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "major_code", referencedColumnName = "id")
     public Major major;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "specificMajor_code", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "specificMajor_code", referencedColumnName = "id")
     public List<User> userList;
 
     @ManyToMany(mappedBy = "specificMajors")
