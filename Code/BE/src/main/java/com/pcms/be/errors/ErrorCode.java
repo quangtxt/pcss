@@ -3,7 +3,7 @@ package com.pcms.be.errors;
 public interface ErrorCode {
 
     String SUCCESS = "API-000";
-
+    String USER_ALREADY_IN_A_GROUP ="USER-IN-GROUP100";
     String INTERNAL_SERVER_ERROR = "API-501";
     String GENERAL_ERROR = "API-502";
 
