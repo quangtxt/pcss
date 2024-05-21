@@ -5,7 +5,6 @@ import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.pojo.UserDTO;
 import com.pcms.be.service.UserService;
-import com.pcms.be.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
