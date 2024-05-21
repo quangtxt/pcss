@@ -4,6 +4,8 @@ public interface ErrorCode {
 
     String SUCCESS = "API-000";
     String USER_ALREADY_IN_A_GROUP ="USER-IN-GROUP100";
+    String MAXIMUM_SIZE_OF_A_GROUP ="GROUP-101";
+    String FAILED_CREATE_GROUP = "GROUP-102";
     String INTERNAL_SERVER_ERROR = "API-501";
     String GENERAL_ERROR = "API-502";
 

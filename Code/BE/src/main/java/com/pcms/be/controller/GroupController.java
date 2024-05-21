@@ -5,6 +5,7 @@ import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.pojo.CreateGroupDTO;
+import com.pcms.be.pojo.GroupDTO;
 import com.pcms.be.pojo.LoginBody;
 import com.pcms.be.service.GroupService;
 import com.pcms.be.service.impl.GroupServiceImpl;
@@ -24,9 +25,9 @@ import java.time.OffsetDateTime;
 public class GroupController {
     private final GroupService groupService;
     @PostMapping("/create")
-    public ResponseEntity<Group> createGroup(@Valid @RequestBody CreateGroupDTO createGroupDTO) {
+    public ResponseEntity<GroupDTO> createGroup(@Valid @RequestBody CreateGroupDTO createGroupDTO) {
         try {
-            Group createdGroup = groupService.createGroup(createGroupDTO);
+            GroupDTO createdGroup = groupService.createGroup(createGroupDTO);
             return ResponseEntity.ok(createdGroup);
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());

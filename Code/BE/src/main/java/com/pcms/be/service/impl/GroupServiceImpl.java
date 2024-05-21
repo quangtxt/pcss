@@ -6,7 +6,9 @@ import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.pojo.CreateGroupDTO;
+import com.pcms.be.pojo.GroupDTO;
 import com.pcms.be.pojo.TokenDTO;
+import com.pcms.be.pojo.UserDTO;
 import com.pcms.be.repository.GroupRepository;
 import com.pcms.be.repository.MemberRepository;
 import com.pcms.be.repository.UserRepository;
@@ -15,14 +17,13 @@ import com.pcms.be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.OffsetDateTime;
-import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,7 @@ public class GroupServiceImpl implements GroupService {
     private final UserService userService;
     private final MemberRepository memberRepository;
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
     ConfigurableApplicationContext applicationContext;
@@ -42,23 +44,18 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public Group createGroup(CreateGroupDTO createGroupDTO) throws ServiceException {
+    public GroupDTO createGroup(CreateGroupDTO createGroupDTO) throws ServiceException {
         try {
-            List<Group> allGroups = groupRepository.findAll();
-            for (Group g : allGroups) {
-                if (g.getOwner().getId() == userService.getCurrentUser().getId()) {
-//                    throw new ServiceException("Current user already owns a group.");
-                    throw new ServiceException(ErrorCode.USER_ALREADY_IN_A_GROUP);
-                }
+            User currentUser = userService.getCurrentUser();
+            if (groupRepository.findByOwnerId(currentUser.getId()) != null) {
+                throw new ServiceException(ErrorCode.USER_ALREADY_IN_A_GROUP);
             }
-            List<Member> allMembers = memberRepository.findAll();
-            for (Member m : allMembers) {
-                if (m.getUser().getId() == userService.getCurrentUser().getId() && m.getUser().status == true) {
-                    throw new ServiceException("Current user already in a group.");
-                }
+            if (memberRepository.findByUserIdAndStatusTrue(currentUser.getId()) != null) {
+                throw new ServiceException(ErrorCode.USER_ALREADY_IN_A_GROUP);
             }
+
             if (createGroupDTO.getListUserID().stream().count() > 4) {
-                throw new ServiceException("Maximum of a group is 5 member.");
+                throw new ServiceException(ErrorCode.MAXIMUM_SIZE_OF_A_GROUP);
             }
             Group group = createGroupInternal(createGroupDTO, userService.getCurrentUser());
             Member ownerGroup = new Member();
@@ -68,14 +65,18 @@ public class GroupServiceImpl implements GroupService {
             ownerGroup.setGroup(group);
             memberRepository.save(ownerGroup);
             for (Integer memberId : createGroupDTO.getListUserID()) {
-                if ((Long.valueOf(memberId)) == userService.getCurrentUser().getId() && !(memberRepository.findByIdAndStatus(memberId, true) != null)) {
-                    throw new ServiceException("Failed to create group.");
+                if (userRepository.findUserById(memberId) == null) {
+                    throw new ServiceException(ErrorCode.USER_NOT_FOUND);
+                }
+                if ((Long.valueOf(memberId)) == userService.getCurrentUser().getId() || memberRepository.findByUserIdAndStatusTrue(Long.valueOf(memberId)) != null) {
+                    throw new ServiceException(ErrorCode.USER_ALREADY_IN_A_GROUP);
                 }
                 createMember(group, memberId);
             }
-            return group;
+            GroupDTO groupDTO = modelMapper.map(group, GroupDTO.class);
+            return groupDTO;
         } catch (Exception e) {
-            throw new ServiceException("Failed to create group.", e);
+            throw new ServiceException(ErrorCode.FAILED_CREATE_GROUP);
         }
     }
 
