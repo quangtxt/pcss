@@ -3,13 +3,11 @@ package com.pcms.be.pojo;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-
 @Getter
 @Setter
-public class CreateGroupDTO {
+public class EditGroupRequest {
     @NotBlank
     private String abbreviations;
     @NotBlank
@@ -20,5 +18,4 @@ public class CreateGroupDTO {
     private String name;
     @NotBlank
     private String vietnameseTitle;
-    private List<Integer> listUserID;
 }

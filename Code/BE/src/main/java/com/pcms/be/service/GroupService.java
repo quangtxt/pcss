@@ -1,15 +1,12 @@
 package com.pcms.be.service;
 
 import com.pcms.be.domain.user.Group;
-import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ServiceException;
-import com.pcms.be.pojo.CreateGroupDTO;
-import com.pcms.be.pojo.GroupDTO;
-
-import java.time.OffsetDateTime;
-import java.util.Date;
+import com.pcms.be.pojo.CreateGroupRequest;
+import com.pcms.be.pojo.EditGroupRequest;
+import com.pcms.be.pojo.GroupResonse;
 
 public interface GroupService {
-    GroupDTO createGroup(CreateGroupDTO createGroupDTO)  throws ServiceException;
-
+    GroupResonse createGroup(CreateGroupRequest createGroupDTO)  throws ServiceException;
+    GroupResonse editGroup(EditGroupRequest editGroupDTO) throws ServiceException;
 }
