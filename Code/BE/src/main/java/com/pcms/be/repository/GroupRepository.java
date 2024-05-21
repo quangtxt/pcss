@@ -11,6 +11,4 @@ import java.util.Optional;
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Long> {
     Group findByOwnerId(Long ownerId);
-
-
 }
