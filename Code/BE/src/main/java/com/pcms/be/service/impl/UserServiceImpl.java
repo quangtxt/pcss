@@ -32,11 +32,13 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     ConfigurableApplicationContext applicationContext;
+
     public Keycloak keycloak() {
         return applicationContext.getBean(Keycloak.class);
     }
+
     @Override
-    public String login(String userName, String password)  throws ServiceException {
+    public String login(String userName, String password) throws ServiceException {
         Optional<User> optionalUser = userRepository.findByUsernameIgnoreCase(userName);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -48,6 +50,19 @@ public class UserServiceImpl implements UserService {
         }
         throw new ServiceException(ErrorCode.USER_NOT_FOUND);
     }
+
+    @Override
+    public String checkUser(String email, String campusCode) throws ServiceException {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if(user.getCampus().getCampusCode().equals(campusCode)) {
+                return jwtService.generateJWT(user);
+            }
+        }
+        throw new ServiceException(ErrorCode.USER_NOT_ALLOW);
+    }
+
     @Override
     @Transactional
     public User getCurrentUser() throws ServiceException {

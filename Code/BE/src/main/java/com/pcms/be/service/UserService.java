@@ -5,5 +5,6 @@ import com.pcms.be.errors.ServiceException;
 
 public interface UserService {
     String login(String userName, String password)  throws ServiceException;
+    String checkUser(String email, String campusCode)  throws ServiceException;
     User getCurrentUser() throws ServiceException;
 }

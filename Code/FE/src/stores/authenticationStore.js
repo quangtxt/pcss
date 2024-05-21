@@ -77,6 +77,22 @@ class AuthenticationStore {
         });
     });
   };
+  @action userLoginWithGoogle = (email, campus) => {
+    return new Promise((resolve, reject) => {
+      AuthenticationRequest.userLoginWithGoogle(email, campus)
+        .then((response) => {
+          localStorage.setItem(
+            "jwt",
+            JSON.stringify(response.data.access_token)
+          );
+          this.setAppToken(JSON.stringify(response.data.access_token));
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   @action checkCurrentUser = () => {
     return new Promise((resolve, reject) => {
       console.log("token", JSON.parse(this.appToken));

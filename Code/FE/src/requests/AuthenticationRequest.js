@@ -31,6 +31,15 @@ export const AuthenticationRequest = {
         password: password,
       },
     }),
+  userLoginWithGoogle: (email, campus) =>
+    axios({
+      method: "post",
+      url: `${apiUrl}/api/v1/auth/check-user`,
+      data: {
+        email: email,
+        campus: campus,
+      },
+    }),
 
   checkCurrentUser: () =>
     axios({

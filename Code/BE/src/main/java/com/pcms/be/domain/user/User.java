@@ -1,5 +1,6 @@
 package com.pcms.be.domain.user;
 
+import com.pcms.be.domain.Campus;
 import com.pcms.be.domain.SpecificMajor;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -61,6 +62,11 @@ public class User implements UserDetails, Serializable {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Member membership;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "campus_code", referencedColumnName = "campus_code")
+    private Campus campus;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

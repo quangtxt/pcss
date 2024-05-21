@@ -1,6 +1,6 @@
 import DemoTagPage from "./pages/Demo/DemoTagPage";
 import PortalPageV2 from "./pages/PortalPageV2/PortalPageV2";
-import DashboardPageV2 from "./pages/DashboardPageV2/DashboardPageV2";
+import DashboardPageV2 from "./pages/HomePage/HomePage";
 
 export const normalRoutes = [
   {

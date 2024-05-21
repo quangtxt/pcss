@@ -16,6 +16,7 @@ public interface ErrorCode {
     String AUTH_INVALID_TOKEN = "AUTH-101";
 
     String USER_NOT_FOUND = "USER-100";
+    String USER_NOT_ALLOW = "USER-106";
     String USER_DUPLICATE_EMAIL = "USER-101";
     String USER_DUPLICATE_USERNAME = "USER-102";
     String USER_PASSWORD_INCORRECT = "USER-103";

@@ -25,7 +25,7 @@ import companyStore from "./stores/companyStore";
 
 // Pages
 import NotFoundPage from "./pages/NotFoundPage";
-import DashboardPageV2 from "./pages/DashboardPageV2";
+import DashboardPageV2 from "./pages/HomePage";
 //ProposalPage
 //Demo
 import DemoTagPage from "./pages/Demo/index";
