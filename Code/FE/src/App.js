@@ -22,6 +22,7 @@ import moduleStore from "./stores/moduleStore";
 import aclStore from "./stores/aclStore";
 import userStore from "./stores/userStore";
 import companyStore from "./stores/companyStore";
+import groupStore from "./stores/groupStore";
 
 // Pages
 import NotFoundPage from "./pages/NotFoundPage";
@@ -74,6 +75,7 @@ const rootStore = {
   aclStore,
   userStore,
   companyStore,
+  groupStore,
 };
 
 axios.defaults.timeout = 60000;
