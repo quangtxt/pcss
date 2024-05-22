@@ -4,6 +4,7 @@ import DashboardPageV2 from "./pages/HomePage/HomePage";
 import HomePage from "./pages/HomePage/HomePage";
 import RegNewsPage from "./pages/RegNewsPage/RegNewsPage";
 import RegTeamPage from "./pages/RegTeamPage/RegTeamPage";
+import RegCreateIdeaPage from "./pages/RegCreateIdeaPage/RegCreateIdeaPage";
 
 export const normalRoutes = [
   {
@@ -38,5 +39,10 @@ export const routes = [
     path: "/registration/team",
     component: RegTeamPage,
     name: "RegNewsPage",
+  },
+  {
+    path: "/registration/createIdea",
+    component: RegCreateIdeaPage,
+    name: "RegCreateIdeaPage",
   },
 ];
