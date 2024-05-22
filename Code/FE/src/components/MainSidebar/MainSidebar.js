@@ -86,8 +86,8 @@ const MainSidebar = (props) => {
 
   // Menu trang chủ
   const menuTrangChu = (
-    <Menu.Item key={"/dashboard"} icon={<HomeOutlined />}>
-      <Link to={"/dashboard"}>Trang chủ</Link>
+    <Menu.Item key={"/home"} icon={<HomeOutlined />}>
+      <Link to={"/home"}>Trang chủ</Link>
     </Menu.Item>
   );
 
@@ -99,22 +99,22 @@ const MainSidebar = (props) => {
       title="Registration Phase"
     >
       <Menu.Item key={"/registration/news"}>
-        <Link to={"/utility/contacts"}>News</Link>
+        <Link to={"/registration/news"}>News</Link>
       </Menu.Item>
       <Menu.Item key={"/registration/team"}>
-        <Link to={"/utility/general-notifications"}>Team</Link>
+        <Link to={"/registration/team"}>Team</Link>
       </Menu.Item>
       <Menu.Item key={"/registration/myRequest"}>
-        <Link to={"/utility/contacts"}>My request</Link>
+        <Link to={"/registration/myRequest"}>My request</Link>
       </Menu.Item>
       <Menu.Item key={"/registration/createIdea"}>
-        <Link to={"/utility/general-notifications"}>Create Idea</Link>
+        <Link to={"/registration/createIdea"}>Create Idea</Link>
       </Menu.Item>
       <Menu.Item key={"/registration/listSupervisors"}>
-        <Link to={"/utility/contacts"}>List Supervisors</Link>
+        <Link to={"/registration/listSupervisors"}>List Supervisors</Link>
       </Menu.Item>
       <Menu.Item key={"/registration/ideaOfSupervisors"}>
-        <Link to={"/utility/general-notifications"}>Ideas of Supervisors</Link>
+        <Link to={"/registration/ideaOfSupervisors"}>Ideas of Supervisors</Link>
       </Menu.Item>
     </Menu.SubMenu>
   );
@@ -179,263 +179,40 @@ const MainSidebar = (props) => {
 
   useEffect(() => {
     // Trang chủ
-    if (location.pathname.includes("/dashboard")) {
-      commonStore.setPage(["/dashboard"]);
+    if (location.pathname.includes("/home")) {
+      commonStore.setPage(["/home"]);
       setOpenedSubMenu([]);
       return;
     }
-    // Lịch cơ quan
-    if (location.pathname.includes("/company-work-schedule")) {
-      commonStore.setPage(["/company-work-schedule"]);
-      setOpenedSubMenu([]);
+    // Đăng ký đồ án
+    if (location.pathname.includes("/registration/news")) {
+      commonStore.setPage(["/registration/news"]);
+      setOpenedSubMenu(["registration"]);
       return;
     }
-    // Thông báo
-    if (location.pathname.includes("/notification")) {
-      commonStore.setPage(["/notification"]);
+    if (location.pathname.includes("/registration/team")) {
+      commonStore.setPage(["/registration/team"]);
+      setOpenedSubMenu(["registration"]);
       return;
     }
-    // Văn bản
-    if (location.pathname.includes("/document-management/")) {
-      commonStore.setPage(["/document-management"]);
-      setOpenedSubMenu(["connected-document"]);
+    if (location.pathname.includes("/registration/myRequest")) {
+      commonStore.setPage(["/registration/myRequest"]);
+      setOpenedSubMenu(["registration"]);
       return;
     }
-    if (location.pathname.includes("/connected-document/")) {
-      commonStore.setPage(["/connected-document/incoming-document"]);
-      setOpenedSubMenu(["connected-document"]);
+    if (location.pathname.includes("/registration/createIdea")) {
+      commonStore.setPage(["/registration/createIdea"]);
+      setOpenedSubMenu(["registration"]);
       return;
     }
-    if (location.pathname.includes("/connected-committee-document/")) {
-      commonStore.setPage(["/connected-committee-document/incoming-document"]);
-      setOpenedSubMenu(["connected-document"]);
+    if (location.pathname.includes("/registration/listSupervisors")) {
+      commonStore.setPage(["/registration/listSupervisors"]);
+      setOpenedSubMenu(["registration"]);
       return;
     }
-    if (location.pathname.includes("/internal-document/")) {
-      commonStore.setPage(["/internal-document/incoming-document"]);
-      setOpenedSubMenu(["connected-document"]);
-      return;
-    }
-
-    // Nhiệm vụ
-    if (location.pathname.includes("/mission-group/")) {
-      commonStore.setPage(["/mission-group/"]);
-      setOpenedSubMenu(["missions"]);
-      return;
-    }
-    if (location.pathname.includes("/mission-management/")) {
-      commonStore.setPage(["/mission-management"]);
-      setOpenedSubMenu(["missions"]);
-      return;
-    }
-    // Công việc
-    if (
-      location.pathname.includes("/my-tasks") ||
-      location.pathname.includes("/my-tasks/")
-    ) {
-      commonStore.setPage(["/my-tasks"]);
-      setOpenedSubMenu([]);
-      return;
-    }
-    // Bảng lương
-
-    if (
-      location.pathname.includes("/my-salary") ||
-      location.pathname.includes("/my-salary/")
-    ) {
-      commonStore.setPage(["/my-salary"]);
-      setOpenedSubMenu(["salary"]);
-      return;
-    }
-
-    if (
-      location.pathname.includes("/proposal-salary-management") ||
-      location.pathname.includes("/proposal-salary-management/")
-    ) {
-      commonStore.setPage(["/proposal-salary-management"]);
-      setOpenedSubMenu(["salary"]);
-      return;
-    }
-
-    if (
-      location.pathname.includes("/salary") ||
-      location.pathname.includes("/salary/")
-    ) {
-      commonStore.setPage(["/salary"]);
-      setOpenedSubMenu(["salary"]);
-      return;
-    }
-
-    if (
-      location.pathname.includes("/proposal-salary-request") ||
-      location.pathname.includes("/proposal-salary-request/")
-    ) {
-      commonStore.setPage(["/proposal-salary-request"]);
-      setOpenedSubMenu(["salary"]);
-      return;
-    }
-    // Quản lý phân hệ
-    if (
-      location.pathname.includes("/module") ||
-      location.pathname.includes("/module/")
-    ) {
-      commonStore.setPage(["/module"]);
-      // setOpenedSubMenu([])
-      return;
-    }
-    // Quản lý phân quyền
-    if (
-      location.pathname.includes("/acl") ||
-      location.pathname.includes("/acl/")
-    ) {
-      commonStore.setPage(["/acl"]);
-      // setOpenedSubMenu([])
-      return;
-    }
-    if (
-      location.pathname.includes("/works") ||
-      location.pathname.includes("/works/")
-    ) {
-      commonStore.setPage(["/works"]);
-      setOpenedSubMenu([]);
-      return;
-    }
-    // Quy trình
-    if (
-      location.pathname.includes("/administrative/consult") ||
-      location.pathname.includes("/administrative/consult/")
-    ) {
-      commonStore.setPage(["/administrative/consult"]);
-      setOpenedSubMenu(["administrative"]);
-      return;
-    }
-    if (
-      location.pathname.includes("/administrative/policy") ||
-      location.pathname.includes("/administrative/policy/")
-    ) {
-      commonStore.setPage(["/administrative/policy"]);
-      setOpenedSubMenu(["administrative"]);
-      return;
-    }
-    if (
-      location.pathname.includes("/administrative/advance-payment") ||
-      location.pathname.includes("/administrative/advance-payment/")
-    ) {
-      commonStore.setPage(["/administrative/advance-payment"]);
-      setOpenedSubMenu(["administrative"]);
-      return;
-    }
-    if (location.pathname.includes("/administrative/payslip")) {
-      commonStore.setPage(["/administrative/payslip"]);
-      setOpenedSubMenu(["administrative"]);
-      return;
-    }
-    // Hành chính
-    if (
-      location.pathname.includes("/proposal-advance") ||
-      location.pathname.includes("/proposal-advance/")
-    ) {
-      commonStore.setPage(["/proposal-advance"]);
-      setOpenedSubMenu(["proposal"]);
-      return;
-    }
-    if (
-      location.pathname.includes("/proposal") ||
-      location.pathname.includes("/proposal/")
-    ) {
-      commonStore.setPage(["/proposal"]);
-      setOpenedSubMenu(["proposal"]);
-      return;
-    }
-
-    if (location.pathname.includes("/administrative-management/")) {
-      commonStore.setPage(["/administrative-management/approval-templates"]);
-      setOpenedSubMenu(["proposal"]);
-      return;
-    }
-
-    // Tiện ích
-    if (
-      location.pathname.includes("/utility/iso") ||
-      location.pathname.includes("/utility/iso/")
-    ) {
-      commonStore.setPage(["/utility/iso"]);
-      setOpenedSubMenu(["utilities"]);
-      return;
-    }
-    if (
-      location.pathname.includes("/utility/vbpc") ||
-      location.pathname.includes("/utility/vbpc/")
-    ) {
-      commonStore.setPage(["/utility/vbpc"]);
-      setOpenedSubMenu(["utilities"]);
-      return;
-    }
-    if (
-      location.pathname.includes("/utility/messages") ||
-      location.pathname.includes("/utility/messages/")
-    ) {
-      commonStore.setPage(["/utility/messages"]);
-      setOpenedSubMenu(["utilities"]);
-      return;
-    }
-    if (
-      location.pathname.includes("/utility/signed-document") ||
-      location.pathname.includes("/utility/signed-document/")
-    ) {
-      commonStore.setPage(["/utility/signed-document"]);
-      setOpenedSubMenu(["utilities"]);
-      return;
-    }
-    if (
-      location.pathname.includes("/utility/contacts") ||
-      location.pathname.includes("/utility/contacts/")
-    ) {
-      commonStore.setPage(["/utility/contacts"]);
-      setOpenedSubMenu(["utilities"]);
-      return;
-    }
-    if (
-      location.pathname.includes("/utility/general-notifications") ||
-      location.pathname.includes("/utility/general-notifications/")
-    ) {
-      commonStore.setPage(["/utility/general-notifications"]);
-      setOpenedSubMenu(["utilities"]);
-      return;
-    }
-    if (
-      location.pathname.includes("/utility/digital-signature") ||
-      location.pathname.includes("/utility/digital-signature/")
-    ) {
-      commonStore.setPage(["/utility/digital-signature"]);
-      setOpenedSubMenu(["utilities"]);
-      return;
-    }
-    // Quản trị
-    if (location.pathname.includes("/management/group")) {
-      commonStore.setPage(["/management/group"]);
-      setOpenedSubMenu(["management"]);
-      return;
-    }
-    if (location.pathname.includes("/management/nhiem-vu-group")) {
-      commonStore.setPage(["/management/nhiem-vu-group"]);
-      setOpenedSubMenu(["management"]);
-      return;
-    }
-
-    if (location.pathname.includes("/management/document-books")) {
-      commonStore.setPage(["/management/document-books"]);
-      setOpenedSubMenu(["management"]);
-      return;
-    }
-    if (location.pathname.includes("/management/sample-document")) {
-      commonStore.setPage(["/management/sample-document"]);
-      setOpenedSubMenu(["management"]);
-      return;
-    }
-    if (location.pathname.includes("/management//management/sign-account")) {
-      commonStore.setPage(["/management/sample-document"]);
-      setOpenedSubMenu(["management"]);
+    if (location.pathname.includes("/registration/ideaOfSupervisors")) {
+      commonStore.setPage(["/registration/ideaOfSupervisors"]);
+      setOpenedSubMenu(["registration"]);
       return;
     }
     commonStore.setPage([location.pathname]);

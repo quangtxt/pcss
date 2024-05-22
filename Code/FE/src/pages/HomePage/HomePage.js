@@ -111,6 +111,7 @@ const HomePage = (props) => {
 
   const handleGoogleSignIn = useGoogleLogin({
     onSuccess: async (response) => {
+      loadingAnimationStore.showSpinner(true);
       try {
         const res = await axios.get(
           "https://www.googleapis.com/oauth2/v3/userinfo",
@@ -123,6 +124,9 @@ const HomePage = (props) => {
         await loginWithGoogle(res);
       } catch (err) {
         console.log(err);
+        loadingAnimationStore.showSpinner(false);
+      } finally {
+        loadingAnimationStore.showSpinner(false);
       }
     },
   });
@@ -134,16 +138,18 @@ const HomePage = (props) => {
         campus
       );
       if (response.status === 200) {
+        loadingAnimationStore.showSpinner(true);
         const res = await authenticationStore.checkCurrentUser();
         console.log(res);
         message.success(
-          `Xin chào, ${utils.getNameInCapitalize(res.data.userName)}!`
+          `Xin chào, ${utils.getNameInCapitalize(res.data.username)}!`
         );
       }
     } catch (err) {
+      loadingAnimationStore.showSpinner(false);
       message.error(err.en || "Login failed response status!");
     } finally {
-      setConfirmLoading(false);
+      loadingAnimationStore.showSpinner(false);
     }
   };
   // const handleGoogleSignIn = useGoogleLogin({
@@ -348,7 +354,7 @@ const HomePage = (props) => {
           backgroundColor={"#f2f3f8"}
         >
           <Helmet>
-            <title>Dashboard</title>
+            <title>Home</title>
           </Helmet>
 
           <Table columns={columns} dataSource={data} />

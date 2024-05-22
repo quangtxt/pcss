@@ -35,7 +35,6 @@ public class User implements UserDetails, Serializable {
     public String email;
 
 
-
     @CreationTimestamp
     @Column(name = "created_at")
     public OffsetDateTime createdAt;
@@ -45,8 +44,11 @@ public class User implements UserDetails, Serializable {
     public OffsetDateTime updatedAt;
 
     @Column(name = "status")
-    public Boolean status = Boolean.FALSE;    @Column(name = "is_admin")
+    public Boolean status = Boolean.FALSE;
+
+    @Column(name = "is_admin")
     public Boolean isAdmin;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "v_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -91,6 +93,7 @@ public class User implements UserDetails, Serializable {
     public boolean isEnabled() {
         return status;
     }
+
     public boolean isAdmin() {
         return isAdmin == Boolean.TRUE;
     }

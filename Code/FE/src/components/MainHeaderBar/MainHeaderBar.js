@@ -83,7 +83,7 @@ const MainHeaderBar = (props) => {
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
   }, []);
-
+  console.log("currentUser", currentUser);
   useEffect(() => {
     if (!localStorage.getItem("FCMToken")) {
       messaging
@@ -360,7 +360,7 @@ const MainHeaderBar = (props) => {
                   Đ/c{" "}
                   {currentUser &&
                     utils.getNameInCapitalize(
-                      currentUser.name_uppercase ?? "quangnv"
+                      currentUser.username ?? "quangnv"
                     )}
                 </span>
               </div>
