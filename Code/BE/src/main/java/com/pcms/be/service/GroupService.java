@@ -6,7 +6,10 @@ import com.pcms.be.pojo.CreateGroupRequest;
 import com.pcms.be.pojo.EditGroupRequest;
 import com.pcms.be.pojo.GroupResonse;
 
+import java.util.List;
+
 public interface GroupService {
     GroupResonse createGroup(CreateGroupRequest createGroupDTO)  throws ServiceException;
     GroupResonse editGroup(EditGroupRequest editGroupDTO) throws ServiceException;
+    List<Group> getGroupsById(List<Long> groupId) throws  ServiceException;
 }
