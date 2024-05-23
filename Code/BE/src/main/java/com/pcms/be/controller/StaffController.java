@@ -1,6 +1,8 @@
 package com.pcms.be.controller;
 
+import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
+import com.pcms.be.pojo.GroupResonse;
 import com.pcms.be.service.StaffService;
 import org.checkerframework.common.reflection.qual.GetMethod;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +21,29 @@ public class StaffController {
     @Autowired
     private StaffService staffService;
 
-    @GetMapping("/checkFormatExcel")
-    public  ResponseEntity<List<Integer>> checkFormatExcel(@RequestParam("file") MultipartFile file) throws ServiceException {
-        return staffService.checkFormatExcel(file);
+    @GetMapping("/checkFormatStudentsExcel")
+    public  ResponseEntity<String> checkFormatExcel_Students(@RequestParam("file") MultipartFile file) throws ServiceException {
+        try {
+            return staffService.checkFormatExcel_Student(file);
+        } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
     }
     @PostMapping("/addStudents")
-    public ResponseEntity<String> addListStudentByExcel(@RequestParam("file") MultipartFile file ){
-        return staffService.addUserByExcel(file);
+    public ResponseEntity<String> addListStudentByExcel(@RequestParam("file") MultipartFile file){
+        return staffService.addStudentsByExcel(file);
+    }
+
+    @GetMapping("/checkFormatMentorsExcel")
+    public  ResponseEntity<String> checkFormatExcel_Mentors(@RequestParam("file") MultipartFile file) throws ServiceException {
+        try {
+            return staffService.checkFormatExcel_Mentor(file);
+        } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
+    }
+    @PostMapping("/addMentors")
+    public ResponseEntity<String> addListMentorByExcel(@RequestParam("file") MultipartFile file){
+        return staffService.addMentorsByExcel(file);
     }
 }
