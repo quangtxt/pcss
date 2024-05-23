@@ -59,10 +59,6 @@ public class User implements UserDetails, Serializable {
             inverseJoinColumns = @JoinColumn(name = "group_id"))
     private Set<Group> groups = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "specificMajor_code", referencedColumnName = "id")
-    public SpecificMajor specificMajor;
-
     @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private Group ownedGroup;
 

@@ -1,6 +1,7 @@
 package com.pcms.be.controller;
 
 
+import com.pcms.be.domain.user.Group;
 import com.pcms.be.domain.user.GroupMentorInvitation;
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
@@ -22,6 +23,7 @@ public class GroupMentorInvitationController {
     public ResponseEntity<List<GroupMentorInvitation>> getGroupInvitation(){
         try {
             List<GroupMentorInvitation> listInvitaion = groupMemberInvitationService.getListInvitation();
+//            List<Group> listGroupHaveInvitation =
             return ResponseEntity.ok(listInvitaion);
         }catch (ServiceException e){
             throw new ApiException(e.getErrorCode(), e.getParams());
