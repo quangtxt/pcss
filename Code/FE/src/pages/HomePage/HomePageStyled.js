@@ -1,6 +1,31 @@
 import { Card, Col, List } from "antd";
 import styled, { css } from "styled-components";
-
+export const LoginWrapper = styled.div`
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(
+      to right bottom,
+      rgb(170 202 255 / 80%),
+      rgb(0 0 0 / 80%)
+    ),
+    url(${(props) => props.bgImage});
+  background-size: cover;
+  background-position: top;
+  #loginForm {
+    padding: 30px;
+    width: 370px;
+    background: rgba(0, 21, 41, 0.8);
+    border-radius: 4px;
+  }
+  .ant-form-item-label > label,
+  .ant-form-item-control h2 {
+    color: #ffffff;
+    margin: 0;
+  }
+`;
 export const FormLogin = styled.div`
   .formLogin {
     content: "";

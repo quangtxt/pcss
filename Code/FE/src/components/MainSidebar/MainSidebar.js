@@ -52,7 +52,6 @@ const MainSidebar = (props) => {
   const [moduleFlatList, setModuleFlatList] = useState([]);
 
   useEffect(() => {
-    console.log("location.pathname", location.pathname);
     // commandStore.getSideMenuCounter(["WORK", "PROPOSAL", "INTERNAL_MESSAGE"]);
   }, [location.pathname]);
 

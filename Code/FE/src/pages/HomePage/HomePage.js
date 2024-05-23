@@ -31,8 +31,7 @@ import { Helmet } from "react-helmet/es/Helmet";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import utils from "../../utils";
 import validator from "../../validator";
-import { LoginWrapper } from "../PortalPageV2/PortalPageV2Styled";
-import { FormLogin } from "./HomePageStyled";
+import { FormLogin, LoginWrapper } from "./HomePageStyled";
 
 const { TabPane } = Tabs;
 const btnPrevAndNextStyled = {
@@ -64,8 +63,8 @@ const HomePage = (props) => {
   const {
     currentUser,
     isAccountAdmin,
-    isSuperAdmin,
-    setAppToken,
+    isStudent,
+    isMentor,
   } = authenticationStore;
   // const { statistic } = statisticStore
 
@@ -152,9 +151,6 @@ const HomePage = (props) => {
       loadingAnimationStore.showSpinner(false);
     }
   };
-  // const handleGoogleSignIn = useGoogleLogin({
-  //   onSuccess: (tokenResponse) => console.log(tokenResponse),
-  // });
   const handleSignInByEmail = useGoogleLogin({
     onSuccess: (tokenResponse) => console.log(tokenResponse),
   });

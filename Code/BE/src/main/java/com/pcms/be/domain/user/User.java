@@ -34,6 +34,8 @@ public class User implements UserDetails, Serializable {
     @Column(name = "email")
     public String email;
 
+    @Column(name = "full_name")
+    public String name;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -55,16 +57,17 @@ public class User implements UserDetails, Serializable {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "specificMajor_code", referencedColumnName = "id")
-    public SpecificMajor specificMajor;
-
     @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private Group ownedGroup;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Member membership;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Student student;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Mentor mentor;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "campus_code", referencedColumnName = "campus_code")
     private Campus campus;

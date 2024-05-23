@@ -1,5 +1,6 @@
 package com.pcms.be.domain;
 
+import com.pcms.be.domain.user.Student;
 import com.pcms.be.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -30,9 +31,8 @@ public class SpecificMajor implements Serializable {
     @JoinColumn(name = "major_code", referencedColumnName = "id")
     public Major major;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "specificMajor_code", referencedColumnName = "id")
-    public List<User> userList;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "specificMajor")
+    public List<Student> students;
 
     @ManyToMany(mappedBy = "specificMajors")
     private Set<Semester> semesters = new HashSet<>();

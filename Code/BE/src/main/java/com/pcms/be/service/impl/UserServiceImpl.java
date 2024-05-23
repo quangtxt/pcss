@@ -17,6 +17,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -74,5 +75,14 @@ public class UserServiceImpl implements UserService {
             }
         }
         throw new ServiceException(ErrorCode.USER_NOT_FOUND);
+    }
+
+    @Override
+    public List<User> getMentor() throws ServiceException {
+        try {
+            return userRepository.findAllByRolesName("MENTOR");
+        } catch (Exception e) {
+            throw new ServiceException(ErrorCode.USER_NOT_FOUND);
+        }
     }
 }

@@ -26,11 +26,9 @@ import { withRouter } from "react-router-dom";
 import { useSSO } from "../../config";
 import { blue } from "../../color";
 import utils from "../../utils";
-import { NOTIFICATION_STATUS } from "../../constants";
 import queryString from "query-string";
 import notificationStore from "../../stores/notificationStore";
 import { useKeycloak } from "@react-keycloak/web";
-import PopupAppGrid from "../PopupAppGrid/PopupAppGrid";
 
 const { TabPane } = Tabs;
 
@@ -105,7 +103,7 @@ const MainHeaderBar = (props) => {
     }
     messaging?.onMessage(async (payload) => {
       console.log("Message received. ", payload);
-      if (payload.data.type === NOTIFICATION_STATUS.NEWS) {
+      if (payload.data.type === "NEWS") {
         if (changedTabsNotification.isOpen) {
           setChangedTabsNotification({
             status: true,
@@ -135,7 +133,7 @@ const MainHeaderBar = (props) => {
     if (!utils.isIOSDevice()) {
       const channel4Broadcast = new BroadcastChannel("channel4");
       channel4Broadcast.onmessage = async (even) => {
-        if (even.data.type === NOTIFICATION_STATUS.NEWS) {
+        if (even.data.type === "NEWS") {
           if (changedTabsNotification.isOpen) {
             setChangedTabsNotification({
               status: true,
