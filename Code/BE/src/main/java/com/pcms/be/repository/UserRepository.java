@@ -1,6 +1,8 @@
 package com.pcms.be.repository;
 
 import com.pcms.be.domain.user.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,5 +14,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsernameIgnoreCase(String username);
     User findUserById(Integer id);
     Optional<User> findByEmail(String email);
-    List<User> findAllByRolesName(String roleName);
+    Page<User> findAllByRolesName(String roleName, Pageable pageable);
 }

@@ -1,11 +1,11 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const MainWrapper = styled.div`
   width: 100%;
   height: 100vh;
   display: flex;
   position: relative;
-`
+`;
 export const SmallSidebarWrapper = styled.div`
   height: 50px;
   display: flex;
@@ -77,7 +77,7 @@ export const SmallSidebarWrapper = styled.div`
       vertical-align: middle;
     }
   }
-`
+`;
 
 export const NotificationItem = styled.div`
   position: relative;
@@ -91,7 +91,7 @@ export const NotificationItem = styled.div`
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    background-color: ${props => props.showNotification && '#4879B8'};
+    background-color: ${(props) => props.showNotification && "#4879B8"};
 
     &:hover {
       background-color: #4879b8;
@@ -113,12 +113,12 @@ export const NotificationItem = styled.div`
       display: none;
     }
   }
-`
+`;
 
 export const ListWrapper = styled.div`
   max-height: calc(100vh - 170px);
   overflow-y: auto;
-`
+`;
 
 export const ViewAll = styled.div`
   display: flex;
@@ -135,15 +135,15 @@ export const ViewAll = styled.div`
       text-decoration: underline;
     }
   }
-`
+`;
 
 export const LayoutWrapper = styled.div`
   width: 100%;
   flex: 0 0 auto;
   display: flex;
-`
+`;
 export const SidebarWrapper = styled.aside`
-  width: ${props => (props.collapsedMenu ? '220px' : '80px')};
+  width: ${(props) => (props.collapsedMenu ? "220px" : "80px")};
   flex: 0 0 auto;
   background-color: #e4eaf2;
   z-index: 10;
@@ -234,27 +234,27 @@ export const SidebarWrapper = styled.aside`
     }
 
     .anticon {
-      font-size: ${props =>
-        !props.collapsedMenu ? '16px !important' : '1rem'};
+      font-size: ${(props) =>
+        !props.collapsedMenu ? "16px !important" : "1rem"};
     }
   }
-`
+`;
 export const ContentWrapper = styled.main`
-  margin-top: ${props => (props.marginTop ? props.marginTop + 'px' : '0px')};
+  margin-top: ${(props) => (props.marginTop ? props.marginTop + "px" : "0px")};
   overflow: auto;
-  height: ${props =>
-    props.marginTop ? "calc(100vh - props.marginTop + 'px')" : '100vh'};
+  height: ${(props) =>
+    props.marginTop ? `calc(100vh - ${props.marginTop}px)` : "100vh"};
   flex: 0 0 auto;
-  background-color: ${props => props.backgroundColor || '#cddaf4'};
+  background-color: ${(props) => props.backgroundColor || "#cddaf4"};
   padding: 24px;
-  width: ${props =>
-    props.collapsedMenu ? 'calc(100% - 220px)' : 'calc(100% - 80px)'};
-`
+  width: ${(props) =>
+    props.collapsedMenu ? "calc(100% - 220px)" : "calc(100% - 80px)"};
+`;
 
 export const CollapseSidebarButton = styled.div`
   background-color: #e4eaf2;
   position: fixed;
-  width: ${props => (props.collapsedMenu ? '220px' : '80px')};
+  width: ${(props) => (props.collapsedMenu ? "220px" : "80px")};
   bottom: 0;
   padding: 10px 24px;
   height: 40px;
@@ -277,7 +277,7 @@ export const CollapseSidebarButton = styled.div`
     &:last-child {
       color: #3a5a7d;
       font-weight: 500;
-      padding-left: ${props => (props.collapsedMenu ? '24px' : '5px')};
+      padding-left: ${(props) => (props.collapsedMenu ? "24px" : "5px")};
     }
   }
-`
+`;

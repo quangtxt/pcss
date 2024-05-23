@@ -3,6 +3,8 @@ package com.pcms.be.service.impl;
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
+import com.pcms.be.pojo.MentorDTO;
+import com.pcms.be.pojo.MentorPageResponse;
 import com.pcms.be.pojo.TokenDTO;
 import com.pcms.be.repository.UserRepository;
 import com.pcms.be.service.EncryptionService;
@@ -12,13 +14,18 @@ import com.pcms.be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +36,7 @@ public class UserServiceImpl implements UserService {
     private final EncryptionService encryptionService;
     private final JWTService jwtService;
     private final TokenService tokenService;
-
+    private final ModelMapper modelMapper;
 
     @Autowired
     ConfigurableApplicationContext applicationContext;
@@ -78,9 +85,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getMentor() throws ServiceException {
+    public MentorPageResponse getMentor(String keyword, PageRequest pageRequests) throws ServiceException {
         try {
-            return userRepository.findAllByRolesName("MENTOR");
+            Pageable pageable = PageRequest.of(pageRequests.getPageNumber(), pageRequests.getPageSize());
+            Page<User> mentorPage = userRepository.findAllByRolesName("MENTOR", pageable);
+
+            MentorPageResponse response = new MentorPageResponse();
+            response.setTotalPage(mentorPage.getTotalPages());
+            response.setTotalCount(mentorPage.getTotalElements());
+            List<MentorDTO> mentorDTOs = mentorPage.stream()
+                    .map(mentor -> modelMapper.map(mentor, MentorDTO.class))
+                    .collect(Collectors.toList());
+            response.setData(mentorDTOs);
+            return response;
         } catch (Exception e) {
             throw new ServiceException(ErrorCode.USER_NOT_FOUND);
         }

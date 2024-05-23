@@ -33,26 +33,7 @@ import utils from "../../utils";
 import validator from "../../validator";
 import { FormLogin, LoginWrapper } from "./HomePageStyled";
 
-const { TabPane } = Tabs;
-const btnPrevAndNextStyled = {
-  cursor: "pointer",
-};
-
 const HomePage = (props) => {
-  const defaultStyle = {
-    transition: `all 500ms cubic-bezier(.4,0,.2,1)`,
-    opacity: 0,
-    margin: 0,
-    maxHeight: 0,
-  };
-
-  const transitionStyles = {
-    entering: { padding: 0, maxHeight: 0, opacity: 0 },
-    entered: { maxHeight: 5000, opacity: 1 },
-    exiting: { padding: 0, maxHeight: 0, opacity: 0 },
-    exited: { padding: 0, maxHeight: 0, opacity: 0 },
-  };
-
   const {
     history,
     location,
@@ -67,15 +48,6 @@ const HomePage = (props) => {
     isMentor,
   } = authenticationStore;
   // const { statistic } = statisticStore
-
-  // const [dataCongViec, setDataCongViec] = useState([{ type: '', value: 0 }])
-  //
-  const [isLoadingCalendar, setIsLoadingCalendar] = useState(false);
-  const [isLoadingSidemenuCounter, setIsLoadingSidemenuCounter] = useState(
-    false
-  );
-  const [isLoadingTinTuc, setIsLoadingTinTuc] = useState(false);
-  //
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [campus, setCampus] = useState("");

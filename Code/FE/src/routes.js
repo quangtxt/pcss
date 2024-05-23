@@ -2,6 +2,7 @@ import HomePage from "./pages/HomePage/HomePage";
 import RegNewsPage from "./pages/RegNewsPage/RegNewsPage";
 import RegTeamPage from "./pages/RegTeamPage/RegTeamPage";
 import RegCreateIdeaPage from "./pages/RegCreateIdeaPage/RegCreateIdeaPage";
+import ListSupervisorsPage from "./pages/Registration/ListSupervisorsPage/ListSupervisorsPage";
 
 export const normalRoutes = [
   {
@@ -36,5 +37,10 @@ export const routes = [
     path: "/registration/createIdea",
     component: RegCreateIdeaPage,
     name: "RegCreateIdeaPage",
+  },
+  {
+    path: "/registration/listSupervisors",
+    component: ListSupervisorsPage,
+    name: "ListSupervisorsPage",
   },
 ];
