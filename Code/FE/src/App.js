@@ -26,7 +26,7 @@ import groupStore from "./stores/groupStore";
 
 // Pages
 import NotFoundPage from "./pages/NotFoundPage";
-import DashboardPageV2 from "./pages/HomePage";
+import HomePage from "./pages/HomePage";
 //ProposalPage
 //Demo
 import DemoTagPage from "./pages/Demo/index";
@@ -49,13 +49,12 @@ const ProtectedRoute = ({ component: Component, ...rest }) => (
       sessionStorage.getItem("jwt") ? (
         <Component {...props} />
       ) : (
-        // <Redirect
-        //   to={{
-        //     pathname: "/login",
-        //     state: { from: props.location },
-        //   }}
-        // />
-        <Component {...props} />
+        <Redirect
+          to={{
+            pathname: "/login",
+            state: { from: props.location },
+          }}
+        />
       )
     }
   />
@@ -124,7 +123,6 @@ const saveToken = (tokenValue) => {
     };
     localStorage.setItem("jwt", JSON.stringify(objToken));
     authenticationStore.setAppToken(JSON.stringify(objToken));
-    console.log("Update access_token", objToken);
   }
 };
 
@@ -156,10 +154,6 @@ export const AppRouter = () => {
   };
 
   const { keycloak } = useSSO ? useKeycloak() : fakeKeycloak;
-
-  useEffect(() => {
-    console.log("useSSO", useSSO, process.env.REACT_APP_USE_SSO);
-  }, [useSSO]);
 
   useEffect(
     () => {
@@ -230,12 +224,8 @@ export const AppRouter = () => {
                 />
               ))}
 
-              <ProtectedRoute exact path={"/"} component={DashboardPageV2} />
-              <ProtectedRoute
-                exact
-                path={"/home"}
-                component={DashboardPageV2}
-              />
+              <ProtectedRoute exact path={"/"} component={HomePage} />
+              <ProtectedRoute exact path={"/home"} component={HomePage} />
 
               {routes.map((route) => (
                 <ProtectedRoute
