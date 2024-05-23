@@ -5,10 +5,7 @@ import com.pcms.be.domain.user.Member;
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
-import com.pcms.be.pojo.CreateGroupDTO;
-import com.pcms.be.pojo.GroupDTO;
-import com.pcms.be.pojo.TokenDTO;
-import com.pcms.be.pojo.UserDTO;
+import com.pcms.be.pojo.*;
 import com.pcms.be.repository.GroupRepository;
 import com.pcms.be.repository.MemberRepository;
 import com.pcms.be.repository.UserRepository;
@@ -19,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,16 +31,10 @@ public class GroupServiceImpl implements GroupService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
-    @Autowired
-    ConfigurableApplicationContext applicationContext;
-
-    public Keycloak keycloak() {
-        return applicationContext.getBean(Keycloak.class);
-    }
 
     @Override
     @Transactional
-    public GroupDTO createGroup(CreateGroupDTO createGroupDTO) throws ServiceException {
+    public GroupResonse createGroup(CreateGroupRequest createGroupDTO) throws ServiceException {
         try {
             User currentUser = userService.getCurrentUser();
             if (groupRepository.findByOwnerId(currentUser.getId()) != null) {
@@ -73,14 +63,14 @@ public class GroupServiceImpl implements GroupService {
                 }
                 createMember(group, memberId);
             }
-            GroupDTO groupDTO = modelMapper.map(group, GroupDTO.class);
-            return groupDTO;
+            GroupResonse groupResonse = modelMapper.map(group, GroupResonse.class);
+            return groupResonse;
         } catch (Exception e) {
             throw new ServiceException(ErrorCode.FAILED_CREATE_GROUP);
         }
     }
 
-    private Group createGroupInternal(CreateGroupDTO createGroupDTO, User owner) {
+    private Group createGroupInternal(CreateGroupRequest createGroupDTO, User owner) {
         Group group = new Group();
         group.setAbbreviations(createGroupDTO.getAbbreviations());
         group.setDescription(createGroupDTO.getDescription());
@@ -98,5 +88,28 @@ public class GroupServiceImpl implements GroupService {
         newInviteMember.setUser(userRepository.findById(Long.valueOf(memberId)).orElse(null));
         newInviteMember.setGroup(group);
         memberRepository.save(newInviteMember);
+    }
+
+    @Override
+    public GroupResonse editGroup(EditGroupRequest editGroupDTO) throws ServiceException {
+        try {
+
+            Group group = groupRepository.findByOwnerId(userService.getCurrentUser().getId());
+            if(group!= null){
+                group.setAbbreviations(editGroupDTO.getAbbreviations());
+                group.setDescription(editGroupDTO.getDescription());
+                group.setKeywords(editGroupDTO.getKeywords());
+                group.setName(editGroupDTO.getName());
+                group.setVietnameseTitle(editGroupDTO.getVietnameseTitle());
+                groupRepository.save(group);
+                GroupResonse groupResonse = modelMapper.map(group, GroupResonse.class);
+                return groupResonse;
+            }else {
+                throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
+            }
+
+        } catch (Exception e) {
+            throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
+        }
     }
 }

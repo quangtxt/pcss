@@ -6,7 +6,6 @@ import { QuestionCircleOutlined } from "@ant-design/icons";
 import htmlToPdfmake from "html-to-pdfmake";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import { RISK_TYPE } from "./constants";
 
 /** App utils */
 const { confirm } = Modal;
@@ -501,9 +500,9 @@ const utils = {
     pdfMake.createPdf(documentDefinition).download(`${title}.pdf`);
   },
   checkRichType(type, delegateValue, unitValue, agencyValue) {
-    return type === RISK_TYPE.DELEGATE
+    return type === "NDDPV"
       ? delegateValue
-      : type === RISK_TYPE.UNIT
+      : type === "DVPT"
       ? unitValue
       : agencyValue;
   },

@@ -55,7 +55,6 @@ public class AuthController {
         User user = new User();
         user.setUsername(loginBody.getUsername());
         user.setPassword(encryptionService.encryptPassword(loginBody.getPassword()));
-        user.setSpecificMajor(specificMajorRepository.findById(Long.parseLong("1")).get());
         userRepository.save(user);
         return ResponseEntity.ok(user);
     }

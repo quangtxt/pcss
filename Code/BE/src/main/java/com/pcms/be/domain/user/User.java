@@ -34,6 +34,8 @@ public class User implements UserDetails, Serializable {
     @Column(name = "email")
     public String email;
 
+    @Column(name = "full_name")
+    public String name;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -45,8 +47,10 @@ public class User implements UserDetails, Serializable {
 
     @Column(name = "status")
     public Boolean status = Boolean.FALSE;
+
     @Column(name = "is_admin")
     public Boolean isAdmin;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "v_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -65,6 +69,11 @@ public class User implements UserDetails, Serializable {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Member membership;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Student student;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Mentor mentor;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "campus_code", referencedColumnName = "campus_code")
     private Campus campus;
