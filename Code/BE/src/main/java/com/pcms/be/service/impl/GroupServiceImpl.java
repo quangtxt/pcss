@@ -20,6 +20,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -112,4 +114,11 @@ public class GroupServiceImpl implements GroupService {
             throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
         }
     }
+
+    @Override
+    public List<Group> getGroupsById(List<Long> groupId) throws ServiceException {
+        return groupRepository.findAllById(groupId);
+    }
+
+
 }

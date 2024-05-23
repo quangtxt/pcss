@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface GroupMentorInvitationRepository extends JpaRepository<GroupMentorInvitation, Long> {
@@ -15,4 +16,8 @@ public interface GroupMentorInvitationRepository extends JpaRepository<GroupMent
     @Modifying
     @Query(value = "SELECT * FROM iqi5186tmljsc2ji.v_group_mentor_invitation where (mentor_id = :mentorId and status = :status) ", nativeQuery = true)
     List<GroupMentorInvitation> findAllByMentorIdAndStatus(Long mentorId, String status);
+
+    Optional<GroupMentorInvitation> findById(Long id);
+
+
 }
