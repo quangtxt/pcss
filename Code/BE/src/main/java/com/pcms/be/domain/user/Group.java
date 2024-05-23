@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.Set;
 @Getter
 @Setter
@@ -49,6 +50,9 @@ public class Group implements Serializable {
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Member> members;
+
+    @ManyToMany(mappedBy = "groups")
+    private Set<User> mentors = new HashSet<>();
 
     // Getters, setters, constructors, etc.
 }
