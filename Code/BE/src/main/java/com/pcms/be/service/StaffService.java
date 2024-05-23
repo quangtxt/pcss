@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface StaffService {
-    public ResponseEntity<List<Integer>> checkFormatExcel(MultipartFile file) throws ServiceException;
-    public ResponseEntity<String> addUserByExcel(MultipartFile file);
+    public ResponseEntity<String> checkFormatExcel_Student(MultipartFile file) throws ServiceException;
+    public ResponseEntity<String> addStudentsByExcel(MultipartFile file);
+    public ResponseEntity<String> checkFormatExcel_Mentor(MultipartFile file) throws ServiceException;
+    public ResponseEntity<String> addMentorsByExcel(MultipartFile file);
+
 }

@@ -1,8 +1,14 @@
 package com.pcms.be.service.impl;
 
+import com.pcms.be.domain.user.Mentor;
+import com.pcms.be.domain.user.Role;
+import com.pcms.be.domain.user.Student;
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
+import com.pcms.be.repository.MentorRepository;
+import com.pcms.be.repository.RoleRepository;
+import com.pcms.be.repository.StudentRepository;
 import com.pcms.be.repository.UserRepository;
 import com.pcms.be.service.StaffService;
 import lombok.RequiredArgsConstructor;
@@ -22,34 +28,43 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class StaffServiceImpl implements StaffService {
-    public final List<String> formatExcel = new ArrayList<>(List.of("RollNumber", "Email", "MemberCode", "FullName", "Status", "Note"));
+    public final List<String> formatExcel_listStudent = new ArrayList<>(List.of("RollNumber", "Email", "MemberCode", "FullName", "Status", "Note"));
+    public final List<String> formatExcel_listMentor = new ArrayList<>(List.of("Empl_ID", "Name", "Gender", "Branch", "Parent Department", "Child Department", "Job Title", "Email FPT", "Email FE", "Telephone", "Contract type"));
+
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private MentorRepository mentorRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Override
-    public ResponseEntity<List<Integer>> checkFormatExcel(MultipartFile file) throws ServiceException{
+    public ResponseEntity<String> checkFormatExcel_Student(MultipartFile file) throws ServiceException{
         try {
             Workbook workbook = new XSSFWorkbook(file.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
 
             //Kiểm tra xem tên các trường dữ liệu trong Excel đã đúng hay chưa
             for (int i = 0; i < sheet.getRow(0).getLastCellNum(); i++){
-                if (!sheet.getRow(0).getCell(i).getStringCellValue().equals(formatExcel.get(i).trim())){
+                if (!sheet.getRow(0).getCell(i).getStringCellValue().equals(formatExcel_listStudent.get(i).trim())){
                     throw new ServiceException(ErrorCode.EXCEL_IS_NOT_IN_THE_CORRECT_FORMAT);
                 }
             }
             //Lấy thứ tự các index các trường dữ liệu
-            List<Integer> listIndex = new ArrayList<>();
-            for (int i = 0; i < formatExcel.size(); i++){
-                for (int j = 0; j < sheet.getRow(0).getLastCellNum(); j++){
-                    if(formatExcel.get(i).trim().equals(sheet.getRow(0).getCell(i).getStringCellValue())){
-                        listIndex.add(i);
-                        break;
-                    }
-                }
-            }
+//            List<Integer> listIndex = new ArrayList<>();
+//            for (int i = 0; i < formatExcel.size(); i++){
+//                for (int j = 0; j < sheet.getRow(0).getLastCellNum(); j++){
+//                    if(formatExcel.get(i).trim().equals(sheet.getRow(0).getCell(i).getStringCellValue())){
+//                        listIndex.add(i);
+//                        break;
+//                    }
+//                }
+//            }
 
-            return ResponseEntity.ok(listIndex);
+            return ResponseEntity.ok("Excel is corrected format.");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -57,42 +72,98 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> addUserByExcel(MultipartFile file) {
+    public ResponseEntity<String> addStudentsByExcel(MultipartFile file) {
         try {
-            List<User> users = new ArrayList<>();
+            //public final List<String> formatExcel = new ArrayList<>(List.of("RollNumber", "Email", "MemberCode", "FullName", "Status", "Note"));
             Workbook workbook = new XSSFWorkbook(file.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
             for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++){
-                String username = sheet.getRow(i).getCell(0).getStringCellValue();
-                Optional<User> user = userRepository.findByUsernameIgnoreCase(username);
-                if (user.isEmpty()){
-                    String password = sheet.getRow(i).getCell(1).getStringCellValue();
+
+                String userName =  sheet.getRow(i).getCell(2).getStringCellValue();
+                String fullName = sheet.getRow(i).getCell(3).getStringCellValue();
+                String email = sheet.getRow(i).getCell(1).getStringCellValue();
+                //Doi van Quang tao bang Staff de lay Campus
+
+                if (userRepository.findByUsernameIgnoreCase(userName).isEmpty() && userRepository.findByEmail(email).isEmpty()){
+                    Set<Role> roles = new HashSet<>();
+                    roles.add(roleRepository.findByName("STUDENT").orElseThrow());
                     User newUser = new User();
-                    newUser.setUsername(username);
-                    newUser.setPassword(password);
-                    users.add(newUser);
+                    newUser.setUsername(userName);
+                    newUser.setName(fullName);
+                    newUser.setEmail(email);
+                    newUser.setStatus(true);
+                    newUser.setIsAdmin(false);
+                    newUser.setRoles(roles);
+                    userRepository.save(newUser);
+                    Student newStudent = new Student();
+                    newStudent.setUser(newUser);
+                    studentRepository.save(newStudent);
                 }
             }
-            if (!userDuplicateChecker(users).isEmpty()){
-                return ResponseEntity.status(409).body("Danh sách các Username bị chùng: " + userDuplicateChecker(users).toString());
-            }else {
-                userRepository.saveAll(users);
-                return ResponseEntity.ok("Import successfully.");
-            }
+            return ResponseEntity.ok("Import successfully.");
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to process the uploaded Excel file: " + e.getMessage());
         }
     }
 
-    public List<String> userDuplicateChecker(List<User> users){
-        List<String> listUsernameDuplicate = new ArrayList<>();
-        Set<String> listUsername = new HashSet<>();
-        for (User user : users){
-            if (!listUsername.add(user.getUsername())){
-                listUsernameDuplicate.add(user.getUsername());
+    @Override
+    public ResponseEntity<String> checkFormatExcel_Mentor(MultipartFile file) throws ServiceException {
+        try {
+            Workbook workbook = new XSSFWorkbook(file.getInputStream());
+            Sheet sheet = workbook.getSheetAt(0);
+
+            //Kiểm tra xem tên các trường dữ liệu trong Excel đã đúng hay chưa
+            for (int i = 0; i < sheet.getRow(0).getLastCellNum(); i++){
+                if (!sheet.getRow(0).getCell(i).getStringCellValue().equals(formatExcel_listMentor.get(i).trim())){
+                    throw new ServiceException(ErrorCode.EXCEL_IS_NOT_IN_THE_CORRECT_FORMAT);
+                }
             }
+
+            return ResponseEntity.ok("Excel is corrected format.");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return listUsernameDuplicate;
     }
+
+    @Override
+    public ResponseEntity<String> addMentorsByExcel(MultipartFile file) {
+        try {
+            //("Empl_ID", "Name", "Gender", "Branch", "Parent Department", "Child Department", "Job Title", "Email FPT", "Email FE", "Telephone", "Contract type");
+            Workbook workbook = new XSSFWorkbook(file.getInputStream());
+            Sheet sheet = workbook.getSheetAt(0);
+            for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++){
+
+                String emailFE = sheet.getRow(i).getCell(8).getStringCellValue();
+                String userName =  emailFE.split("@")[0];
+                String fullName = sheet.getRow(i).getCell(1).getStringCellValue();
+                //Doi van Quang tao bang Staff de lay Campus
+
+                if (userRepository.findByUsernameIgnoreCase(userName).isEmpty() && userRepository.findByEmail(emailFE).isEmpty()){
+                    Set<Role> roles = new HashSet<>();
+                    roles.add(roleRepository.findByName("MENTOR").orElseThrow());
+                    User newUser = new User();
+                    newUser.setUsername(userName);
+                    newUser.setName(fullName);
+                    newUser.setEmail(emailFE);
+                    newUser.setStatus(true);
+                    newUser.setIsAdmin(false);
+                    newUser.setRoles(roles);
+                    userRepository.save(newUser);
+                    Mentor mentor = new Mentor();
+                    mentor.setUser(newUser);
+                    boolean gender = sheet.getRow(i).getCell(2).getStringCellValue().trim().equalsIgnoreCase("m");
+                    String phone =  sheet.getRow(i).getCell(9).getStringCellValue();
+                    mentor.setGender(gender);
+                    mentor.setPhone(phone);
+                    mentorRepository.save(mentor);
+                }
+            }
+            return ResponseEntity.ok("Import successfully.");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to process the uploaded Excel file: " + e.getMessage());
+        }
+    }
+
 }
