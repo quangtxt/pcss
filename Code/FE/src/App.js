@@ -21,6 +21,7 @@ import accountStore from "./stores/accountStore";
 import moduleStore from "./stores/moduleStore";
 import aclStore from "./stores/aclStore";
 import userStore from "./stores/userStore";
+import mentorStore from "./stores/mentorStore.js";
 import companyStore from "./stores/companyStore";
 import groupStore from "./stores/groupStore";
 
@@ -75,6 +76,7 @@ const rootStore = {
   userStore,
   companyStore,
   groupStore,
+  mentorStore,
 };
 
 axios.defaults.timeout = 60000;
