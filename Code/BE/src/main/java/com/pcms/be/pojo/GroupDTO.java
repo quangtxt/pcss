@@ -8,7 +8,7 @@ import java.time.OffsetDateTime;
 
 @Getter
 @Setter
-public class GroupResonse {
+public class GroupDTO {
     private Long id;
     private String name;
     private String description;
@@ -18,4 +18,5 @@ public class GroupResonse {
     public OffsetDateTime createdAt;
     public OffsetDateTime updatedAt;
     private UserDTO owner;
+    private String status;
 }

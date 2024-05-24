@@ -11,5 +11,5 @@ import java.util.List;
 public interface GroupService {
     GroupResonse createGroup(CreateGroupRequest createGroupDTO)  throws ServiceException;
     GroupResonse editGroup(EditGroupRequest editGroupDTO) throws ServiceException;
-    List<Group> getGroupsById(List<Long> groupId) throws  ServiceException;
+    List<Group> getListGroupsById(List<Long> groupId) throws  ServiceException;
 }

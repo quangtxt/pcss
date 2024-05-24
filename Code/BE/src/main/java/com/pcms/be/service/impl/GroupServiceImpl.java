@@ -66,6 +66,7 @@ public class GroupServiceImpl implements GroupService {
                 createMember(group, memberId);
             }
             GroupResonse groupResonse = modelMapper.map(group, GroupResonse.class);
+
             return groupResonse;
         } catch (Exception e) {
             throw new ServiceException(ErrorCode.FAILED_CREATE_GROUP);
@@ -116,7 +117,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<Group> getGroupsById(List<Long> groupId) throws ServiceException {
+    public List<Group> getListGroupsById(List<Long> groupId) throws ServiceException {
         return groupRepository.findAllById(groupId);
     }
 
