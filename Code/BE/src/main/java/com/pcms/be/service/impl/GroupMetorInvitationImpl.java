@@ -1,11 +1,9 @@
 package com.pcms.be.service.impl;
 
-import com.pcms.be.domain.user.Group;
 import com.pcms.be.domain.user.GroupMentorInvitation;
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
-import com.pcms.be.pojo.GroupResonse;
 import com.pcms.be.repository.GroupMentorInvitationRepository;
 import com.pcms.be.service.GroupMentorInvitationService;
 import com.pcms.be.service.UserService;
