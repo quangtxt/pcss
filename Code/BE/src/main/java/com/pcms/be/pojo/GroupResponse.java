@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 
 @Getter
 @Setter
-public class GroupResonse {
+public class GroupResponse {
     private Long id;
     private String name;
     private String description;

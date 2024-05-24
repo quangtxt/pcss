@@ -13,10 +13,7 @@ import com.pcms.be.service.GroupService;
 import com.pcms.be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.keycloak.admin.client.Keycloak;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +33,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public GroupResonse createGroup(CreateGroupRequest createGroupDTO) throws ServiceException {
+    public GroupResponse createGroup(CreateGroupRequest createGroupDTO) throws ServiceException {
         try {
             User currentUser = userService.getCurrentUser();
             if (groupRepository.findByOwnerId(currentUser.getId()) != null) {
@@ -63,10 +60,10 @@ public class GroupServiceImpl implements GroupService {
                 if ((Long.valueOf(memberId)) == userService.getCurrentUser().getId() || memberRepository.findByUserIdAndStatusTrue(Long.valueOf(memberId)) != null) {
                     throw new ServiceException(ErrorCode.USER_ALREADY_IN_A_GROUP);
                 }
-                createMember(group, memberId);
+                inviteMember(group, memberId);
             }
-            GroupResonse groupResonse = modelMapper.map(group, GroupResonse.class);
-            return groupResonse;
+            GroupResponse groupResponse = modelMapper.map(group, GroupResponse.class);
+            return groupResponse;
         } catch (Exception e) {
             throw new ServiceException(ErrorCode.FAILED_CREATE_GROUP);
         }
@@ -83,7 +80,7 @@ public class GroupServiceImpl implements GroupService {
         return groupRepository.save(group);
     }
 
-    private void createMember(Group group, Integer memberId) {
+    private void inviteMember(Group group, Integer memberId) {
         Member newInviteMember = new Member();
         newInviteMember.setRole(Member.MemberRole.MEMBER);
         newInviteMember.setStatus(false);
@@ -93,20 +90,20 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public GroupResonse editGroup(EditGroupRequest editGroupDTO) throws ServiceException {
+    public GroupResponse editGroup(EditGroupRequest editGroupDTO) throws ServiceException {
         try {
 
             Group group = groupRepository.findByOwnerId(userService.getCurrentUser().getId());
-            if(group!= null){
+            if (group != null) {
                 group.setAbbreviations(editGroupDTO.getAbbreviations());
                 group.setDescription(editGroupDTO.getDescription());
                 group.setKeywords(editGroupDTO.getKeywords());
                 group.setName(editGroupDTO.getName());
                 group.setVietnameseTitle(editGroupDTO.getVietnameseTitle());
                 groupRepository.save(group);
-                GroupResonse groupResonse = modelMapper.map(group, GroupResonse.class);
-                return groupResonse;
-            }else {
+                GroupResponse groupResponse = modelMapper.map(group, GroupResponse.class);
+                return groupResponse;
+            } else {
                 throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
             }
 
@@ -116,9 +113,16 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<Group> getGroupsById(List<Long> groupId) throws ServiceException {
-        return groupRepository.findAllById(groupId);
+    public GroupResponse getGroupByStatusTrue() throws ServiceException {
+        try {
+
+            Member member = memberRepository.findByUserIdAndStatusTrue(userService.getCurrentUser().getId());
+            Group group = member.getGroup();
+            GroupResponse groupResponse = modelMapper.map(group, GroupResponse.class);
+            return groupResponse;
+
+        } catch (Exception e) {
+            throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
+        }
     }
-
-
 }
