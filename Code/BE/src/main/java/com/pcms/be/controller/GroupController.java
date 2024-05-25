@@ -101,4 +101,13 @@ public class GroupController {
         }
     }
 
+    @PostMapping("removeMember")
+    public ResponseEntity<MemberResponse> removeMember(@Valid @RequestBody RemoveMemberRequest removeMemberRequest){
+        try {
+            MemberResponse memberResponse = memberService.removeMember(removeMemberRequest);
+            return  ResponseEntity.ok(memberResponse);
+        } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
+    }
 }
