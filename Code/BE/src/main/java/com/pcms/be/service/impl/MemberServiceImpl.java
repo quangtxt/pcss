@@ -7,6 +7,7 @@ import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.pojo.InviteMemberRequest;
 import com.pcms.be.pojo.MemberResponse;
+import com.pcms.be.pojo.RemoveMemberRequest;
 import com.pcms.be.pojo.UpdateInvitationStatusRequest;
 import com.pcms.be.repository.GroupRepository;
 import com.pcms.be.repository.MemberRepository;
@@ -55,16 +56,20 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponse updateStatus(UpdateInvitationStatusRequest updateInvitationStatusRequest) throws ServiceException {
         try {
-            if(groupRepository.findById(Long.valueOf(updateInvitationStatusRequest.getGroupId())) == null){
+            if (groupRepository.findById(Long.valueOf(updateInvitationStatusRequest.getGroupId())) == null) {
                 throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
             }
 
             Member member = memberRepository.findByUserIdAndGroupId(userService.getCurrentUser().getId(), updateInvitationStatusRequest.getGroupId());
-            if( member!=null && updateInvitationStatusRequest.isStatus() == true){
+            if (member != null && updateInvitationStatusRequest.isStatus() == true) {
                 member.setStatus(updateInvitationStatusRequest.isStatus());
                 memberRepository.save(member);
-
-            }if(member!=null && updateInvitationStatusRequest.isStatus() == false){
+                List<Member> members = memberRepository.findAllByUserIdAndStatusFalse(userService.getCurrentUser().getId());
+                for (Member mem : members) {
+                    memberRepository.delete(mem);
+                }
+            }
+            if (member != null && updateInvitationStatusRequest.isStatus() == false) {
                 memberRepository.delete(member);
             }
             return modelMapper.map(member, MemberResponse.class);
@@ -78,7 +83,7 @@ public class MemberServiceImpl implements MemberService {
         try {
 
             Member member = memberRepository.findByUserIdAndStatusTrue(userService.getCurrentUser().getId());
-            List<Member> listMember = memberRepository.findAllByGroupIdAndStatusTrue( member.getGroup().getId());
+            List<Member> listMember = memberRepository.findAllByGroupIdAndStatusTrue(member.getGroup().getId());
             List<MemberResponse> listMemberRes = new ArrayList<>();
             for (Member mem : listMember
             ) {
@@ -95,17 +100,17 @@ public class MemberServiceImpl implements MemberService {
     public List<MemberResponse> inviteMember(InviteMemberRequest inviteMemberRequest) throws ServiceException {
         try {
             User user = userService.getCurrentUser();
-            Member member= memberRepository.findByGroupIdAndRole(Long.valueOf(inviteMemberRequest.getGroupId()), Member.MemberRole.OWNER);
-            if(user.getId() != member.getUser().getId()){
+            Member member = memberRepository.findByGroupIdAndRole(Long.valueOf(inviteMemberRequest.getGroupId()), Member.MemberRole.OWNER);
+            if (user.getId() != member.getUser().getId()) {
                 throw new ServiceException(ErrorCode.FAILED_GET_IVITATIONS);
             }
-            if((memberRepository.findAllByGroupIdAndStatusTrue( member.getGroup().getId()).size() + inviteMemberRequest.getListUserID().size()) > 5 ){
+            if ((memberRepository.findAllByGroupIdAndStatusTrue(member.getGroup().getId()).size() + inviteMemberRequest.getListUserID().size()) > 5) {
                 throw new ServiceException(ErrorCode.FAILED_GET_IVITATIONS);
             }
             List<MemberResponse> newMembers = new ArrayList<>();
             for (Integer userId : inviteMemberRequest.getListUserID()) {
                 User invitedUser = userRepository.findUserById(userId);
-                if(invitedUser ==null){
+                if (invitedUser == null) {
                     throw new ServiceException(ErrorCode.USER_NOT_FOUND);
                 }
 
@@ -116,10 +121,33 @@ public class MemberServiceImpl implements MemberService {
                 newMembers.add(modelMapper.map(newMember, MemberResponse.class));
             }
             return newMembers;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ServiceException(ErrorCode.FAILED_GET_IVITATIONS);
         }
     }
+
+    @Override
+    public MemberResponse removeMember(RemoveMemberRequest removeMemberRequest) throws ServiceException {
+        try {
+            User user = userService.getCurrentUser();
+            Optional<Group> group = groupRepository.findById(Long.valueOf(removeMemberRequest.getGroupId()));
+            if (!group.isPresent()) {
+                throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
+            } else {
+                Group group1 = group.get();
+                if (!user.getId().equals(group1.getOwner().getId())) {
+                    throw new ServiceException(ErrorCode.USER_NOT_ALLOW);
+                } else {
+                    Member member = memberRepository.findByUserIdAndStatusTrue(Long.valueOf(removeMemberRequest.getUserID()));
+                    memberRepository.delete(member);
+                    return modelMapper.map(member, MemberResponse.class);
+                }
+            }
+        } catch (ServiceException e) {
+            throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
+        }
+    }
+
     private Member inviteMember(Group group, User user) {
         Member newMember = new Member();
         newMember.setRole(Member.MemberRole.MEMBER);
