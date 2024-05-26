@@ -5,7 +5,7 @@ import com.pcms.be.domain.user.Group;
 import com.pcms.be.domain.user.GroupMentorInvitation;
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
-import com.pcms.be.pojo.GroupResponse;
+import com.pcms.be.pojo.response.GroupResponse;
 import com.pcms.be.service.GroupMentorInvitationService;
 import com.pcms.be.service.GroupService;
 import com.pcms.be.service.UserService;

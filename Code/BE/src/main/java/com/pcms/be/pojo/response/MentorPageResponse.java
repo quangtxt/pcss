@@ -1,6 +1,6 @@
-package com.pcms.be.pojo;
+package com.pcms.be.pojo.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pcms.be.pojo.DTO.MentorDTO;
 import lombok.Getter;
 import lombok.Setter;
 

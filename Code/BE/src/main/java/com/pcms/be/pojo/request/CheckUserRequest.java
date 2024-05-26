@@ -1,4 +1,4 @@
-package com.pcms.be.pojo;
+package com.pcms.be.pojo.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

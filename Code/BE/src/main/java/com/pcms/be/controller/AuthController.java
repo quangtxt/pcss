@@ -2,11 +2,10 @@ package com.pcms.be.controller;
 
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ApiException;
-import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
-import com.pcms.be.pojo.CheckUserRequest;
-import com.pcms.be.pojo.LoginBody;
-import com.pcms.be.pojo.LoginResponse;
+import com.pcms.be.pojo.request.CheckUserRequest;
+import com.pcms.be.pojo.DTO.LoginBody;
+import com.pcms.be.pojo.response.LoginResponse;
 import com.pcms.be.repository.SpecificMajorRepository;
 import com.pcms.be.repository.UserRepository;
 import com.pcms.be.service.EncryptionService;

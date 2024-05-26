@@ -1,9 +1,8 @@
-package com.pcms.be.pojo;
+package com.pcms.be.pojo.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

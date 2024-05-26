@@ -1,6 +1,8 @@
 package com.pcms.be.pojo;
 
 import com.pcms.be.domain.user.Member;
+import com.pcms.be.pojo.DTO.UserDTO;
+import com.pcms.be.pojo.response.GroupResponse;
 import lombok.Getter;
 import lombok.Setter;
 

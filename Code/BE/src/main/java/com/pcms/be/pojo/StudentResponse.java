@@ -1,6 +1,7 @@
 package com.pcms.be.pojo;
 
 import com.pcms.be.domain.SpecificMajor;
+import com.pcms.be.pojo.DTO.UserDTO;
 import lombok.Getter;
 import lombok.Setter;
 
