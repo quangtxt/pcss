@@ -50,12 +50,13 @@ const ProtectedRoute = ({ component: Component, ...rest }) => (
       sessionStorage.getItem("jwt") ? (
         <Component {...props} />
       ) : (
-        <Redirect
-          to={{
-            pathname: "/login",
-            state: { from: props.location },
-          }}
-        />
+        // <Redirect
+        //   to={{
+        //     pathname: "/login",
+        //     state: { from: props.location },
+        //   }}
+        // />
+        <Component {...props} />
       )
     }
   />

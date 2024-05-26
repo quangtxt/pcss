@@ -1,20 +1,12 @@
 import { action, autorun, computed, observable } from "mobx";
 import { AuthenticationRequest } from "../requests/AuthenticationRequest";
-import {
-  DDPV,
-  DIGITAL_SIGN,
-  EOFFICE_ADMIN,
-  EOFFICE_CLERICAL,
-  EOFFICE_LEADER,
-  EOFFICE_SECRETARY,
-} from "../constants";
-
 class AuthenticationStore {
   constructor() {
     autorun(() => {
       this.isAccountAdmin = this.checkAccountAdmin; //admin vpdt
       this.isMentor = this.checkMentor;
       this.isStudent = this.checkStudent;
+      this.isStaff = this.checkStaff;
     });
   }
 
@@ -103,6 +95,14 @@ class AuthenticationStore {
     return (
       this.currentUser &&
       this.currentUser.roles.some((role) => role.name.includes("STUDENT"))
+    );
+  }
+  @observable isStaff = undefined;
+
+  @computed get checkStaff() {
+    return (
+      this.currentUser &&
+      this.currentUser.roles.some((role) => role.name.includes("STAFF"))
     );
   }
 }
