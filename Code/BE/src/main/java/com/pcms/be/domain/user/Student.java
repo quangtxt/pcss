@@ -30,6 +30,7 @@ public class Student {
     @Column(name = "alternative_email")
     public String alternativeEmail;
 
+
     @ManyToOne
     @JoinColumn(name = "specificMajor_code", referencedColumnName = "id")
     private SpecificMajor specificMajor;

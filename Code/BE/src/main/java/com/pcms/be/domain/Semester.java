@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,6 +24,12 @@ public class Semester implements Serializable {
 
     @Column(name = "name")
     public String name;
+
+    @Column(name = "start_at")
+    public OffsetDateTime beginAt;
+
+    @Column(name = "end_at")
+    public OffsetDateTime endAt;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "semester_specificMajor",

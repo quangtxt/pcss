@@ -4,7 +4,7 @@ package com.pcms.be.service;
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ErrorCode;
-import com.pcms.be.pojo.TokenDTO;
+import com.pcms.be.pojo.DTO.TokenDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.RefreshableKeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;

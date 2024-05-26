@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -53,16 +54,16 @@ public class StaffServiceImpl implements StaffService {
                     throw new ServiceException(ErrorCode.EXCEL_IS_NOT_IN_THE_CORRECT_FORMAT);
                 }
             }
-            //Lấy thứ tự các index các trường dữ liệu
-//            List<Integer> listIndex = new ArrayList<>();
-//            for (int i = 0; i < formatExcel.size(); i++){
-//                for (int j = 0; j < sheet.getRow(0).getLastCellNum(); j++){
-//                    if(formatExcel.get(i).trim().equals(sheet.getRow(0).getCell(i).getStringCellValue())){
-//                        listIndex.add(i);
-//                        break;
-//                    }
-//                }
-//            }
+            List<String> listInValidEmail = new ArrayList<>();
+            for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
+                String email = sheet.getRow(i).getCell(1).getStringCellValue();
+                if(!isValidEmail(email)){
+                    listInValidEmail.add(email);
+                }
+            }
+            if (listInValidEmail.isEmpty()){
+                return ResponseEntity.badRequest().body("Danh sách email không hợp lệ: " + listInValidEmail.toString());
+            }
 
             return ResponseEntity.ok("Excel is corrected format.");
         } catch (IOException e) {
@@ -164,6 +165,16 @@ public class StaffServiceImpl implements StaffService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to process the uploaded Excel file: " + e.getMessage());
         }
+    }
+
+
+    public static boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
     }
 
 }

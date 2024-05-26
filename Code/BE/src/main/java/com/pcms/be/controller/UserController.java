@@ -3,20 +3,15 @@ package com.pcms.be.controller;
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
-import com.pcms.be.pojo.MentorDTO;
-import com.pcms.be.pojo.MentorPageResponse;
-import com.pcms.be.pojo.UserDTO;
+import com.pcms.be.pojo.response.MentorPageResponse;
+import com.pcms.be.pojo.DTO.UserDTO;
 import com.pcms.be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
 @RestController

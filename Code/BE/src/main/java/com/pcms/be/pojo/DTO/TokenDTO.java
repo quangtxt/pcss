@@ -1,4 +1,4 @@
-package com.pcms.be.pojo;
+package com.pcms.be.pojo.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
