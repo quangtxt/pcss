@@ -20,4 +20,26 @@ export const GroupRequest = {
         listUserID: [],
       },
     }),
+  getListInvitationToJoinGroup: () =>
+    axios({
+      method: "get",
+      url: `${apiUrl}/api/v1/group/invitations`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+    }),
+  updateInvitationStatus: (groupId, status) =>
+    axios({
+      method: "post",
+      url: `${apiUrl}/api/v1/group/update/invitation/status`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+      data: {
+        groupId: groupId,
+        status: status,
+      },
+    }),
 };

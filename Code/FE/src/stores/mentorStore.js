@@ -29,8 +29,6 @@ class MentorStore {
         .then((response) => {
           this.mentorListTotalCount = response.data.totalCount;
           this.mentorList = response.data.data;
-          console.log("res", response);
-          console.log("this.mentorListTotalCount", this.mentorListTotalCount);
           resolve(response);
         })
         .catch((error) => {

@@ -27,5 +27,28 @@ class GroupStore {
         });
     });
   };
+  @action getListInvitationToJoinGroup = () => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.getListInvitationToJoinGroup()
+        .then((response) => {
+          console.log("res", response);
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action updateInvitationStatus = (groupId, status) => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.updateInvitationStatus(groupId, status)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
 }
 export default new GroupStore();

@@ -44,7 +44,14 @@ const MainSidebar = (props) => {
     moduleStore,
     aclStore,
   } = props;
-  const { currentUser, isAccountAdmin, isSuperAdmin } = authenticationStore;
+  const {
+    currentUser,
+    isAccountAdmin,
+    isSuperAdmin,
+    isMentor,
+    isStaff,
+    isStudent,
+  } = authenticationStore;
   const { openedSubMenu, setOpenedSubMenu, collapsedMenu } = commonStore;
   const { moduleList } = moduleStore;
   const { aclActionsByUser } = aclStore;
@@ -97,24 +104,50 @@ const MainSidebar = (props) => {
       icon={<CalendarOutlined />}
       title="Registration Phase"
     >
-      <Menu.Item key={"/registration/news"}>
-        <Link to={"/registration/news"}>News</Link>
-      </Menu.Item>
-      <Menu.Item key={"/registration/team"}>
-        <Link to={"/registration/team"}>Team</Link>
-      </Menu.Item>
-      <Menu.Item key={"/registration/myRequest"}>
-        <Link to={"/registration/myRequest"}>My request</Link>
-      </Menu.Item>
-      <Menu.Item key={"/registration/createIdea"}>
-        <Link to={"/registration/createIdea"}>Create Idea</Link>
-      </Menu.Item>
-      <Menu.Item key={"/registration/listSupervisors"}>
-        <Link to={"/registration/listSupervisors"}>List Supervisors</Link>
-      </Menu.Item>
-      <Menu.Item key={"/registration/ideaOfSupervisors"}>
-        <Link to={"/registration/ideaOfSupervisors"}>Ideas of Supervisors</Link>
-      </Menu.Item>
+      {isMentor && (
+        <Menu.Item key={"/registration/std-request"}>
+          <Link to={"/registration/std-request"}>
+            Registration Group You Recommend
+          </Link>
+        </Menu.Item>
+      )}
+      {isStaff && (
+        <Menu.Item key={"/registration/student"}>
+          <Link to={"/registration/student"}>Manager Student</Link>
+        </Menu.Item>
+      )}
+      {isStaff && (
+        <Menu.Item key={"/registration/mentor"}>
+          <Link to={"/registration/mentor"}>Manager Mentor</Link>
+        </Menu.Item>
+      )}
+      {isStudent && (
+        <Menu.Item key={"/registration/team"}>
+          <Link to={"/registration/team"}>Team</Link>
+        </Menu.Item>
+      )}
+      {isStudent && (
+        <Menu.Item key={"/registration/myRequest"}>
+          <Link to={"/registration/myRequest"}>My request</Link>
+        </Menu.Item>
+      )}
+      {isStudent && (
+        <Menu.Item key={"/registration/createIdea"}>
+          <Link to={"/registration/createIdea"}>Create Idea</Link>
+        </Menu.Item>
+      )}
+      {isStudent && (
+        <Menu.Item key={"/registration/listSupervisors"}>
+          <Link to={"/registration/listSupervisors"}>List Supervisors</Link>
+        </Menu.Item>
+      )}
+      {isStudent && (
+        <Menu.Item key={"/registration/ideaOfSupervisors"}>
+          <Link to={"/registration/ideaOfSupervisors"}>
+            Ideas of Supervisors
+          </Link>
+        </Menu.Item>
+      )}
     </Menu.SubMenu>
   );
   // Menu hướng dẫn đồ án
