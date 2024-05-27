@@ -56,10 +56,11 @@ export const routes = [
     component: ListSupervisorsPage,
     name: "ListSupervisorsPage",
   },
-  path: "/registration/profile",
+  {
+    path: "/registration/profile",
     component: RegProfilePage,
     name: "RegProfilePage",
-
+  },
   //mentor
   {
     path: "/registration/std-request",

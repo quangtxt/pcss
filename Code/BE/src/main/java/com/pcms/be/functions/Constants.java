@@ -64,4 +64,11 @@ public interface Constants {
         String INGROUP = "INGROUP";
         String OUTGROUP = "OUTGROUP";
     }
+    interface CampusCode {
+        String Hoa_Lac = "HL";
+        String Can_Tho = "CT";
+        String Ho_Chi_Minh = "HCM";
+        String Da_Nang = "DN";
+        String Quy_Nhon = "QN";
+    }
 }
