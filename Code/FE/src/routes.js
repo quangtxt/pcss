@@ -5,6 +5,7 @@ import ListRequestPage from "./pages/Registration/ListRequestPage/ListRequestPag
 import RegCreateIdeaPage from "./pages/RegCreateIdeaPage/RegCreateIdeaPage";
 import ListSupervisorsPage from "./pages/Registration/ListSupervisorsPage/ListSupervisorsPage";
 import GroupInvitedMentorPage from "./pages/GroupInvitedMentorPage/GroupInvitedMentorPage";
+import RegProfilePage from "./pages/RegProfilePage/RegProfilePage";
 
 export const normalRoutes = [
   {
@@ -55,6 +56,9 @@ export const routes = [
     component: ListSupervisorsPage,
     name: "ListSupervisorsPage",
   },
+  path: "/registration/profile",
+    component: RegProfilePage,
+    name: "RegProfilePage",
 
   //mentor
   {
