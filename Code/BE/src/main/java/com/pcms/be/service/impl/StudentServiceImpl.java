@@ -63,12 +63,12 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<StudentResponse> getAllStudentToInvite() {
 
-//            List<Student> listStudentToInvite= studentRepository.findStudentsNotInMemberOrInactive();
+            List<Student> listStudentToInvite= studentRepository.findStudentsNotInMemberOrInactive();
             List<StudentResponse> studentResponseList = new ArrayList<>();
-//            for (Student student: listStudentToInvite) {
-//                StudentResponse studentResponse = modelMapper.map(student, StudentResponse.class);
-//                studentResponseList.add(studentResponse);
-//            }
+            for (Student student: listStudentToInvite) {
+                StudentResponse studentResponse = modelMapper.map(student, StudentResponse.class);
+                studentResponseList.add(studentResponse);
+            }
             return studentResponseList;
 
     }

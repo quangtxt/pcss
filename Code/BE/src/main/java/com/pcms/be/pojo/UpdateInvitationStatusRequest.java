@@ -9,4 +9,5 @@ import lombok.Setter;
 public class UpdateInvitationStatusRequest {
     int groupId;
     String status;
+    int studentId;
 }

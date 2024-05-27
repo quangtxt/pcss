@@ -61,21 +61,54 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponse updateStatus(UpdateInvitationStatusRequest updateInvitationStatusRequest) throws ServiceException {
         try {
-            if (groupRepository.findById(Long.valueOf(updateInvitationStatusRequest.getGroupId())) == null) {
-                throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
-            }
-            Member member = memberRepository.findByStudentIdAndGroupId(userService.getCurrentUser().getId(), updateInvitationStatusRequest.getGroupId());
-            if (member != null && updateInvitationStatusRequest.getStatus().equals(Constants.MemberStatus.INGROUP)) {
-                member.setStatus(Constants.MemberStatus.INGROUP);
-                memberRepository.save(member);
-            }
-            if (member != null && updateInvitationStatusRequest.getStatus().equals(Constants.MemberStatus.OUTGROUP)) {
-                member.setStatus(Constants.MemberStatus.OUTGROUP);
-                memberRepository.save(member);
-            }
+            User user = userService.getCurrentUser();
+            int groupId = updateInvitationStatusRequest.getGroupId();
+            Long studentId = Long.valueOf(updateInvitationStatusRequest.getStudentId());
 
-            return modelMapper.map(member, MemberResponse.class);
-
+            Group group = groupRepository.findById(Long.valueOf(groupId)).orElseThrow(() -> new ServiceException(ErrorCode.GROUP_NOT_FOUND));
+            Member member1 = memberRepository.findByStudentIdAndGroupId(studentId,groupId);
+            if(member1 ==null){
+                throw new ServiceException(ErrorCode.STUDENT_NOT_FOUND);
+            }
+            //student accept to join group or reject to join group // out group
+            if (user.getStudent().getId() == member1.getStudent().getId()) {
+                if (member1.getStatus().equals(Constants.MemberStatus.PENDING)) {
+                    if (updateInvitationStatusRequest.getStatus().equals(Constants.MemberStatus.INGROUP)) {
+                        member1.setStatus(Constants.MemberStatus.INGROUP);
+                        memberRepository.save(member1);
+                        // set thong bao accept to join group
+                    } else {
+                        member1.setStatus(Constants.MemberStatus.OUTGROUP);
+                        memberRepository.save(member1);
+                        // set thong bao reject to join group
+                    }
+                } else if (member1.getStatus().equals(Constants.MemberStatus.INGROUP)) {
+                    member1.setStatus(Constants.MemberStatus.OUTGROUP);
+                    memberRepository.save(member1);
+                    // set thong bao Out group
+                }
+                return modelMapper.map(member1, MemberResponse.class);
+            }
+            //Owner remove member or remove request
+            else {
+                if (!user.getStudent().getId().equals(group.getOwner().getId())) {
+                    throw new ServiceException(ErrorCode.USER_NOT_ALLOW);
+                } else {
+                    if (updateInvitationStatusRequest.getStatus().equals(Constants.MemberStatus.INGROUP)) {
+                        member1.setStatus(Constants.MemberStatus.OUTGROUP);
+                        memberRepository.save(member1);
+                        //set thong bao remove member
+                        return modelMapper.map(member1, MemberResponse.class);
+                    }
+                    else if(updateInvitationStatusRequest.getStatus().equals(Constants.MemberStatus.PENDING)) {
+                        member1.setStatus(Constants.MemberStatus.OUTGROUP);
+                        memberRepository.save(member1);
+                        //set thong bao remove request
+                        return modelMapper.map(member1, MemberResponse.class);
+                    }
+                }
+            }
+            return null;
         } catch (Exception e) {
             throw new ServiceException(ErrorCode.FAILED_UPDATE_INVITE_STATUS);
         }
@@ -102,15 +135,16 @@ public class MemberServiceImpl implements MemberService {
         try {
             User user = userService.getCurrentUser();
             Optional<Group> group = groupRepository.findById(Long.valueOf(inviteMemberRequest.getGroupId()));
-            if(!group.isPresent()){
+            if (!group.isPresent()) {
                 throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
             }
             Group group1 = group.get();
             if (user.getStudent().getId() != group1.getOwner().getId()) {
                 throw new ServiceException(ErrorCode.FAILED_INVITE_MEMBER);
             }
-            List<Member> members = memberRepository.findAllByGroupId(inviteMemberRequest.getGroupId());
-            if (members.size() + inviteMemberRequest.getListStudentID().size() > 5) {
+            List<Member> members = memberRepository.findAllByGroupIdAndStatus(Long.valueOf(inviteMemberRequest.getGroupId()), Constants.MemberStatus.INGROUP);
+            List<Member> members1 = memberRepository.findAllByGroupIdAndStatus(Long.valueOf(inviteMemberRequest.getGroupId()), Constants.MemberStatus.PENDING);
+            if ((members.size() + members1.size() + inviteMemberRequest.getListStudentID().size()) > 5) {
                 throw new ServiceException(ErrorCode.MAXIMUM_SIZE_OF_A_GROUP);
             }
             List<MemberResponse> newMembers = new ArrayList<>();
@@ -119,7 +153,7 @@ public class MemberServiceImpl implements MemberService {
                 if (!invitedStudent.isPresent()) {
                     throw new ServiceException(ErrorCode.STUDENT_NOT_FOUND);
                 }
-                if (memberRepository.findByStudentIdAndStatus((Long.valueOf(studentId)),Constants.MemberStatus.INGROUP) != null) {
+                if (memberRepository.findByStudentIdAndStatus((Long.valueOf(studentId)), Constants.MemberStatus.INGROUP) != null) {
                     throw new ServiceException(ErrorCode.STUDENT_ALREADY_IN_A_GROUP);
                 }
                 Student student1 = invitedStudent.get();
@@ -129,7 +163,7 @@ public class MemberServiceImpl implements MemberService {
             return newMembers;
 
         } catch (Exception e) {
-            throw new ServiceException(ErrorCode.FAILED_GET_IVITATIONS);
+            throw new ServiceException(ErrorCode.FAILED_INVITE_MEMBER);
         }
     }
 
@@ -145,14 +179,18 @@ public class MemberServiceImpl implements MemberService {
                 if (!user.getId().equals(group1.getOwner().getId())) {
                     throw new ServiceException(ErrorCode.USER_NOT_ALLOW);
                 } else {
-//                    Member member = memberRepository.findByUserIdAndStatusTrue(Long.valueOf(removeMemberRequest.getUserID()));
-//                    memberRepository.delete(member);
-//                    return modelMapper.map(member, MemberResponse.class);
-                    return  null;
+                    Member member = memberRepository.findByStudentIdAndGroupId(Long.valueOf(removeMemberRequest.getStudentId()), removeMemberRequest.getGroupId());
+                    if (member == null) {
+                        throw new ServiceException(ErrorCode.STUDENT_NOT_FOUND);
+                    } else {
+                        member.setStatus(Constants.MemberStatus.OUTGROUP);
+                        memberRepository.save(member);
+                        return modelMapper.map(member, MemberResponse.class);
+                    }
                 }
             }
         } catch (ServiceException e) {
-            throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
+            throw new ServiceException(ErrorCode.FAILED_REMOVE_MEMBER);
         }
     }
 
