@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 public class UpdateInvitationStatusRequest {
     int groupId;
-    boolean status;
+    String status;
 }

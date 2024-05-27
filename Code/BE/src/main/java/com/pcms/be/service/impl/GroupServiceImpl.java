@@ -45,7 +45,7 @@ public class GroupServiceImpl implements GroupService {
             if (groupRepository.findByOwnerId(currentUser.getStudent().getId()) != null) {
                 throw new ServiceException(ErrorCode.STUDENT_ALREADY_IN_A_GROUP);
             }
-            if (memberRepository.findByStudentIdAndStatus(currentUser.getStudent().getId(), Constants.MemberStatus.APPROVAL) != null) {
+            if (memberRepository.findByStudentIdAndStatus(currentUser.getStudent().getId(), Constants.MemberStatus.INGROUP) != null) {
                 throw new ServiceException(ErrorCode.STUDENT_ALREADY_IN_A_GROUP);
             }
             if (createGroupDTO.getListStudentID().stream().count() > 4) {
@@ -54,7 +54,7 @@ public class GroupServiceImpl implements GroupService {
             Group group = createGroupInternal(createGroupDTO, userService.getCurrentUser());
             Member ownerGroup = new Member();
             ownerGroup.setRole(Constants.MemberRole.OWNER);
-            ownerGroup.setStatus(Constants.MemberStatus.APPROVAL);
+            ownerGroup.setStatus(Constants.MemberStatus.INGROUP);
             ownerGroup.setStudent(userService.getCurrentUser().getStudent());
             ownerGroup.setGroup(group);
             memberRepository.save(ownerGroup);
@@ -63,7 +63,7 @@ public class GroupServiceImpl implements GroupService {
                     throw new ServiceException(ErrorCode.STUDENT_NOT_FOUND);
                 }
                 if ((Long.valueOf(studentId)) == userService.getCurrentUser().getStudent().getId()
-                        || memberRepository.findByStudentIdAndStatus(Long.valueOf(studentId), Constants.MemberStatus.APPROVAL) != null) {
+                        || memberRepository.findByStudentIdAndStatus(Long.valueOf(studentId), Constants.MemberStatus.INGROUP) != null) {
                     throw new ServiceException(ErrorCode.STUDENT_ALREADY_IN_A_GROUP);
                 }
                 inviteMember(group, studentId);
@@ -101,7 +101,7 @@ public class GroupServiceImpl implements GroupService {
         try {
 
             Group group = groupRepository.findByOwnerId(userService.getCurrentUser().getStudent().getId());
-            if (!group.getStatus().equalsIgnoreCase("PENDING")) {
+            if (!group.getStatus().equals(Constants.GroupStatus.PENDING)) {
                 throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
             }
             if (group != null) {

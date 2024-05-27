@@ -9,5 +9,5 @@ import java.util.List;
 @Setter
 public class InviteMemberRequest {
     int GroupId;
-    private List<Integer> listUserID;
+    private List<Integer> listStudentID;
 }

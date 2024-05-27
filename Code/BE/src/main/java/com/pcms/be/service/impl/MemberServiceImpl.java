@@ -14,6 +14,7 @@ import com.pcms.be.pojo.RemoveMemberRequest;
 import com.pcms.be.pojo.UpdateInvitationStatusRequest;
 import com.pcms.be.repository.GroupRepository;
 import com.pcms.be.repository.MemberRepository;
+import com.pcms.be.repository.StudentRepository;
 import com.pcms.be.repository.UserRepository;
 import com.pcms.be.service.GroupService;
 import com.pcms.be.service.MemberService;
@@ -37,6 +38,7 @@ public class MemberServiceImpl implements MemberService {
     private final UserService userService;
     private final GroupService groupService;
     private final GroupRepository groupRepository;
+    private final StudentRepository studentRepository;
     private final MemberRepository memberRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
@@ -44,7 +46,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public List<MemberResponse> getInvitations() throws ServiceException {
         try {
-            long id = userService.getCurrentUser().getId();
             List<Member> listMember = memberRepository.findAllByStudentIdAndStatus(userService.getCurrentUser().getStudent().getId(), Constants.MemberStatus.PENDING);
             List<MemberResponse> listInvitation = new ArrayList<>();
             for (Member mem : listMember
@@ -63,23 +64,20 @@ public class MemberServiceImpl implements MemberService {
             if (groupRepository.findById(Long.valueOf(updateInvitationStatusRequest.getGroupId())) == null) {
                 throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
             }
+            Member member = memberRepository.findByStudentIdAndGroupId(userService.getCurrentUser().getId(), updateInvitationStatusRequest.getGroupId());
+            if (member != null && updateInvitationStatusRequest.getStatus().equals(Constants.MemberStatus.INGROUP)) {
+                member.setStatus(Constants.MemberStatus.INGROUP);
+                memberRepository.save(member);
+            }
+            if (member != null && updateInvitationStatusRequest.getStatus().equals(Constants.MemberStatus.OUTGROUP)) {
+                member.setStatus(Constants.MemberStatus.OUTGROUP);
+                memberRepository.save(member);
+            }
 
-//            Member member = memberRepository.findByUserIdAndGroupId(userService.getCurrentUser().getId(), updateInvitationStatusRequest.getGroupId());
-//            if (member != null && updateInvitationStatusRequest.isStatus() == true) {
-//                member.setStatus(updateInvitationStatusRequest.isStatus());
-//                memberRepository.save(member);
-//                List<Member> members = memberRepository.findAllByUserIdAndStatusFalse(userService.getCurrentUser().getId());
-//                for (Member mem : members) {
-//                    memberRepository.delete(mem);
-//                }
-//            }
-//            if (member != null && updateInvitationStatusRequest.isStatus() == false) {
-//                memberRepository.delete(member);
-//            }
-//            return modelMapper.map(member, MemberResponse.class);
-            return null;
+            return modelMapper.map(member, MemberResponse.class);
+
         } catch (Exception e) {
-            throw new ServiceException(ErrorCode.FAILED_GET_GROUP);
+            throw new ServiceException(ErrorCode.FAILED_UPDATE_INVITE_STATUS);
         }
     }
 
@@ -102,29 +100,34 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public List<MemberResponse> inviteMember(InviteMemberRequest inviteMemberRequest) throws ServiceException {
         try {
-//            User user = userService.getCurrentUser();
-//            Member member = memberRepository.findByGroupIdAndRole(Long.valueOf(inviteMemberRequest.getGroupId()), Member.MemberRole.OWNER);
-//            if (user.getId() != member.getStudent().getId()) {
-//                throw new ServiceException(ErrorCode.FAILED_GET_IVITATIONS);
-//            }
-//            if ((memberRepository.findAllByGroupIdAndStatusTrue(member.getGroup().getId()).size() + inviteMemberRequest.getListUserID().size()) > 5) {
-//                throw new ServiceException(ErrorCode.FAILED_GET_IVITATIONS);
-//            }
-//            List<MemberResponse> newMembers = new ArrayList<>();
-//            for (Integer userId : inviteMemberRequest.getListUserID()) {
-//                User invitedUser = userRepository.findUserById(userId);
-//                if (invitedUser == null) {
-//                    throw new ServiceException(ErrorCode.USER_NOT_FOUND);
-//                }
-//
-//                if (memberRepository.findByUserIdAndStatusTrue(Long.valueOf(userId)) != null) {
-//                    throw new ServiceException(ErrorCode.USER_ALREADY_IN_A_GROUP);
-//                }
-//                Member newMember = inviteMember(member.getGroup(), invitedUser);
-//                newMembers.add(modelMapper.map(newMember, MemberResponse.class));
-//            }
-//            return newMembers;
-            return  null;
+            User user = userService.getCurrentUser();
+            Optional<Group> group = groupRepository.findById(Long.valueOf(inviteMemberRequest.getGroupId()));
+            if(!group.isPresent()){
+                throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
+            }
+            Group group1 = group.get();
+            if (user.getStudent().getId() != group1.getOwner().getId()) {
+                throw new ServiceException(ErrorCode.FAILED_INVITE_MEMBER);
+            }
+            List<Member> members = memberRepository.findAllByGroupId(inviteMemberRequest.getGroupId());
+            if (members.size() + inviteMemberRequest.getListStudentID().size() > 5) {
+                throw new ServiceException(ErrorCode.MAXIMUM_SIZE_OF_A_GROUP);
+            }
+            List<MemberResponse> newMembers = new ArrayList<>();
+            for (Integer studentId : inviteMemberRequest.getListStudentID()) {
+                Optional<Student> invitedStudent = studentRepository.findById(Long.valueOf(studentId));
+                if (!invitedStudent.isPresent()) {
+                    throw new ServiceException(ErrorCode.STUDENT_NOT_FOUND);
+                }
+                if (memberRepository.findByStudentIdAndStatus((Long.valueOf(studentId)),Constants.MemberStatus.INGROUP) != null) {
+                    throw new ServiceException(ErrorCode.STUDENT_ALREADY_IN_A_GROUP);
+                }
+                Student student1 = invitedStudent.get();
+                Member newMember = inviteMember(group1, student1);
+                newMembers.add(modelMapper.map(newMember, MemberResponse.class));
+            }
+            return newMembers;
+
         } catch (Exception e) {
             throw new ServiceException(ErrorCode.FAILED_GET_IVITATIONS);
         }
@@ -155,8 +158,8 @@ public class MemberServiceImpl implements MemberService {
 
     private Member inviteMember(Group group, Student student) {
         Member newMember = new Member();
-//        newMember.setRole(Member.MemberRole.MEMBER);
-//        newMember.setStatus(false);
+        newMember.setRole(Constants.MemberRole.MEMBER);
+        newMember.setStatus(Constants.MemberStatus.PENDING);
         newMember.setStudent(student);
         newMember.setGroup(group);
         return memberRepository.save(newMember);

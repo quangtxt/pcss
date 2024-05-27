@@ -273,4 +273,6 @@ public interface ErrorCode {
     String POSITION_101 = "POSITION_101";
     String POSITION_102 = "POSITION_102";
     String STUDENT_NOT_FOUND = "STUDENT-102";
+    String FAILED_INVITE_MEMBER = "STUDENT-103";
+    String FAILED_UPDATE_INVITE_STATUS = "STUDENT-104";
 }

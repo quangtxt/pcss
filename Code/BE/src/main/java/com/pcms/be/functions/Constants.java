@@ -61,7 +61,7 @@ public interface Constants {
     }
     interface MemberStatus {
         String PENDING = "PENDING";
-        String APPROVAL = "APPROVAL";
-        String REJECT = "REJECT";
+        String INGROUP = "INGROUP";
+        String OUTGROUP = "OUTGROUP";
     }
 }
