@@ -8,10 +8,10 @@ import java.util.List;
 
 @Repository
 public interface StudentRepository  extends JpaRepository<Student, Long> {
-     @Query("SELECT s "
-            + "FROM Student s "
-            + "LEFT JOIN s.user u "
-            + "LEFT JOIN Member m ON u.id = m.user.id "
-            + "WHERE m IS NULL OR m.status = false")
-    List<Student> findStudentsNotInMemberOrInactive();
+//     @Query("SELECT s "
+//            + "FROM Student s "
+//            + "LEFT JOIN s.user u "
+//            + "LEFT JOIN Member m ON u.id = m.user.id "
+//            + "WHERE m IS NULL OR m.status = false")
+//    List<Student> findStudentsNotInMemberOrInactive();
 }

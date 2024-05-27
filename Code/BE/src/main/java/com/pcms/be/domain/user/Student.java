@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
@@ -30,6 +33,17 @@ public class Student {
     @Column(name = "alternative_email")
     public String alternativeEmail;
 
+//    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinTable(name = "v_group_mentor_invitation",
+//            joinColumns = @JoinColumn(name = "mentor_id"),
+//            inverseJoinColumns = @JoinColumn(name = "group_id"))
+//    private Set<Group> groups = new HashSet<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Member> members;
+
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Group ownedGroup;
 
     @ManyToOne
     @JoinColumn(name = "specificMajor_code", referencedColumnName = "id")

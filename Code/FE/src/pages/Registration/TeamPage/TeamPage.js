@@ -13,9 +13,9 @@ import {
   TreeSelect,
   message,
 } from "antd";
-import DashboardLayout from "../../layouts/DashboardLayout";
+import DashboardLayout from "../../../layouts/DashboardLayout";
 import { Helmet } from "react-helmet/es/Helmet";
-import { PortalContent } from "./RegTeamPageStyled";
+import { PortalContent } from "./TeamPageStyled";
 
 const RegTeamPage = (props) => {
   const {

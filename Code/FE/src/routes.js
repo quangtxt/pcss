@@ -1,6 +1,6 @@
 import HomePage from "./pages/HomePage/HomePage";
 import RegNewsPage from "./pages/RegNewsPage/RegNewsPage";
-import RegTeamPage from "./pages/RegTeamPage/RegTeamPage";
+import TeamPage from "./pages/Registration/TeamPage/TeamPage";
 import ListRequestPage from "./pages/Registration/ListRequestPage/ListRequestPage";
 import RegCreateIdeaPage from "./pages/RegCreateIdeaPage/RegCreateIdeaPage";
 import ListSupervisorsPage from "./pages/Registration/ListSupervisorsPage/ListSupervisorsPage";
@@ -32,8 +32,8 @@ export const routes = [
   },
   {
     path: "/registration/team",
-    component: RegTeamPage,
-    name: "RegNewsPage",
+    component: TeamPage,
+    name: "TeamPage",
   },
   {
     path: "/registration/myRequest",

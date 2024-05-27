@@ -91,7 +91,6 @@ public class UserServiceImpl implements UserService {
         try {
             Pageable pageable = PageRequest.of(pageRequests.getPageNumber(), pageRequests.getPageSize());
             Page<User> mentorPage = userRepository.findAllByRolesName("MENTOR", pageable);
-
             MentorPageResponse response = new MentorPageResponse();
             response.setTotalPage(mentorPage.getTotalPages());
             response.setTotalCount(mentorPage.getTotalElements());

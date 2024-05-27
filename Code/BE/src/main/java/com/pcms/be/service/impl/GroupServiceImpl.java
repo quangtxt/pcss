@@ -41,9 +41,9 @@ public class GroupServiceImpl implements GroupService {
             if (groupRepository.findByOwnerId(currentUser.getId()) != null) {
                 throw new ServiceException(ErrorCode.USER_ALREADY_IN_A_GROUP);
             }
-            if (memberRepository.findByUserIdAndStatusTrue(currentUser.getId()) != null) {
-                throw new ServiceException(ErrorCode.USER_ALREADY_IN_A_GROUP);
-            }
+//            if (memberRepository.findByUserIdAndStatusTrue(currentUser.getId()) != null) {
+//                throw new ServiceException(ErrorCode.USER_ALREADY_IN_A_GROUP);
+//            }
 
             if (createGroupDTO.getListUserID().stream().count() > 4) {
                 throw new ServiceException(ErrorCode.MAXIMUM_SIZE_OF_A_GROUP);
@@ -52,16 +52,16 @@ public class GroupServiceImpl implements GroupService {
             Member ownerGroup = new Member();
             ownerGroup.setRole(Member.MemberRole.OWNER);
             ownerGroup.setStatus(true);
-            ownerGroup.setUser(userService.getCurrentUser());
+//            ownerGroup.setUser(userService.getCurrentUser());
             ownerGroup.setGroup(group);
             memberRepository.save(ownerGroup);
             for (Integer memberId : createGroupDTO.getListUserID()) {
                 if (userRepository.findUserById(memberId) == null) {
                     throw new ServiceException(ErrorCode.USER_NOT_FOUND);
                 }
-                if ((Long.valueOf(memberId)) == userService.getCurrentUser().getId() || memberRepository.findByUserIdAndStatusTrue(Long.valueOf(memberId)) != null) {
-                    throw new ServiceException(ErrorCode.USER_ALREADY_IN_A_GROUP);
-                }
+//                if ((Long.valueOf(memberId)) == userService.getCurrentUser().getId() || memberRepository.findByUserIdAndStatusTrue(Long.valueOf(memberId)) != null) {
+//                    throw new ServiceException(ErrorCode.USER_ALREADY_IN_A_GROUP);
+//                }
                 inviteMember(group, memberId);
             }
             GroupResponse groupResponse = modelMapper.map(group, GroupResponse.class);
@@ -78,7 +78,7 @@ public class GroupServiceImpl implements GroupService {
         group.setKeywords(createGroupDTO.getKeywords());
         group.setName(createGroupDTO.getName());
         group.setVietnameseTitle(createGroupDTO.getVietnameseTitle());
-        group.setOwner(owner);
+//        group.setOwner(owner);
         return groupRepository.save(group);
     }
 
@@ -86,7 +86,7 @@ public class GroupServiceImpl implements GroupService {
         Member newInviteMember = new Member();
         newInviteMember.setRole(Member.MemberRole.MEMBER);
         newInviteMember.setStatus(false);
-        newInviteMember.setUser(userRepository.findById(Long.valueOf(memberId)).orElse(null));
+//        newInviteMember.setUser(userRepository.findById(Long.valueOf(memberId)).orElse(null));
         newInviteMember.setGroup(group);
         memberRepository.save(newInviteMember);
     }
@@ -121,12 +121,11 @@ public class GroupServiceImpl implements GroupService {
 
     public GroupResponse getGroupByStatusTrue() throws ServiceException {
         try {
-
-            Member member = memberRepository.findByUserIdAndStatusTrue(userService.getCurrentUser().getId());
-            Group group = member.getGroup();
-            GroupResponse groupResponse = modelMapper.map(group, GroupResponse.class);
-            return groupResponse;
-
+//            Member member = memberRepository.findByUserIdAndStatusTrue(userService.getCurrentUser().getId());
+//            Group group = member.getGroup();
+//            GroupResponse groupResponse = modelMapper.map(group, GroupResponse.class);
+//            return groupResponse;
+            return null;
         } catch (Exception e) {
             throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
         }

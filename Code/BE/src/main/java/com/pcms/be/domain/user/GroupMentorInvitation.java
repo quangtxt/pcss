@@ -21,7 +21,7 @@ public class GroupMentorInvitation implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "mentor_id", nullable = false)
-    private User mentorId;
+    private Mentor mentorId;
 
     @Column(name = "status", nullable = false)
     private String status;
