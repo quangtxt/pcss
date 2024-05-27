@@ -13,6 +13,6 @@ public interface GroupService {
     GroupResponse createGroup(CreateGroupRequest createGroupDTO)  throws ServiceException;
     GroupResponse editGroup(EditGroupRequest editGroupDTO) throws ServiceException;
     List<Group> getGroupsById(List<Long> groupId) throws  ServiceException;
-    GroupResponse getGroupByStatusTrue() throws ServiceException;
+    GroupResponse getGroupById(int groupId) throws  ServiceException;
 
 }

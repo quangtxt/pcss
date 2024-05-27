@@ -28,8 +28,7 @@ public class Member implements Serializable {
     private Group group;
 
     @Column(name = "role", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private MemberRole role;
+    private String role;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -39,14 +38,11 @@ public class Member implements Serializable {
     @Column(name = "updated_at")
     public OffsetDateTime updatedAt;
 
-    @Column(name = "status", columnDefinition = "BOOLEAN DEFAULT FALSE", nullable = false)
-    private boolean status;
+    @Column(name = "status", nullable = false)
+    private String status;
 
     // Getters, setters, constructors, etc.
 
-    public enum MemberRole {
-        OWNER,
-        ADMIN,
-        MEMBER
-    }
+
+
 }
