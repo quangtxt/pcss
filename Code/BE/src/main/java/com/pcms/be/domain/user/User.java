@@ -57,23 +57,12 @@ public class User implements UserDetails, Serializable {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "v_group_mentor_invitation",
-            joinColumns = @JoinColumn(name = "mentor_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id"))
-    private Set<Group> groups = new HashSet<>();
-
-    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Group ownedGroup;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Member> members;
-
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Student student;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Mentor mentor;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "campus_code", referencedColumnName = "campus_code")
     private Campus campus;

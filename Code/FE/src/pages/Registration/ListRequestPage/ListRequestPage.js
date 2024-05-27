@@ -27,6 +27,7 @@ const ListRequestPage = (props) => {
       getListInvitationToJoinGroup();
     }
   }, [authenticationStore.currentUser]);
+
   const getListInvitationToJoinGroup = async () => {
     loadingAnimationStore.setTableLoading(true);
     const res = await groupStore.getListInvitationToJoinGroup().finally(() => {

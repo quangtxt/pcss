@@ -36,6 +36,9 @@ public class Group implements Serializable {
     @Column(name = "keywords", columnDefinition = "TEXT")
     private String keywords;
 
+    @Column(name = "status")
+    private String status;
+
     @CreationTimestamp
     @Column(name = "created_at")
     public OffsetDateTime createdAt;
@@ -46,13 +49,10 @@ public class Group implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "owner_id", nullable = false)
-    private User owner;
+    private Student owner;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Member> members;
-
-    @ManyToMany(mappedBy = "groups")
-    private Set<User> mentors = new HashSet<>();
 
     // Getters, setters, constructors, etc.
 }

@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -30,5 +32,11 @@ public class Mentor implements Serializable {
 
     @Column(name = "self_description")
     public String selfDescription;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "v_group_mentor_invitation",
+            joinColumns = @JoinColumn(name = "mentor_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id"))
+    private Set<Group> groups = new HashSet<>();
 
 }

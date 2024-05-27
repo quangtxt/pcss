@@ -17,5 +17,5 @@ public class GroupResponse {
     private String keywords;
     public OffsetDateTime createdAt;
     public OffsetDateTime updatedAt;
-    private UserDTO owner;
+//    private UserDTO owner;
 }
