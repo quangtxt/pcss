@@ -3,7 +3,7 @@ package com.pcms.be.errors;
 public interface ErrorCode {
 
     String SUCCESS = "API-000";
-    String USER_ALREADY_IN_A_GROUP ="USER-IN-GROUP100";
+    String STUDENT_ALREADY_IN_A_GROUP ="STUDENT-IN-GROUP100";
     String MAXIMUM_SIZE_OF_A_GROUP ="GROUP-101";
     String FAILED_CREATE_GROUP = "GROUP-102";
     String FAILED_EDIT_GROUP = "GROUP-103";
@@ -272,5 +272,5 @@ public interface ErrorCode {
     String POSITION_100 = "POSITION_100";
     String POSITION_101 = "POSITION_101";
     String POSITION_102 = "POSITION_102";
-
+    String STUDENT_NOT_FOUND = "STUDENT-102";
 }

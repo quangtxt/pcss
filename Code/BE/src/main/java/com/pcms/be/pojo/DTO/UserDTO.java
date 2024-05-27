@@ -14,5 +14,5 @@ public class UserDTO {
     public String name;
     public String email;
     private List<RoleDTO> roles = new ArrayList<>();
-    public String campus;
+    public CampusDTO campus;
 }

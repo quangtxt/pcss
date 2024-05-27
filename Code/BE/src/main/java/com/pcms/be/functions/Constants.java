@@ -48,7 +48,11 @@ public interface Constants {
         String MENTOR = "MENTOR";
         String STUDENT = "STUDENT";
     }
+     interface MemberRole {
+         String OWNER="OWNER";
+         String MEMBER="MEMBER";
 
+    }
     interface GroupStatus {
         String PENDING = "PENDING";
         String ACCEPTED = "ACCEPTED";

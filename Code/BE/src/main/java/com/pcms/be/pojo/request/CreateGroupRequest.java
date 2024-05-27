@@ -20,5 +20,5 @@ public class CreateGroupRequest {
     private String name;
     @NotBlank
     private String vietnameseTitle;
-    private List<Integer> listUserID;
+    private List<Integer> listStudentID;
 }

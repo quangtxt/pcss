@@ -6,6 +6,8 @@ import com.pcms.be.domain.user.Student;
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
+import com.pcms.be.functions.Constants;
+import com.pcms.be.pojo.DTO.MemberDTO;
 import com.pcms.be.pojo.InviteMemberRequest;
 import com.pcms.be.pojo.MemberResponse;
 import com.pcms.be.pojo.RemoveMemberRequest;
@@ -43,12 +45,12 @@ public class MemberServiceImpl implements MemberService {
     public List<MemberResponse> getInvitations() throws ServiceException {
         try {
             long id = userService.getCurrentUser().getId();
-//            List<Member> listMember = memberRepository.findAllByUserIdAndStatusFalse(userService.getCurrentUser().getId());
+            List<Member> listMember = memberRepository.findAllByStudentIdAndStatus(userService.getCurrentUser().getStudent().getId(), Constants.MemberStatus.PENDING);
             List<MemberResponse> listInvitation = new ArrayList<>();
-//            for (Member mem : listMember
-//            ) {
-//                listInvitation.add(modelMapper.map(mem, MemberResponse.class));
-//            }
+            for (Member mem : listMember
+            ) {
+                listInvitation.add(modelMapper.map(mem, MemberResponse.class));
+            }
             return listInvitation;
         } catch (Exception e) {
             throw new ServiceException(ErrorCode.FAILED_GET_IVITATIONS);
@@ -82,16 +84,14 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<MemberResponse> getGroupMember() throws ServiceException {
+    public List<MemberDTO> getGroupMember(int groupId) throws ServiceException {
         try {
-
-//            Member member = memberRepository.findByUserIdAndStatusTrue(userService.getCurrentUser().getId());
-//            List<Member> listMember = memberRepository.findAllByGroupIdAndStatusTrue(member.getGroup().getId());
-            List<MemberResponse> listMemberRes = new ArrayList<>();
-//            for (Member mem : listMember
-//            ) {
-//                listMemberRes.add(modelMapper.map(mem, MemberResponse.class));
-//            }
+            List<Member> listMember = memberRepository.findAllByGroupId(groupId);
+            List<MemberDTO> listMemberRes = new ArrayList<>();
+            for (Member mem : listMember
+            ) {
+                listMemberRes.add(modelMapper.map(mem, MemberDTO.class));
+            }
             return listMemberRes;
         } catch (Exception e) {
             throw new ServiceException(ErrorCode.FAILED_GET_IVITATIONS);
@@ -155,8 +155,8 @@ public class MemberServiceImpl implements MemberService {
 
     private Member inviteMember(Group group, Student student) {
         Member newMember = new Member();
-        newMember.setRole(Member.MemberRole.MEMBER);
-        newMember.setStatus(false);
+//        newMember.setRole(Member.MemberRole.MEMBER);
+//        newMember.setStatus(false);
         newMember.setStudent(student);
         newMember.setGroup(group);
         return memberRepository.save(newMember);

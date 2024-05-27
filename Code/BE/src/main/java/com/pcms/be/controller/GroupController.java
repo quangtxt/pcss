@@ -75,20 +75,11 @@ public class GroupController {
         }
     }
     @GetMapping("/view")
-    public ResponseEntity<GroupResponse> getGroupByStatusTrue(){
+    public ResponseEntity<GroupResponse> getGroupById(@RequestParam int groupId){
         try {
-        GroupResponse groupResponse = groupService.getGroupByStatusTrue();
+        GroupResponse groupResponse = groupService.getGroupById(groupId);
+        groupResponse.setMembers(memberService.getGroupMember(groupId));
         return ResponseEntity.ok(groupResponse);
-
-        } catch (ServiceException e) {
-            throw new ApiException(e.getErrorCode(), e.getParams());
-        }
-    }
-    @GetMapping("/viewMember")
-    public ResponseEntity<List<MemberResponse>> getGroupMember(){
-        try {
-            List<MemberResponse> memberResponse = memberService.getGroupMember();
-            return ResponseEntity.ok(memberResponse);
 
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());
