@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 @Setter
 public class MemberResponse {
     private Long id;
-    private StudentDTO studentDTO;
+    private StudentDTO student;
     private GroupResponse group;
     private String role;
     public OffsetDateTime createdAt;

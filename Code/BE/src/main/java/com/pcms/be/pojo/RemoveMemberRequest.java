@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class RemoveMemberRequest {
     int GroupId;
-    int UserID;
+    int StudentId;
 }
