@@ -16,11 +16,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findUserById(Integer id);
     Optional<User> findByEmail(String email);
     Page<User> findAllByRolesName(String roleName, Pageable pageable);
-    @Query(value = "SELECT DISTINCT u.* FROM v_user u " +
-            "JOIN v_user_role ur ON u.id = ur.user_id " +
-            "JOIN v_role r ON ur.role_id = r.id " +
-            "WHERE r.name = 'STUDENT' AND u.id NOT IN (SELECT u.id FROM v_user u " +
-            "JOIN v_members m ON u.id = m.user_id " +
-            "WHERE m.status = 1);", nativeQuery = true)
-    Page<User> findAllStudentNoneGroup(Pageable pageable);
 }
