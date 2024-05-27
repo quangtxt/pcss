@@ -3,6 +3,7 @@ package com.pcms.be.service.impl;
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
+import com.pcms.be.functions.Constants;
 import com.pcms.be.pojo.DTO.MentorDTO;
 import com.pcms.be.pojo.response.MentorPageResponse;
 import com.pcms.be.pojo.DTO.TokenDTO;
@@ -90,7 +91,7 @@ public class UserServiceImpl implements UserService {
     public MentorPageResponse getMentor(String keyword, PageRequest pageRequests) throws ServiceException {
         try {
             Pageable pageable = PageRequest.of(pageRequests.getPageNumber(), pageRequests.getPageSize());
-            Page<User> mentorPage = userRepository.findAllByRolesName("MENTOR", pageable);
+            Page<User> mentorPage = userRepository.findAllByRolesName(Constants.RoleConstants.MENTOR, pageable);
             MentorPageResponse response = new MentorPageResponse();
             response.setTotalPage(mentorPage.getTotalPages());
             response.setTotalCount(mentorPage.getTotalElements());
