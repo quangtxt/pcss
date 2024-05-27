@@ -21,12 +21,8 @@ public interface StudentService {
     List<StudentResponse> getAllStudentToInvite();
     StudentProfileResponse getStudentProfile(int Id) throws ServiceException;
     StudentProfileResponse editStudentProfile(EditStudentProfileRequest editStudentProfileRequest) throws ServiceException;
-    public Page<User> getListStudentNoneGroup(Pageable pageable);
-
     public ResponseEntity<String> checkFormatExcel_Student(MultipartFile file) throws ServiceException;
     public ResponseEntity<StudentDTO> addStudent(AddStudentRequest addStudentRequest) throws ServiceException;
     public ResponseEntity<String> addStudentsByExcel(MultipartFile file);
-    public ResponseEntity<String> checkFormatExcel_Mentor(MultipartFile file) throws ServiceException;
-    public ResponseEntity<MentorDTO> addMentor(AddMentorRequest addMentorRequest) throws ServiceException;
-    public ResponseEntity<String> addMentorsByExcel(MultipartFile file);
+
 }

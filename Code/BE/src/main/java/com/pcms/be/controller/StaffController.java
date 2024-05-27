@@ -7,6 +7,7 @@ import com.pcms.be.pojo.DTO.MentorDTO;
 import com.pcms.be.pojo.DTO.StudentDTO;
 import com.pcms.be.pojo.request.AddMentorRequest;
 import com.pcms.be.pojo.request.AddStudentRequest;
+import com.pcms.be.service.MentorService;
 import com.pcms.be.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,9 @@ public class StaffController {
 
     @Autowired
     private StudentService studentService;
+
+    @Autowired
+    private MentorService mentorService;
 
     @GetMapping("/checkFormatStudentsExcel")//done
     public  ResponseEntity<String> checkFormatExcel_Students(@RequestParam("file") MultipartFile file) throws ServiceException {
@@ -47,7 +51,7 @@ public class StaffController {
     @GetMapping("/checkFormatMentorsExcel")//done
     public  ResponseEntity<String> checkFormatExcel_Mentors(@RequestParam("file") MultipartFile file) throws ServiceException {
         try {
-            return studentService.checkFormatExcel_Mentor(file);
+            return mentorService.checkFormatExcel_Mentor(file);
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
@@ -55,14 +59,14 @@ public class StaffController {
     @PostMapping("/addMentor")
     public ResponseEntity<MentorDTO> addMentor(@RequestBody AddMentorRequest addMentorRequest) throws ServiceException {
         try {
-            return studentService.addMentor(addMentorRequest);
+            return mentorService.addMentor(addMentorRequest);
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
     @PostMapping("/addMentors")//done
     public ResponseEntity<String> addListMentorByExcel(@RequestParam("file") MultipartFile file){
-        return studentService.addMentorsByExcel(file);
+        return mentorService.addMentorsByExcel(file);
     }
 
     @PostMapping("/student/automatically-sort")

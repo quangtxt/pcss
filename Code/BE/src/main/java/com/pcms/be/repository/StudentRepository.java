@@ -18,6 +18,4 @@ public interface StudentRepository  extends JpaRepository<Student, Long> {
 //            + "WHERE m IS NULL OR m.status = false")
 //    List<Student> findStudentsNotInMemberOrInactive();
 Optional<Student> findByAlternativeEmail(String email);
-    @Query(value = "", nativeQuery = true)
-Page<Student> findAllStudentNoneGroup(Pageable pageable);
 }
