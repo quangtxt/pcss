@@ -1,6 +1,7 @@
 package com.pcms.be.pojo;
 
 import com.pcms.be.domain.SpecificMajor;
+import com.pcms.be.pojo.DTO.SpecificMajorDTO;
 import com.pcms.be.pojo.DTO.UserDTO;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,5 +16,5 @@ public class StudentResponse {
     public String phone;
     public String facebook;
     public String alternativeEmail;
-    private SpecificMajor specificMajor;
+    private SpecificMajorDTO specificMajor;
 }
