@@ -1,15 +1,18 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
+import { AudioOutlined } from '@ant-design/icons';
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { Button, Pagination } from "antd";
+import { Button, Pagination, Input, Space } from "antd";
 import uuid from "uuid";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 import { TableBottomPaginationBlock } from "../../../components/Common/Table";
 import ContentBlockWrapper from "../../../components/ContentBlockWrapper";
 import PageTitle from "../../../components/PageTitle";
 import { Helmet } from "react-helmet/es/Helmet";
-import { ForContent } from "./ListSupervisorsPageStyled";
+import { ForContent, TableSupervisors } from "./ListSupervisorsPageStyled";
 import TableComponent from "../../../components/Common/TableComponent";
+
+const { Search } = Input;
 
 const ListSupervisorsPage = (props) => {
   const {
@@ -48,28 +51,24 @@ const ListSupervisorsPage = (props) => {
   const columns = [
     {
       title: "No.",
-      width: 100,
       render: (record, index, dataSource) => dataSource + 1,
     },
     {
       title: "Full Name",
-      width: 100,
       render: (record) => record?.name,
     },
     {
       title: "Email",
-      width: 100,
       render: (record) => record?.email,
     },
     {
       title: "Action",
-      width: 100,
       render: (record) => (
         <Button onClick={() => navigateToDetail(record)}>View</Button> // Thêm nút View để navigating to detail page
       ),
     },
   ];
-  function navigateToDetail(record) {}
+  function navigateToDetail(record) { }
   return (
     <DashboardLayout>
       <Helmet>
@@ -81,13 +80,23 @@ const ListSupervisorsPage = (props) => {
         hiddenGoBack
       ></PageTitle>
       <ContentBlockWrapper>
-        <TableComponent
-          rowKey={(record) => record.id || uuid()}
-          dataSource={mentorList}
-          columns={columns}
-          pagination={false}
-          loading={loadingAnimationStore.tableLoading}
-        />
+        <TableSupervisors>
+          <div className="searchSupervisors">
+            <p>FE Email Or Name:</p>
+            <Search
+              allowClear
+              placeholder={'FE Email or Name'}
+              className="searchInput"
+            />
+          </div>
+          <TableComponent
+            rowKey={(record) => record.id || uuid()}
+            dataSource={mentorList}
+            columns={columns}
+            pagination={false}
+            loading={loadingAnimationStore.tableLoading}
+          />
+        </TableSupervisors>
         <div
           style={{
             display: "flex",

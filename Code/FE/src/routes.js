@@ -6,6 +6,8 @@ import RegCreateIdeaPage from "./pages/RegCreateIdeaPage/RegCreateIdeaPage";
 import ListSupervisorsPage from "./pages/Registration/ListSupervisorsPage/ListSupervisorsPage";
 import GroupInvitedMentorPage from "./pages/GroupInvitedMentorPage/GroupInvitedMentorPage";
 import RegProfilePage from "./pages/RegProfilePage/RegProfilePage";
+import DetailProfileSupervisorPage from "./pages/DetailProfileSupervisorPage";
+import ListStudentPage from "./pages/ListStudentPage";
 
 export const normalRoutes = [
   {
@@ -61,10 +63,21 @@ export const routes = [
     component: RegProfilePage,
     name: "RegProfilePage",
   },
+  {
+    path: "/detailProfileSupervisor",
+    component: DetailProfileSupervisorPage,
+    name: "DetailProfileSupervisorPage",
+  },
+
   //mentor
   {
     path: "/registration/std-request",
     component: GroupInvitedMentorPage,
     name: "GroupInvitedMentorPage",
+  },
+  {
+    path: "/listStudent",
+    component: ListStudentPage,
+    name: "ListStudentPage",
   },
 ];

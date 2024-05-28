@@ -168,7 +168,7 @@ const RegProfilePage = (props) => {
                   name="name"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Input style={{ maxWidth: '100%' }} />
+                  <Input style={{ maxWidth: '100%' }} value={"hieupbhe163832@fpt.edu.vn"} />
                 </Form.Item>
               </div>
               <div className="inputForm">
