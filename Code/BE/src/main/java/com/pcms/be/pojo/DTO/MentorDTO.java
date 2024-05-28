@@ -17,4 +17,5 @@ public class MentorDTO {
     public String email;
     private List<RoleDTO> roles = new ArrayList<>();
     public CampusDTO campus;
+    public UserDTO user;
 }
