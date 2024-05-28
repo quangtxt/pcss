@@ -28,4 +28,16 @@ export const MentorRequest = {
         "Content-Type": "application/json",
       },
     }),
+  getMentorProfileById: (mentorId) =>
+    axios({
+      method: "get",
+      url: `${apiUrl}/api/v1/profile/mentor`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+      params: {
+        Id: mentorId,
+      },
+    }),
 };

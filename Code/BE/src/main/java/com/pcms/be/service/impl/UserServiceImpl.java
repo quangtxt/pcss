@@ -1,5 +1,6 @@
 package com.pcms.be.service.impl;
 
+import com.pcms.be.domain.user.Mentor;
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
@@ -7,6 +8,7 @@ import com.pcms.be.functions.Constants;
 import com.pcms.be.pojo.DTO.MentorDTO;
 import com.pcms.be.pojo.response.MentorPageResponse;
 import com.pcms.be.pojo.DTO.TokenDTO;
+import com.pcms.be.repository.MentorRepository;
 import com.pcms.be.repository.UserRepository;
 import com.pcms.be.service.EncryptionService;
 import com.pcms.be.service.JWTService;
@@ -36,6 +38,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final MentorRepository mentorRepository;
     private final EncryptionService encryptionService;
     private final JWTService jwtService;
     private final TokenService tokenService;
@@ -91,7 +94,7 @@ public class UserServiceImpl implements UserService {
     public MentorPageResponse getMentor(String keyword, PageRequest pageRequests) throws ServiceException {
         try {
             Pageable pageable = PageRequest.of(pageRequests.getPageNumber(), pageRequests.getPageSize());
-            Page<User> mentorPage = userRepository.findAllByRolesName(Constants.RoleConstants.MENTOR, pageable);
+            Page<Mentor> mentorPage = mentorRepository.findMentorsByEmailOrName(keyword, pageable);
             MentorPageResponse response = new MentorPageResponse();
             response.setTotalPage(mentorPage.getTotalPages());
             response.setTotalCount(mentorPage.getTotalElements());

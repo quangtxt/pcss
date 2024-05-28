@@ -29,7 +29,6 @@ class AuthenticationStore {
             JSON.stringify(response.data.access_token)
           );
           this.setAppToken(JSON.stringify(response.data.access_token));
-          this.currentUser = "admin";
           resolve(response);
         })
         .catch((error) => {
@@ -55,12 +54,10 @@ class AuthenticationStore {
   };
   @action checkCurrentUser = () => {
     return new Promise((resolve, reject) => {
-      console.log("token", JSON.parse(this.appToken));
       AuthenticationRequest.checkCurrentUser()
         .then((response) => {
           this.currentUser = response.data;
           const { roles } = response.data;
-          console.log("user", response.data);
           resolve(response);
         })
         .catch((error) => {
@@ -78,7 +75,6 @@ class AuthenticationStore {
   @observable isAccountAdmin = undefined;
 
   @computed get checkAccountAdmin() {
-    console.log("checkAccountAdmin", this.currentUser?.is_admin);
     return this.currentUser && this.currentUser.is_admin === true;
   }
   @observable isMentor = undefined;

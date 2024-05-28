@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
-import { AudioOutlined } from '@ant-design/icons';
+import { AudioOutlined } from "@ant-design/icons";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import { Button, Pagination, Input, Space } from "antd";
@@ -29,6 +29,7 @@ const ListSupervisorsPage = (props) => {
     mentorListPageIndex,
     setFilter,
   } = mentorStore;
+
   useEffect(() => {
     if (authenticationStore.currentUser) {
       loadingAnimationStore.setTableLoading(true);
@@ -40,6 +41,16 @@ const ListSupervisorsPage = (props) => {
       mentorStore.clearStore();
     };
   }, [authenticationStore.currentUser]);
+
+  const onSearchByEmailOrName = (keyword) => {
+    setFilter("mentorListPageIndex", 0);
+    setFilter("mentorListKeyword", keyword);
+    loadingAnimationStore.setTableLoading(true);
+    mentorStore.getMentorList().finally(() => {
+      loadingAnimationStore.setTableLoading(false);
+    });
+  };
+
   const onChangePagination = (e) => {
     setFilter("mentorListPageIndex", e - 1);
     loadingAnimationStore.setTableLoading(true);
@@ -47,7 +58,7 @@ const ListSupervisorsPage = (props) => {
       .getMentorList()
       .finally(() => loadingAnimationStore.setTableLoading(false));
   };
-  console.log("mentorListPageSize", mentorListPageSize);
+
   const columns = [
     {
       title: "No.",
@@ -55,20 +66,22 @@ const ListSupervisorsPage = (props) => {
     },
     {
       title: "Full Name",
-      render: (record) => record?.name,
+      render: (record) => record?.user.name,
     },
     {
       title: "Email",
-      render: (record) => record?.email,
+      render: (record) => record?.user.email,
     },
     {
       title: "Action",
       render: (record) => (
-        <Button onClick={() => navigateToDetail(record)}>View</Button> // Thêm nút View để navigating to detail page
+        <Button onClick={() => navigateToDetail(record?.id)}>View</Button> // Thêm nút View để navigating to detail page
       ),
     },
   ];
-  function navigateToDetail(record) { }
+  function navigateToDetail(mentorId) {
+    history.push("/registration/supervisor/detail", { mentorId });
+  }
   return (
     <DashboardLayout>
       <Helmet>
@@ -85,8 +98,9 @@ const ListSupervisorsPage = (props) => {
             <p>FE Email Or Name:</p>
             <Search
               allowClear
-              placeholder={'FE Email or Name'}
+              placeholder={"FE Email or Name"}
               className="searchInput"
+              onSearch={onSearchByEmailOrName}
             />
           </div>
           <TableComponent

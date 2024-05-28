@@ -36,6 +36,17 @@ class MentorStore {
         });
     });
   };
+  @action getMentorProfileById = (mentorId) => {
+    return new Promise((resolve, reject) => {
+      MentorRequest.getMentorProfileById(mentorId)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
 
   @action getGroupMentorRegistered = () => {
     return new Promise((resolve, reject) => {
