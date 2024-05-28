@@ -1,5 +1,6 @@
 package com.pcms.be.pojo.DTO;
 
+import com.pcms.be.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,9 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 public class MentorDTO {
     public Long id;
-    public String name;
-    public String email;
-    private List<RoleDTO> roles = new ArrayList<>();
-    public CampusDTO campus;
-    public UserDTO user;
+    private UserDTO user;
+    public boolean gender;
+    public String phone;
+    public String personalEmail;
+    public String selfDescription;
 }

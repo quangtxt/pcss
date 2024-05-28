@@ -29,6 +29,7 @@ import utils from "../../utils";
 import queryString from "query-string";
 import notificationStore from "../../stores/notificationStore";
 import { useKeycloak } from "@react-keycloak/web";
+import { subStringAvatar } from "../Common/CellText";
 
 const { TabPane } = Tabs;
 
@@ -81,7 +82,7 @@ const MainHeaderBar = (props) => {
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
   }, []);
-  console.log("currentUser", currentUser);
+
   useEffect(() => {
     if (!localStorage.getItem("FCMToken")) {
       messaging
@@ -348,7 +349,10 @@ const MainHeaderBar = (props) => {
                   src={
                     currentUserAvatar && URL.createObjectURL(currentUserAvatar)
                   }
-                />
+                  style={{ backgroundColor: blue, fontSize: 12 }}
+                >
+                  {currentUser && subStringAvatar(currentUser.username)}
+                </Avatar>
                 <span
                   style={{
                     margin: "0 7px",
@@ -357,9 +361,7 @@ const MainHeaderBar = (props) => {
                 >
                   Đ/c{" "}
                   {currentUser &&
-                    utils.getNameInCapitalize(
-                      currentUser.username ?? "quangnv"
-                    )}
+                    utils.getNameInCapitalize(currentUser.username)}
                 </span>
               </div>
             </div>

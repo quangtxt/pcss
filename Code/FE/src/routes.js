@@ -64,7 +64,7 @@ export const routes = [
     name: "RegProfilePage",
   },
   {
-    path: "/detailProfileSupervisor",
+    path: "/registration/supervisor/detail",
     component: DetailProfileSupervisorPage,
     name: "DetailProfileSupervisorPage",
   },
