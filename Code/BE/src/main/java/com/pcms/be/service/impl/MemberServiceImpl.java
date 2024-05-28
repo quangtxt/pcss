@@ -117,7 +117,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public List<MemberDTO> getGroupMember(int groupId) throws ServiceException {
         try {
-            List<Member> listMember = memberRepository.findAllByGroupId(groupId);
+            List<Member> listMember = memberRepository.findAllByGroupIdAndStatus(Long.valueOf(groupId), Constants.MemberStatus.INGROUP);
             List<MemberDTO> listMemberRes = new ArrayList<>();
             for (Member mem : listMember
             ) {

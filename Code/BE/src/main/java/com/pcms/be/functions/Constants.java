@@ -64,6 +64,12 @@ public interface Constants {
         String INGROUP = "INGROUP";
         String OUTGROUP = "OUTGROUP";
     }
+    interface MentorStatus {
+        String PENDING_MENTOR = "PENDING_MENTOR";
+        String PENDING_LEADER_TEACHER = "PENDING_LEADER_TEACHER";
+
+
+    }
     interface CampusCode {
         String Hoa_Lac = "HL";
         String Can_Tho = "CT";

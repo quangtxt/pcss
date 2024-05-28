@@ -5,7 +5,9 @@ import com.pcms.be.errors.ServiceException;
 import com.pcms.be.pojo.*;
 import com.pcms.be.pojo.request.CreateGroupRequest;
 import com.pcms.be.pojo.request.EditGroupRequest;
+import com.pcms.be.pojo.request.SubmitGroupRequest;
 import com.pcms.be.pojo.response.GroupResponse;
+import com.pcms.be.pojo.response.SubmitGroupResponse;
 import com.pcms.be.service.GroupService;
 import com.pcms.be.service.MemberService;
 import com.pcms.be.service.StudentService;
@@ -94,12 +96,21 @@ public class GroupController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
-
-    @PostMapping("removeMember")
-    public ResponseEntity<MemberResponse> removeMember(@Valid @RequestBody RemoveMemberRequest removeMemberRequest){
+//
+//    @PostMapping("removeMember")
+//    public ResponseEntity<MemberResponse> removeMember(@Valid @RequestBody RemoveMemberRequest removeMemberRequest){
+//        try {
+//            MemberResponse memberResponse = memberService.removeMember(removeMemberRequest);
+//            return  ResponseEntity.ok(memberResponse);
+//        } catch (ServiceException e) {
+//            throw new ApiException(e.getErrorCode(), e.getParams());
+//        }
+//    }
+    @PostMapping("submitGroup")
+    public ResponseEntity<SubmitGroupResponse> sumitGroup(@Valid @RequestBody SubmitGroupRequest submitGroupRequest){
         try {
-            MemberResponse memberResponse = memberService.removeMember(removeMemberRequest);
-            return  ResponseEntity.ok(memberResponse);
+            SubmitGroupResponse submitGroupResponse = groupService.submitGroup(submitGroupRequest);
+            return ResponseEntity.ok(submitGroupResponse);
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
