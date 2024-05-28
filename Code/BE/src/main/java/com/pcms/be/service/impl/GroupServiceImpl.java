@@ -1,18 +1,17 @@
 package com.pcms.be.service.impl;
 
-import com.pcms.be.domain.user.Group;
-import com.pcms.be.domain.user.Member;
-import com.pcms.be.domain.user.User;
+import com.pcms.be.domain.user.*;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.functions.Constants;
+import com.pcms.be.pojo.DTO.GroupMentorInvitationDTO;
+import com.pcms.be.pojo.DTO.MemberDTO;
 import com.pcms.be.pojo.request.CreateGroupRequest;
 import com.pcms.be.pojo.request.EditGroupRequest;
+import com.pcms.be.pojo.request.SubmitGroupRequest;
 import com.pcms.be.pojo.response.GroupResponse;
-import com.pcms.be.repository.GroupRepository;
-import com.pcms.be.repository.MemberRepository;
-import com.pcms.be.repository.StudentRepository;
-import com.pcms.be.repository.UserRepository;
+import com.pcms.be.pojo.response.SubmitGroupResponse;
+import com.pcms.be.repository.*;
 import com.pcms.be.service.GroupService;
 import com.pcms.be.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +20,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,8 +32,10 @@ public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
     private final UserService userService;
     private final MemberRepository memberRepository;
+    private final MentorRepository mentorRepository;
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
+    private final GroupMentorInvitationRepository groupMentorInvitationRepository;
     private final ModelMapper modelMapper;
 
 
@@ -50,6 +52,12 @@ public class GroupServiceImpl implements GroupService {
             }
             if (createGroupDTO.getListStudentID().stream().count() > 4) {
                 throw new ServiceException(ErrorCode.MAXIMUM_SIZE_OF_A_GROUP);
+            }
+            List<Member> members = memberRepository.findAllByStudentIdAndStatus(Long.valueOf(currentUser.getStudent().getId()), Constants.MemberStatus.PENDING);
+            for (Member m : members
+            ) {
+                m.setStatus(Constants.MemberStatus.OUTGROUP);
+                memberRepository.save(m);
             }
             Group group = createGroupInternal(createGroupDTO, userService.getCurrentUser());
             Member ownerGroup = new Member();
@@ -138,8 +146,58 @@ public class GroupServiceImpl implements GroupService {
             }
             return null;
         } catch (Exception e) {
-            throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
+            throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
         }
     }
 
+    @Override
+    @Transactional
+    public SubmitGroupResponse submitGroup(SubmitGroupRequest submitGroupRequest) throws ServiceException {
+        try {
+            Group group = groupRepository.findById(Long.valueOf(submitGroupRequest.getGroupId())).orElse(null);
+
+            if (group == null) {
+                throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
+            }
+            if (submitGroupRequest.getMentorIds().size() > 2) {
+                throw new ServiceException(ErrorCode.MAXIMUM_SIZE_MENTOR_OF_A_GROUP);
+            }
+            List<Member> members = memberRepository.findAllByGroupIdAndStatus(group.getId(), Constants.MemberStatus.PENDING);
+            for (Member m : members) {
+                m.setStatus(Constants.MemberStatus.OUTGROUP);
+                memberRepository.save(m);
+            }
+
+            SubmitGroupResponse submitGroupResponse = new SubmitGroupResponse();
+
+            List<Member> memberInGroup = memberRepository.findAllByGroupIdAndStatus(group.getId(), Constants.MemberStatus.INGROUP);
+            List<MemberDTO> memberDTOList = new ArrayList<>();
+            List<GroupMentorInvitationDTO> groupMentorInvitationDTOS = new ArrayList<>();
+            for (Member member: memberInGroup
+                 ) {
+                memberDTOList.add(modelMapper.map(member,MemberDTO.class));
+            }
+            if (submitGroupRequest.getMentorIds().size() <= 2) {
+                for (Integer mentorId : submitGroupRequest.getMentorIds()) {
+                    Optional<Mentor> m = mentorRepository.findById(Long.valueOf(mentorId));
+                    if (m.isPresent()) {
+                        GroupMentorInvitation groupMentorInvitation = new GroupMentorInvitation();
+                        groupMentorInvitation.setGroupId(group);
+                        groupMentorInvitation.setMentorId(m.get());
+                        groupMentorInvitation.setStatus(Constants.MentorStatus.PENDING_MENTOR);
+                        groupMentorInvitationRepository.save(groupMentorInvitation);
+                        groupMentorInvitationDTOS.add(modelMapper.map(groupMentorInvitation, GroupMentorInvitationDTO.class));
+                    }
+                }
+            }
+            group.setStatus(Constants.GroupStatus.SUBMITTED);
+            groupRepository.save(group);
+            submitGroupResponse = modelMapper.map(group, SubmitGroupResponse.class);
+            submitGroupResponse.setGroupMentorInvitations(groupMentorInvitationDTOS);
+            submitGroupResponse.setMembers(memberDTOList);
+            return submitGroupResponse;
+        } catch (Exception e) {
+            throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
+        }
+    }
 }
