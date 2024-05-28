@@ -4,6 +4,7 @@ import com.pcms.be.domain.user.GroupMentorInvitation;
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
+import com.pcms.be.functions.Constants;
 import com.pcms.be.pojo.DTO.GroupMentorInvitationDTO;
 import com.pcms.be.pojo.response.GroupMentorInvitationResponse;
 import com.pcms.be.repository.GroupMentorInvitationRepository;
@@ -27,14 +28,25 @@ public class GroupMetorInvitationImpl implements GroupMentorInvitationService {
     private final ModelMapper modelMapper;
     @Override
     public List<GroupMentorInvitationResponse> getListInvitationByStatus(String status) throws ServiceException {
-        User currentUser = userService.getCurrentUser();
-        List<GroupMentorInvitation> listInvitation = groupMentorInvitationRepository.findByMentorIdAndStatus(currentUser.getMentor(), status);
-        List<GroupMentorInvitationResponse> groupMentorInvitationResponses = new ArrayList<>();
-        for (GroupMentorInvitation groupMentorInvitation: listInvitation
-             ) {
-            groupMentorInvitationResponses.add(modelMapper.map(groupMentorInvitation, GroupMentorInvitationResponse.class));
+        if(status.equals(Constants.MentorStatus.PENDING_MENTOR)){
+            User currentUser = userService.getCurrentUser();
+            List<GroupMentorInvitation> listInvitation = groupMentorInvitationRepository.findByMentorIdAndStatus(currentUser.getMentor(), status);
+            List<GroupMentorInvitationResponse> groupMentorInvitationResponses = new ArrayList<>();
+            for (GroupMentorInvitation groupMentorInvitation: listInvitation
+            ) {
+                groupMentorInvitationResponses.add(modelMapper.map(groupMentorInvitation, GroupMentorInvitationResponse.class));
+            }
+            return groupMentorInvitationResponses;
+        }else if(status.equals(Constants.MentorStatus.PENDING_LEADER_TEACHER)){
+            List<GroupMentorInvitation> listInvitation = groupMentorInvitationRepository.findAllByStatus(status);
+            List<GroupMentorInvitationResponse> groupMentorInvitationResponses = new ArrayList<>();
+            for (GroupMentorInvitation groupMentorInvitation: listInvitation
+            ) {
+                groupMentorInvitationResponses.add(modelMapper.map(groupMentorInvitation, GroupMentorInvitationResponse.class));
+            }
+            return groupMentorInvitationResponses;
         }
-        return groupMentorInvitationResponses;
+        return null;
     }
 
     @Override
