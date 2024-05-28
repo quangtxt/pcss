@@ -66,7 +66,7 @@ export const LoginWrapper = styled.div`
   }
 `;
 
-export const TableSupervisors = styled.div`
+export const TableStudents = styled.div`
 .searchSupervisors {
   display: flex;
   align-items: center;
@@ -99,32 +99,32 @@ export const TableSupervisors = styled.div`
       width: 37.94px;
       height: 37.94px;
       border-radius: 0 360px 360px 0 !important;
-  }
+    }
   }
 }
-  table {
-    th, td {
+.grBtn {
+  margin-top: 0 !important;
+  margin-bottom: 20px !important;
+  
+}
+table {
+  th, td {
       font-size: 16px;
-    }
-    th {
-      font-weight: 600;
-    }
-    th:nth-child(1) {
-      width: 5%;
-    }
-    th:nth-child(4) {
-      width: 10%;
-    }
-    th:nth-child(1), th:nth-child(4), td:nth-child(1){
-      text-align: center;
-    }
-    th:nth-child(2), th:nth-child(3) {
-      width: 42.5%;
-    }
-    td:nth-child(4) {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
   }
+  th {
+      font-weight: 600;
+  }
+  th:nth-child(1) {
+      width: 5%;
+  }
+  th:nth-child(4) {
+      width: 25%;
+  }
+  th:nth-child(1), td:nth-child(1){
+      text-align: center;
+  }
+  th:nth-child(2), th:nth-child(3) {
+      width: 35%;
+  }
+}
 `;

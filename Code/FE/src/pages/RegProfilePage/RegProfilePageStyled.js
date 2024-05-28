@@ -47,28 +47,41 @@ export const LoginWrapper = styled.div`
   `
 
 export const Profile = styled.div`
-.btnEdit {
+.btnEdit, .btnCancel, .btnAdd, .btnImport {
   border-radius: 8px;
-  border: 1px solid #3a5a7d;
-  background-color: #3a5a7d;
   color: #fff;
   font-size: 14px;
   font-weight: 600;
   padding: 0 20px;
   height: 40px;
 }
+.btnAdd {
+  border: 1px solid #3a5a7d;
+  background-color: #3a5a7d;
+}
+.btnAdd:hover {
+  background-color: unset;
+  color: #3a5a7d;
+}
+.btnImport {
+  border: 1px solid #1D6F42;
+  background-color: #1D6F42;
+}
+.btnImport:hover {
+  background-color: unset;
+  color: #1D6F42;
+}
+.btnEdit {
+  border: 1px solid #3a5a7d;
+  background-color: #3a5a7d;
+}
 .btnEdit:hover {
   background-color: unset;
   color: #3a5a7d;
 }
 .btnCancel {
-  border-radius: 8px;
   border: 1px solid rgba(204, 204, 204, 0.6);
   background-color: rgba(204, 204, 204, 0.6);
-  font-size: 14px;
-  font-weight: 600;
-  padding: 0 20px;
-  height: 40px;
   color: #000;
 }
 .btnCancel:hover {
@@ -82,6 +95,37 @@ export const Profile = styled.div`
   gap: 20px;
   margin-top: 24px;
   display: flex;
+}
+.inputForm {
+  .ant-form-item-label > label {
+    text-align: left;
+    width: 100%;
+    font-weight: 500;
+    font-size: 16px;
+  }
+  .ant-form-item-label > label::before, .ant-form-item-label > label::after {
+      display: none !important;
+  }
+  .ant-row {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    .ant-col {
+      max-width: 100% !important;
+    }
+  }
+  input {
+    font-size: 16px;
+    font-weight: 400;
+    border: none;
+    pointer-events: none;
+  }
+  textarea {
+    font-size: 16px;
+    font-weight: 400;
+    border: none;
+    pointer-events: none;
+    resize: none;
+  }
 }
 .formProfile {
   max-width: 100% ;
@@ -162,9 +206,7 @@ export const Profile = styled.div`
         }
       }
     }
-  }
-  
-  
+  } 
   .grBtn {
     display: none;
   }
@@ -178,22 +220,6 @@ export const Profile = styled.div`
       max-width: 100% !important;
     }
   }
-  .inputForm {
-    input {
-      font-size: 16px;
-      font-weight: 400;
-      border: none;
-      pointer-events: none;
-    }
-    textarea {
-      font-size: 16px;
-      font-weight: 400;
-      border: none;
-      pointer-events: none;
-      resize: none;
-    }
-  }
-  
   .inputForm.active {
     input {
       border: 1px solid #d9d9d9;
@@ -217,17 +243,6 @@ export const Profile = styled.div`
       margin-bottom: 0 !important;
     }
   }
-  .ant-form-item-label > label {
-    text-align: left;
-    width: 100%;
-    font-weight: 500;
-    font-size: 16px;
-  }
-  
-  .ant-form-item-label > label::before, .ant-form-item-label > label::after {
-      display: none !important;
-  }
-  
   .inputForm.important {
     .ant-form-item-label > label::after {
       display: inline-block !important;
@@ -249,8 +264,6 @@ export const Profile = styled.div`
   height: calc(100% - 50px);
   background: rgba(204, 204, 204, 0.8);
 }
-
-
 .changeEmail {
   display: none;
   position: fixed;
@@ -297,11 +310,14 @@ export const Profile = styled.div`
   .inputForm {
     .ant-row {
       margin-bottom: 20px !important;
+      display: block;
       .ant-col {
         width: 100%;
         max-width: 100%;
-        input {
+        input, textarea {
           font-size: 16px;
+          border: 1px solid #d9d9d9;
+          pointer-events: all;
         }
         input::placeholder {
           font-size: 16px;
@@ -325,5 +341,45 @@ export const Profile = styled.div`
 }
 .overlay.active {
   display: block;
+}
+
+.detailProfileSupervisor {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+  .left, .right {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px 30px;
+  }
+  .left {
+    width: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    p {
+      font-size: 20px;
+      font-weight: 600;
+    }
+  }
+  .right {
+    width: 75%;
+    .inputForm {
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(204, 204, 204, 0.8);
+      .ant-row {
+        grid-template-columns: 20% 80%;
+        margin-bottom: 0 !important;   
+      }
+    }
+    .inputForm:first-child {
+      padding-top: 0;
+    }
+    .inputForm:last-child {
+      padding-bottom: 0;
+    }
+  }
 }
 `
