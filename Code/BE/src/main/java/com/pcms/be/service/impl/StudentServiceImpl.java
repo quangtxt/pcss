@@ -161,7 +161,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public ResponseEntity<StudentDTO> addStudent(AddStudentRequest addStudentRequest) throws ServiceException{
         try{
-            if (studentRepository.findByAlternativeEmail(addStudentRequest.getEmail()).isPresent()){
+            if (studentRepository.findByEmail(addStudentRequest.getEmail()).isPresent()){
                 throw new ServiceException(ErrorCode.USER_DUPLICATE_EMAIL);
             }else {
                 Set<Role> roles = new HashSet<>();

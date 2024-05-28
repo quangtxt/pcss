@@ -11,5 +11,5 @@ import java.util.Optional;
 @Repository
 public interface MentorRepository extends JpaRepository<Mentor, Long> {
 //    @Query(value = "SELECT m.* FROM v_mentor m WHERE m.personal_email = :email", nativeQuery = true)
-//    Optional<Mentor> findByPersonalEmail(Pageable pageable, String email);
+//    Optional<Mentor> findByPersonalEmail( String email);
 }
