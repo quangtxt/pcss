@@ -1,8 +1,8 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { Button, Form, message, Menu, Icon, Dropdown } from "antd";
-import { MoreOutlined, SendOutlined } from "@ant-design/icons";
+import { Button, Form, message, Menu, Icon, Dropdown, Modal } from "antd";
+import { MoreOutlined, SendOutlined, EditOutlined } from "@ant-design/icons";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 import { Helmet } from "react-helmet/es/Helmet";
 import { PortalContent } from "./TeamPageStyled";
@@ -17,6 +17,16 @@ const RegTeamPage = (props) => {
     groupStore,
   } = props;
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const [size, setSize] = useState("large");
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm();
@@ -86,10 +96,6 @@ const RegTeamPage = (props) => {
     setFilteredEmails(filtered);
   };
 
-  const handleShow = useCallback(() => {
-    setIsEditing((prevState) => !prevState);
-  }, []);
-
   const menu = (
     <Menu>
       <Menu.Item key="view-profile">
@@ -128,6 +134,8 @@ const RegTeamPage = (props) => {
     setSearchTerm(email);
     setFilteredEmails([]);
   };
+
+  console.log("isModalOpen ", isModalOpen);
   return (
     <DashboardLayout>
       <Helmet>
@@ -218,10 +226,10 @@ const RegTeamPage = (props) => {
               <div className="showMember">
                 <p className="title">Members</p>
                 <div className="numMember">
-                  <p>
+                  <p className="numMemberInfor">
                     Max: <span>5 members</span>
                   </p>
-                  <p>
+                  <p className="numMemberInfor">
                     Available Slot: <span>0</span>
                   </p>
                 </div>
@@ -266,7 +274,6 @@ const RegTeamPage = (props) => {
             </div>
             <div className="centered-button">
               <Button
-                
                 type="primary"
                 shape="round"
                 icon={<SendOutlined />}
@@ -275,6 +282,28 @@ const RegTeamPage = (props) => {
                 Send
               </Button>
             </div>
+            <div className="centered-button">
+              <Button
+                style={{ marginTop: "20px " }}
+                className="btnAdd"
+                type="primary"
+                shape="round"
+                icon={<EditOutlined />}
+                onClick={showModal}
+              >
+                Edit Team Profile
+              </Button>
+            </div>
+            <Modal
+              title="Basic Modal"
+              open={isModalOpen}
+              onOk={handleOk}
+              onCancel={handleCancel}
+            >
+              <p>Some contents...</p>
+              <p>Some contents...</p>
+              <p>Some contents...</p>
+            </Modal>
           </div>
         </div>
       </Team>
