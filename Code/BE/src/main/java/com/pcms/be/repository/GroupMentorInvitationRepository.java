@@ -18,5 +18,8 @@ public interface GroupMentorInvitationRepository extends JpaRepository<GroupMent
     Optional<GroupMentorInvitation> findById(Long id);
 
     List<GroupMentorInvitation> findByMentorIdAndStatus(Mentor mentorId, String status);
+    List<GroupMentorInvitation> findAllByStatus(String status);
+
+
 
 }
