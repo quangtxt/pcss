@@ -6,23 +6,28 @@ import { Button, Form, Input, message, Avatar, Space, Radio, Card } from "antd";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { Helmet } from "react-helmet/es/Helmet";
 import { Profile } from "../RegProfilePage/RegProfilePageStyled";
+import PageTitle from "../../components/PageTitle";
 
 const DetailProfileSupervisorPage = (props) => {
-  const { mentorStore, loadingAnimationStore } = props;
-  const { mentorId } = useLocation().state;
+  const { history, mentorStore, loadingAnimationStore } = props;
+  const { state } = useLocation();
+
+  useEffect(() => {
+    if (state && state.userId) {
+      getMentorProfile(state.userId);
+    } else {
+      history.push("/");
+    }
+  }, [state]);
   const { TextArea } = Input;
   const [form] = Form.useForm();
 
   const [mentor, setMentor] = useState();
 
-  useEffect(() => {
-    getMentorProfile(mentorId);
-  }, [mentorId]);
-
-  const getMentorProfile = async (mentorId) => {
+  const getMentorProfile = async (userId) => {
     try {
       loadingAnimationStore.showSpinner(true);
-      const response = await mentorStore.getMentorProfileById(mentorId);
+      const response = await mentorStore.getMentorProfileById(userId);
       if (response.status === 200) {
         setMentor(response.data);
         form.setFieldsValue({
@@ -44,6 +49,11 @@ const DetailProfileSupervisorPage = (props) => {
       <Helmet>
         <title>Detail Profile of Supervisor</title>
       </Helmet>
+      <PageTitle
+        location={props.location}
+        title={"Detail Supervisors"}
+        showTitle={true}
+      ></PageTitle>
       <Profile>
         <div className="detailProfileSupervisor">
           <div className="left">

@@ -22,6 +22,7 @@ import { Helmet } from "react-helmet/es/Helmet";
 import { PortalContent } from "./RegCreateIdeaPageStyled";
 import PageTitle from "../../components/PageTitle";
 import { Profile } from "./RegCreateIdeaPageStyled";
+import InviteForm from "./InviteForm";
 
 const RegCreateIdeaPage = (props) => {
   const {
@@ -150,7 +151,7 @@ const RegCreateIdeaPage = (props) => {
                   />
                 </Form.Item>
               </div>
-
+              <InviteForm />
               <Form.Item>
                 <Button className="btnEdit" htmlType="submit">
                   Submit

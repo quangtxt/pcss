@@ -30,6 +30,8 @@ const ListSupervisorsPage = (props) => {
     setFilter,
   } = mentorStore;
 
+  // const [isVisiblePopup, setIsVisiblePopup] = useState(false);
+
   useEffect(() => {
     if (authenticationStore.currentUser) {
       loadingAnimationStore.setTableLoading(true);
@@ -75,12 +77,13 @@ const ListSupervisorsPage = (props) => {
     {
       title: "Action",
       render: (record) => (
-        <Button onClick={() => navigateToDetail(record?.id)}>View</Button> // Thêm nút View để navigating to detail page
+        <Button onClick={() => navigateToDetail(record?.user.id)}>View</Button> // Thêm nút View để navigating to detail page
       ),
     },
   ];
-  function navigateToDetail(mentorId) {
-    history.push("/registration/supervisor/detail", { mentorId });
+  function navigateToDetail(userId) {
+    history.push("/registration/supervisor/detail", { userId });
+    // setIsVisiblePopup(true);
   }
   return (
     <DashboardLayout>
@@ -90,7 +93,6 @@ const ListSupervisorsPage = (props) => {
       <PageTitle
         location={props.location}
         title={"List Supervisors"}
-        hiddenGoBack
       ></PageTitle>
       <ContentBlockWrapper>
         <TableSupervisors>
@@ -130,6 +132,11 @@ const ListSupervisorsPage = (props) => {
           />
         </div>
       </ContentBlockWrapper>
+      {/* <PopupViewDetail
+        isVisiblePopup={isVisiblePopup}
+        setIsVisiblePopup={setIsVisiblePopup}
+        handleClosePopup={() => setIsVisiblePopup(false)}
+      /> */}
     </DashboardLayout>
   );
 };

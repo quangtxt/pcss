@@ -141,13 +141,6 @@ const MainSidebar = (props) => {
           <Link to={"/registration/listSupervisors"}>List Supervisors</Link>
         </Menu.Item>
       )}
-      {isStudent && (
-        <Menu.Item key={"/registration/ideaOfSupervisors"}>
-          <Link to={"/registration/ideaOfSupervisors"}>
-            Ideas of Supervisors
-          </Link>
-        </Menu.Item>
-      )}
     </Menu.SubMenu>
   );
   // Menu hướng dẫn đồ án

@@ -17,6 +17,7 @@ export const GroupRequest = {
         keywords: keywords,
         name: name,
         vietnameseTitle: vietnameseTitle,
+
         listUserID: [],
       },
     }),
