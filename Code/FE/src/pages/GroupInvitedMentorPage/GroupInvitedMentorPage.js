@@ -1,7 +1,8 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { Button, Pagination } from "antd";
+import { Button, Modal, message,Tooltip } from "antd";
+import { CloseCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import uuid from "uuid";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { TableBottomPaginationBlock } from "../../components/Common/Table";
@@ -18,54 +19,155 @@ const GroupInvitedMentorPage = (props) => {
     mentorStore,
     authenticationStore,
   } = props;
-
-  const {
-    mentorList,
-    mentorListTotalCount,
-    mentorListPageSize,
-    mentorListPageIndex,
-    setFilter,
-  } = mentorStore;
-  useEffect(() => {
+  
+  const [listGroupMentorRegistered, setListGroupMentorRegistered] = useState();
+  useEffect( () => {
     if (authenticationStore.currentUser) {
-      loadingAnimationStore.setTableLoading(true);
-      mentorStore.getMentorList().finally(() => {
-        loadingAnimationStore.setTableLoading(false);
-      });
+      getListMentorRegistered();
     }
-    return () => {
-      mentorStore.clearStore();
-    };
   }, [authenticationStore.currentUser]);
-  const onChangePagination = (e) => {
-    setFilter("mentorListPageIndex", e - 1);
+  const getListMentorRegistered = async () => {
     loadingAnimationStore.setTableLoading(true);
-    mentorStore
-      .getMentorList()
-      .finally(() => loadingAnimationStore.setTableLoading(false));
+    // const res = await mentorStore.getGroupMentorRegistered().finally(() => {
+    //   loadingAnimationStore.setTableLoading(false);
+    // });
+    // setListGroupMentorRegistered(res.data);
+    console.log(res);
   };
-  console.log("mentorListPageSize", mentorListPageSize);
+
+  const showConfirmModal = (action, record) => {
+    Modal.confirm({
+      title: `Do you want to ${action} to be a mentor of this group?`,
+      onOk: () => {
+        if (action === "agree") {
+          handleAgree(record);
+        } else {
+          handleRefuse(record);
+        }
+      },
+      onCancel: () => {},
+      okText: "Yes",
+      cancelText: "No",
+    });
+  };
+
+  const handleAgree = async (values) => {
+    // updateInvitationStatus(values, true);
+  };
+  const handleRefuse = async (values) => {
+    // updateInvitationStatus(values, false);
+  };
+  const dataSource = [
+    {
+      id: 1,
+      name: "John Doe",
+      vietnameseTitle: "Giám đốc",
+      studentLeader: "Alice Nguyen"
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      vietnameseTitle: "Trưởng phòng",
+      studentLeader: "Bob Tran"
+    },
+    {
+      id: 3,
+      name: "Michael Johnson",
+      vietnameseTitle: "Kỹ sư trưởng",
+      studentLeader: "Charlie Lee"
+    },
+    {
+      id: 4,
+      name: "Sarah Lee",
+      vietnameseTitle: "Nhân viên",
+      studentLeader: "David Pham"
+    },
+    {
+      id: 5,
+      name: "David Kim",
+      vietnameseTitle: "Quản lý",
+      studentLeader: "Emily Vu"
+    },
+    {
+      id: 6,
+      name: "Emily Chen",
+      vietnameseTitle: "Trợ lý",
+      studentLeader: "Frank Hoang"
+    },
+    {
+      id: 7,
+      name: "William Park",
+      vietnameseTitle: "Chuyên viên",
+      studentLeader: "Gina Nguyen"
+    },
+    {
+      id: 8,
+      name: "Jessica Nguyen",
+      vietnameseTitle: "Trưởng phòng",
+      studentLeader: "Henry Tran"
+    },
+    {
+      id: 9,
+      name: "Benjamin Lim",
+      vietnameseTitle: "Kỹ sư",
+      studentLeader: "Isabella Phan"
+    },
+    {
+      id: 10,
+      name: "Olivia Tran",
+      vietnameseTitle: "Nhân viên",
+      studentLeader: "Jacob Le"
+    }
+  ];
+
   const columns = [
     {
       title: "No.",
-      width: 100,
+      width: "5%",
       render: (record, index, dataSource) => dataSource + 1,
     },
     {
-      title: "Full Name",
-      width: 100,
+      title: "Group Name",
+      width: "27%",
       render: (record) => record?.name,
     },
     {
-      title: "Email",
-      width: 100,
-      render: (record) => record?.email,
+      title: "Vietnamese Title",
+      width: "27%",
+      render: (record) => record?.vietnameseTitle,
+    },
+    {
+      title: "Student Leader",
+      width: "27%",
+      render: (record) => record?.studentLeader,
     },
     {
       title: "Action",
-      width: 100,
+      width: "14%",
+      align: "center",
       render: (record) => (
-        <Button onClick={() => navigateToDetail(record)}>View</Button> // Thêm nút View để navigating to detail page
+        <div>
+          <Tooltip title="Confirm">
+            <Button
+              type="primary"
+              icon={<CheckCircleOutlined />}
+              onClick={() => showConfirmModal("agree", record)}
+            >
+              Accept
+            </Button>
+          </Tooltip>
+          <Tooltip title="Reject">
+            <Button
+              type="danger"
+              icon={<CloseCircleOutlined />}
+              onClick={() => showConfirmModal("refuse", record)}
+              style={{ marginLeft: 8 }}
+            >
+              {" "}
+              Reject
+            </Button>
+          </Tooltip>
+        </div>
       ),
     },
   ];
@@ -73,39 +175,21 @@ const GroupInvitedMentorPage = (props) => {
   return (
     <DashboardLayout>
       <Helmet>
-        <title>Registration | List Supervisors</title>
+        <title>Registration | List Group Registered</title>
       </Helmet>
       <PageTitle
         location={props.location}
-        title={"List Supervisors"}
+        title={"List Group Registered"}
         hiddenGoBack
       ></PageTitle>
       <ContentBlockWrapper>
         <TableComponent
           rowKey={(record) => record.id || uuid()}
-          dataSource={mentorList}
+          dataSource={dataSource}
           columns={columns}
           pagination={false}
           loading={loadingAnimationStore.tableLoading}
         />
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            padding: "15px 0",
-          }}
-        >
-          <Pagination
-            onChange={(e) => onChangePagination(e)}
-            hideOnSinglePage={true}
-            total={mentorListTotalCount}
-            pageSize={mentorListPageSize}
-            current={mentorListPageIndex + 1}
-            showSizeChanger={false}
-            showLessItems
-          />
-        </div>
       </ContentBlockWrapper>
     </DashboardLayout>
   );

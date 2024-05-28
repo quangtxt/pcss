@@ -37,6 +37,18 @@ class MentorStore {
     });
   };
 
+  @action getGroupMentorRegistered = () => {
+    return new Promise((resolve, reject) => {
+      MentorRequest.getGroupMentorRegistered()
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+
   @action setFilter = (filterName, filterValue) => {
     if (typeof filterName !== "string") return;
     this[filterName] = filterValue;

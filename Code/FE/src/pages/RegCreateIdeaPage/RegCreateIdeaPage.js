@@ -1,22 +1,27 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
+import { UserOutlined, EditOutlined } from "@ant-design/icons";
 import {
-  Button,
   Cascader,
   DatePicker,
-  Form,
-  Input,
   InputNumber,
   Mentions,
   Select,
   TreeSelect,
+  Button,
+  Form,
+  Input,
   message,
+  Avatar,
+  Space,
+  Radio,
 } from "antd";
-
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { Helmet } from "react-helmet/es/Helmet";
 import { PortalContent } from "./RegCreateIdeaPageStyled";
+import PageTitle from "../../components/PageTitle";
+import { Profile } from "./RegCreateIdeaPageStyled";
 
 const RegCreateIdeaPage = (props) => {
   const {
@@ -26,6 +31,7 @@ const RegCreateIdeaPage = (props) => {
     groupStore,
   } = props;
 
+  const { TextArea } = Input;
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -66,54 +72,94 @@ const RegCreateIdeaPage = (props) => {
       <Helmet>
         <title>Registration || News</title>
       </Helmet>
-      <h1>Create Group</h1>
-      <Form
-        {...formItemLayout}
-        variant="filled"
-        style={{ maxWidth: 600 }}
-        onFinish={handleSubmit}
+      <PageTitle
+        location={props.location}
+        title={"Create Idea"}
+        hiddenGoBack
+      ></PageTitle>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+        }}
       >
-        <Form.Item
-          label="Name"
-          name="name"
-          rules={[{ required: true, message: "Please input!" }]}
+        <h1
+          style={{
+            textAlign: "center",
+            marginBottom: "16px",
+            fontFamily: "Montserrat, sans-serif",
+            padding: "8px 16px",
+            borderRadius: "24px",
+            display: "inline-block",
+            backgroundColor: "#f0f0f0",
+          }}
         >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="vietnameseTitle"
-          name="vietnameseTitle"
-          rules={[{ required: true, message: "Please input!" }]}
+          Create Group
+        </h1>
+      </div>
+
+      <Profile>
+        <Form
+          {...formItemLayout}
+          variant="filled"
+          onFinish={handleSubmit}
+          className="formProfile"
         >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="abbreviations"
-          name="abbreviations"
-          rules={[{ required: true, message: "Please input!" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Description"
-          name="description"
-          rules={[{ required: true, message: "Please input!" }]}
-        >
-          <Input.TextArea />
-        </Form.Item>
-        <Form.Item
-          label="keywords"
-          name="keywords"
-          rules={[{ required: true, message: "Please input!" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
+          <div className="">
+            <div className="contactInfor">
+              <div className="groupInput">
+                <Form.Item
+                  label="Name"
+                  name="name"
+                  rules={[{ required: true, message: "Please input!" }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label="Vietnamese Title"
+                  name="vietnameseTitle"
+                  rules={[{ required: true, message: "Please input!" }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label="Abbreviations"
+                  name="abbreviations"
+                  rules={[{ required: true, message: "Please input!" }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label="Keywords"
+                  name="keywords"
+                  rules={[{ required: true, message: "Please input!" }]}
+                >
+                  <Input />
+                </Form.Item>
+              </div>
+              <div className="textarea-form">
+                <Form.Item
+                  label="Description"
+                  name="description"
+                  rules={[{ required: true, message: "Please input!" }]}
+                >
+                  <Input.TextArea
+                    rows={4}
+                    autoSize={{ minRows: 4, maxRows: 6 }}
+                    style={{ resize: "none" }}
+                  />
+                </Form.Item>
+              </div>
+
+              <Form.Item>
+                <Button className="btnEdit" htmlType="submit">
+                  Submit
+                </Button>
+              </Form.Item>
+            </div>
+          </div>
+        </Form>
+      </Profile>
     </DashboardLayout>
   );
 };

@@ -1,21 +1,13 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import {
-  Button,
-  Cascader,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Mentions,
-  Select,
-  TreeSelect,
-  message,
-} from "antd";
+import { Button, Form, message, Menu, Icon, Dropdown } from "antd";
+import { MoreOutlined, SendOutlined } from "@ant-design/icons";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 import { Helmet } from "react-helmet/es/Helmet";
 import { PortalContent } from "./TeamPageStyled";
+import PageTitle from "../../../components/PageTitle";
+import { Team, MemberItem } from "./TeamPageStyled";
 
 const RegTeamPage = (props) => {
   const {
@@ -24,26 +16,29 @@ const RegTeamPage = (props) => {
     loadingAnimationStore,
     groupStore,
   } = props;
+
+  const [size, setSize] = useState("large");
+  const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm();
   const { setFieldValue } = form;
 
   const { currentUser, isAccountAdmin, isSuperAdmin } = authenticationStore;
   const [user, setUser] = useState("");
-  useEffect(() => {
-    (async () => {
-      loadingAnimationStore.showSpinner(true);
-      try {
-        const { data } = await authenticationStore.checkCurrentUser();
-        console.log("response", data);
-        setUser(data);
-      } catch (err) {
-        console.log(err);
-        loadingAnimationStore.showSpinner(false);
-      } finally {
-        loadingAnimationStore.showSpinner(false);
-      }
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     loadingAnimationStore.showSpinner(true);
+  //     try {
+  //       const { data } = await authenticationStore.checkCurrentUser();
+  //       console.log("response", data);
+  //       setUser(data);
+  //     } catch (err) {
+  //       console.log(err);
+  //       loadingAnimationStore.showSpinner(false);
+  //     } finally {
+  //       loadingAnimationStore.showSpinner(false);
+  //     }
+  //   })();
+  // }, []);
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -78,14 +73,6 @@ const RegTeamPage = (props) => {
       loadingAnimationStore.showSpinner(false);
     }
   };
-  const [searchTerm, setSearchTerm] = useState("");
-  const [emails, setEmails] = useState([
-    "example11@example.com",
-    "example2@example.com",
-    "example3@example.com",
-    "example4@example.com",
-    "example5@example.com",
-  ]);
   const [filteredEmails, setFilteredEmails] = useState([]);
 
   const handleSearchChange = (event) => {
@@ -99,6 +86,44 @@ const RegTeamPage = (props) => {
     setFilteredEmails(filtered);
   };
 
+  const handleShow = useCallback(() => {
+    setIsEditing((prevState) => !prevState);
+  }, []);
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="view-profile">
+        <a target="_blank" rel="noopener noreferrer" href="#">
+          View Profile
+        </a>
+      </Menu.Item>
+      <Menu.Item key="change-to-leader">Change to Leader</Menu.Item>
+      <Menu.Item key="remove-member">Remove Member</Menu.Item>
+    </Menu>
+  );
+
+  const MemberItem = ({ name, email, avatar, role }) => {
+    return (
+      <div className="informMember">
+        <div className="info">
+          <img src={avatar} alt="Avatar" />
+          <div className="memInfo">
+            <a href={`/StudentProfile/Index?studentId=${email}`}>{email}</a>
+            <p>{name}</p>
+          </div>
+        </div>
+        <div className="role">
+          <p>{role}</p>
+        </div>
+        <Dropdown overlay={menu}>
+          <Button type="text">
+            <MoreOutlined style={{ fontSize: "15px" }} />
+          </Button>
+        </Dropdown>
+      </div>
+    );
+  };
+
   const handleEmailSelect = (email) => {
     setSearchTerm(email);
     setFilteredEmails([]);
@@ -108,43 +133,151 @@ const RegTeamPage = (props) => {
       <Helmet>
         <title>Registration || News</title>
       </Helmet>
-      <h1>Create Group</h1>
-      <Form
-        {...formItemLayout}
-        variant="filled"
-        style={{ maxWidth: 600 }}
-        onFinish={handleSubmit}
-      >
-        <Form.Item
-          label="Name"
-          name="name"
-          rules={[{ required: true, message: "Please input!" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
-      <div>
-        <input
-          type="text"
-          placeholder="Search emails"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-        {filteredEmails.length > 0 && (
-          <ul>
-            {filteredEmails.map((email) => (
-              <li key={email} onClick={() => handleEmailSelect(email)}>
-                {email}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <PageTitle
+        location={props.location}
+        title={"Team Page"}
+        hiddenGoBack
+      ></PageTitle>
+      <Team>
+        <div className="container">
+          <div className="main">
+            <div className="informGroup">
+              <div className="introGroup">
+                <div className="nameProject">
+                  <img
+                    src="https://lh3.googleusercontent.com/a/ACg8ocI0Exl7P4CfPQjZK2gS_yWbGqpn80JFQg3xICctXAomZ0Rc8Q=s96-c"
+                    alt="Avatar"
+                  />
+                  <div className="inforGro">
+                    <p>TH Company management system</p>
+                    <p className="createDate">
+                      Created at: 4/11/2024 8:14:56 PM
+                    </p>
+                  </div>
+                </div>
+                <div className="btnAddMem">
+                  <form
+                    action="/MyGroup/LeaveGroup?projectId=3929"
+                    method="post"
+                    id="formLeaveGroup"
+                  ></form>
+                </div>
+              </div>
+              <div className="someInforms">
+                <div className="someInforms--top">
+                  <div className="abbreviations">
+                    <p className="title">Abbreviations</p>
+                    <p className="content">THC</p>
+                  </div>
+                  <div className="vietnamTitle">
+                    <p className="title">Vietnamese Title</p>
+                    <p className="content">Hệ thống quản lý công ty</p>
+                  </div>
+                </div>
+                <div className="someInforms--bottom">
+                  <div className="professional">
+                    <p className="title">Profession</p>
+                    <p className="content">
+                      Information Technology A (K15 trở đi)
+                    </p>
+                  </div>
+                  <div className="specialty">
+                    <p className="title">Specialty</p>
+                    <p className="content">Lập trình .NET</p>
+                  </div>
+                </div>
+              </div>
+              <div className="desIdea">
+                <p className="title">Description</p>
+                <p className="content">
+                  The TH Company management system is a comprehensive software
+                  solution designed specifically for organizations. It offers a
+                  wide range of features to streamline company management,
+                  including project management, resource allocation, employee
+                  tracking, and financial management. This system provides a
+                  centralized platform for managers to monitor project progress,
+                  assign tasks, and track deadlines, ensuring efficient project
+                  execution. It also facilitates resource allocation by
+                  providing an overview of available resources, allowing
+                  managers to assign them based on availability and skill sets.
+                  The employee tracking feature enables monitoring of individual
+                  performance and productivity, providing insights for effective
+                  evaluations and resource optimization. Financial management is
+                  seamlessly integrated, allowing real-time tracking of budgets,
+                  expenses, and revenue, enabling informed decision-making for
+                  budget allocation and cost reduction.
+                </p>
+              </div>
+              <div className="keyword">
+                <p className="title">Keywords</p>
+                <div className="keywordText">
+                  <p className="content">123</p>
+                </div>
+              </div>
+
+              <div className="showMember">
+                <p className="title">Members</p>
+                <div className="numMember">
+                  <p>
+                    Max: <span>5 members</span>
+                  </p>
+                  <p>
+                    Available Slot: <span>0</span>
+                  </p>
+                </div>
+                <div className="members">
+                  <MemberItem
+                    name="quangnvhe161807"
+                    email="quangnvhe161807@fpt.edu.vn"
+                    avatar="https://lh3.googleusercontent.com/a/ACg8ocI0Exl7P4CfPQjZK2gS_yWbGqpn80JFQg3xICctXAomZ0Rc8Q=s96-c"
+                    role="Owner | Leader"
+                  />
+                  <MemberItem
+                    name="hieupbhe163832"
+                    email="hieupbhe163832@fpt.edu.vn"
+                    avatar="https://lh3.googleusercontent.com/a/ACg8ocJRAMQFmpCJm1u1YRaij6fYlBy5toa5ops12Q5MlweE609qMj9I=s96-c"
+                    role="Member"
+                  />
+                  <MemberItem
+                    name="anhlqhe163875"
+                    email="anhlqhe163875@fpt.edu.vn"
+                    avatar="https://lh3.googleusercontent.com/a/ACg8ocIeOwginA7EcndYQCm4sRL2kY2ZgAhF09icKTv35d0PztkVxA=s96-c"
+                    role="Member"
+                  />
+                  <MemberItem
+                    name="quangnhhe160214"
+                    email="quangnhhe160214@fpt.edu.vn"
+                    avatar="https://lh3.googleusercontent.com/a/ACg8ocJyVe4b--6zurg8_K559s8KCyQCHYOw8oB4dsF2R-DYILAFxA=s96-c"
+                    role="Member"
+                  />
+                  <MemberItem
+                    name="congvthe160103"
+                    email="congvthe160103@fpt.edu.vn"
+                    avatar="https://lh3.googleusercontent.com/a/ACg8ocL_az3VoKiySTOhR5wd2DmOFs_OiWqiyXDM-fzDRH-ZAOFJEQ=s96-c"
+                    role="Member"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="sidebar--right">
+            <div className="inforGro">
+              <p style={{ padding: "20px 20px" }}>Register Group</p>
+            </div>
+            <div className="centered-button">
+              <Button
+                
+                type="primary"
+                shape="round"
+                icon={<SendOutlined />}
+                size={size}
+              >
+                Send
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Team>
     </DashboardLayout>
   );
 };
