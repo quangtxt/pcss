@@ -21,7 +21,6 @@ public class GroupResponse {
     private String keywords;
     public OffsetDateTime createdAt;
     public OffsetDateTime updatedAt;
-    private StudentDTO owner;
     private String status;
     private List<MemberDTO> members;
 }

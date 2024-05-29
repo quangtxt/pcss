@@ -22,6 +22,5 @@ public class GroupDTO {
     private String keywords;
     public OffsetDateTime createdAt;
     public OffsetDateTime updatedAt;
-    private StudentDTO owner;
     private String status;
 }

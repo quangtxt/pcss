@@ -91,6 +91,17 @@ public class GroupController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+    @GetMapping("/view-group")
+    public ResponseEntity<GroupResponse> getGroupByMemberId(){
+        try {
+            GroupResponse groupResponse = groupService.getGroupByMemberId();
+//            groupResponse.setMembers(memberService.getGroupMember(groupId));
+            return ResponseEntity.ok(groupResponse);
+
+        } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
+    }
     @GetMapping("/delete")
     public ResponseEntity<Void> Delete(@RequestParam int groupId){
 

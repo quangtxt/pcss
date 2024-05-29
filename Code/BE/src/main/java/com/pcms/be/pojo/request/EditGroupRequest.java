@@ -8,6 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 public class EditGroupRequest {
+    int groupId;
     @NotBlank
     private String abbreviations;
     @NotBlank

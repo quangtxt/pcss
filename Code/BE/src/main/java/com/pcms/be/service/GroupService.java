@@ -14,7 +14,7 @@ public interface GroupService {
 
     GroupResponse createGroup(CreateGroupRequest createGroupDTO)  throws ServiceException;
     GroupResponse editGroup(EditGroupRequest editGroupDTO) throws ServiceException;
-    List<Group> getGroupsById(List<Long> groupId) throws  ServiceException;
+    GroupResponse getGroupByMemberId() throws ServiceException;
     GroupResponse getGroupById(int groupId) throws  ServiceException;
     SubmitGroupResponse submitGroup(SubmitGroupRequest submitGroupRequest) throws ServiceException;
 
