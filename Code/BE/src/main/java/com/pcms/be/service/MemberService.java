@@ -15,5 +15,5 @@ public interface MemberService {
     MemberResponse updateStatus(UpdateInvitationStatusRequest updateInvitationStatusRequest) throws ServiceException;
     List<MemberDTO> getGroupMember(int groupId) throws ServiceException;
     List<MemberResponse> inviteMember(InviteMemberRequest inviteMemberRequest)throws ServiceException;
-    MemberResponse removeMember(RemoveMemberRequest removeMemberRequest) throws ServiceException;
+
 }

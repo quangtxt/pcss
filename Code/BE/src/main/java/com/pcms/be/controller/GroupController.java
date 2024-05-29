@@ -122,16 +122,7 @@ public class GroupController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
-//
-//    @PostMapping("removeMember")
-//    public ResponseEntity<MemberResponse> removeMember(@Valid @RequestBody RemoveMemberRequest removeMemberRequest){
-//        try {
-//            MemberResponse memberResponse = memberService.removeMember(removeMemberRequest);
-//            return  ResponseEntity.ok(memberResponse);
-//        } catch (ServiceException e) {
-//            throw new ApiException(e.getErrorCode(), e.getParams());
-//        }
-//    }
+
     @PostMapping("submitGroup")
     public ResponseEntity<SubmitGroupResponse> sumitGroup(@Valid @RequestBody SubmitGroupRequest submitGroupRequest){
         try {
