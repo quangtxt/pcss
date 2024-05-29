@@ -91,7 +91,7 @@ public class MemberServiceImpl implements MemberService {
             }
             //Owner remove member or remove request
             else {
-                if (!user.getStudent().getId().equals(0)) {
+                if (!memberRepository.findByStudentIdAndGroupId(user.getStudent().getId(),groupId).getRole().equals(Constants.MemberRole.OWNER)) {
                     throw new ServiceException(ErrorCode.USER_NOT_ALLOW);
                 } else {
                     if (updateInvitationStatusRequest.getStatus().equals(Constants.MemberStatus.INGROUP)) {
@@ -139,9 +139,9 @@ public class MemberServiceImpl implements MemberService {
                 throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
             }
             Group group1 = group.get();
-//            if (user.getStudent().getId() != group1.getOwner().getId()) {
-//                throw new ServiceException(ErrorCode.FAILED_INVITE_MEMBER);
-//            }
+            if (!memberRepository.findByStudentIdAndGroupId(user.getStudent().getId(),Integer.parseInt(Long.toString(group1.getId()))).getRole().equals(Constants.MemberRole.OWNER)) {
+                throw new ServiceException(ErrorCode.FAILED_INVITE_MEMBER);
+            }
             List<Member> members = memberRepository.findAllByGroupIdAndStatus(Long.valueOf(inviteMemberRequest.getGroupId()), Constants.MemberStatus.INGROUP);
             List<Member> members1 = memberRepository.findAllByGroupIdAndStatus(Long.valueOf(inviteMemberRequest.getGroupId()), Constants.MemberStatus.PENDING);
             if ((members.size() + members1.size() + inviteMemberRequest.getListStudentID().size()) > 5) {
@@ -167,32 +167,7 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    @Override
-    public MemberResponse removeMember(RemoveMemberRequest removeMemberRequest) throws ServiceException {
-        try {
-            User user = userService.getCurrentUser();
-            Optional<Group> group = groupRepository.findById(Long.valueOf(removeMemberRequest.getGroupId()));
-            if (!group.isPresent()) {
-                throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
-            } else {
-                Group group1 = group.get();
-                if (!user.getId().equals(0)) {
-                    throw new ServiceException(ErrorCode.USER_NOT_ALLOW);
-                } else {
-                    Member member = memberRepository.findByStudentIdAndGroupId(Long.valueOf(removeMemberRequest.getStudentId()), removeMemberRequest.getGroupId());
-                    if (member == null) {
-                        throw new ServiceException(ErrorCode.STUDENT_NOT_FOUND);
-                    } else {
-                        member.setStatus(Constants.MemberStatus.OUTGROUP);
-                        memberRepository.save(member);
-                        return modelMapper.map(member, MemberResponse.class);
-                    }
-                }
-            }
-        } catch (ServiceException e) {
-            throw new ServiceException(ErrorCode.FAILED_REMOVE_MEMBER);
-        }
-    }
+
 
     private Member inviteMember(Group group, Student student) {
         Member newMember = new Member();
