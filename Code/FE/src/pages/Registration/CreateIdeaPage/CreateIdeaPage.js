@@ -17,22 +17,33 @@ import {
   Space,
   Radio,
 } from "antd";
-import DashboardLayout from "../../layouts/DashboardLayout";
+import DashboardLayout from "../../../layouts/DashboardLayout";
 import { Helmet } from "react-helmet/es/Helmet";
-import { PortalContent } from "./RegCreateIdeaPageStyled";
-import PageTitle from "../../components/PageTitle";
-import { Profile } from "./RegCreateIdeaPageStyled";
+import { PortalContent } from "./CreateIdeaPageStyled";
+import PageTitle from "../../../components/PageTitle";
+import { Profile } from "./CreateIdeaPageStyled";
 import InviteForm from "./InviteForm";
+import {
+  Container,
+  UserItem,
+  UserAvatar,
+  Title,
+  UserEmail,
+} from "./InviteFormStyled";
 
-const RegCreateIdeaPage = (props) => {
+const CreateIdeaPage = (props) => {
   const {
-    history,
-    authenticationStore,
+    studentStore,
     loadingAnimationStore,
     groupStore,
+    authenticationStore,
   } = props;
+  const { currentUser } = authenticationStore;
 
   const { TextArea } = Input;
+
+  const [selectedStudent, setSelectedStudent] = useState([]);
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -46,18 +57,18 @@ const RegCreateIdeaPage = (props) => {
   const handleSubmit = async (values) => {
     try {
       loadingAnimationStore.showSpinner(true);
-
       const response = await groupStore.createGroup(
         values.abbreviations,
         values.description,
         values.keywords,
         values.name,
-        values.vietnameseTitle
+        values.vietnameseTitle,
+        selectedStudent
       );
       if (response.status === 200) {
         //neu tao gr thanh cong
-        message.success("create ok");
-        console.log(response);
+        message.success("Created group successfully");
+        history.push("/registration/team");
       }
     } catch (err) {
       console.log(err);
@@ -105,6 +116,7 @@ const RegCreateIdeaPage = (props) => {
           variant="filled"
           onFinish={handleSubmit}
           className="formProfile"
+          scrollToFirstError
         >
           <div className="">
             <div className="contactInfor">
@@ -151,7 +163,25 @@ const RegCreateIdeaPage = (props) => {
                   />
                 </Form.Item>
               </div>
-              <InviteForm />
+              <Container>
+                <Title>Existed Members</Title>
+                <UserItem>
+                  <UserAvatar></UserAvatar>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexGrow: 1,
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <UserEmail>{currentUser?.email}</UserEmail>
+                    <strong style={{ marginRight: "50px" }}>OWNER</strong>
+                  </div>
+                </UserItem>
+                <InviteForm setSelectedStudent={setSelectedStudent} />
+              </Container>
+
               <Form.Item>
                 <Button className="btnEdit" htmlType="submit">
                   Submit
@@ -169,7 +199,8 @@ export default memo(
     inject(
       "authenticationStore",
       "loadingAnimationStore",
-      "groupStore"
-    )(observer(RegCreateIdeaPage))
+      "groupStore",
+      "studentStore"
+    )(observer(CreateIdeaPage))
   )
 );

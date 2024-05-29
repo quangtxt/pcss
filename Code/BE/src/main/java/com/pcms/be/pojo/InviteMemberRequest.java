@@ -8,6 +8,6 @@ import java.util.List;
 @Getter
 @Setter
 public class InviteMemberRequest {
-    int GroupId;
+    int groupId;
     private List<Integer> listStudentID;
 }

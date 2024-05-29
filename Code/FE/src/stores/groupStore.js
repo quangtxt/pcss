@@ -9,15 +9,19 @@ class GroupStore {
     description,
     keywords,
     name,
-    vietnameseTitle
+    vietnameseTitle,
+    selectedStudent
   ) => {
+    console.log("selectedStudent", selectedStudent);
+
     return new Promise((resolve, reject) => {
       GroupRequest.createGroup(
         abbreviations,
         description,
         keywords,
         name,
-        vietnameseTitle
+        vietnameseTitle,
+        selectedStudent
       )
         .then((response) => {
           resolve(response);
@@ -31,7 +35,17 @@ class GroupStore {
     return new Promise((resolve, reject) => {
       GroupRequest.getListInvitationToJoinGroup()
         .then((response) => {
-          console.log("res", response);
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action getGroupByMemberId = () => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.getGroupByMemberId()
+        .then((response) => {
           resolve(response);
         })
         .catch((error) => {
@@ -42,6 +56,28 @@ class GroupStore {
   @action updateInvitationStatus = (groupId, status) => {
     return new Promise((resolve, reject) => {
       GroupRequest.updateInvitationStatus(groupId, status)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action inviteMember = (groupId, listStudentID) => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.inviteMember(groupId, listStudentID)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action inviteMember = (groupId, status, studentId) => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.updateStatus(groupId, status, studentId)
         .then((response) => {
           resolve(response);
         })

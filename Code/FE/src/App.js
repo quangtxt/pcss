@@ -41,6 +41,7 @@ import Report from "./components/MainSidebar/Report";
 //keycloak
 import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
 import notificationStore from "./stores/notificationStore";
+import studentStore from "./stores/studentStore.js";
 const ProtectedRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
@@ -78,6 +79,7 @@ const rootStore = {
   companyStore,
   groupStore,
   mentorStore,
+  studentStore,
 };
 
 axios.defaults.timeout = 60000;

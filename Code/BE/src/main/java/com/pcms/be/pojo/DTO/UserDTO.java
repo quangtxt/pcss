@@ -15,4 +15,5 @@ public class UserDTO {
     public String email;
     private List<RoleDTO> roles = new ArrayList<>();
     public CampusDTO campus;
+    public GroupDTO group;
 }
