@@ -42,6 +42,11 @@ export const SORT_TYPE = {
   DESCENDING: "DESC",
   ASCENDING: "ASC",
 };
+export const MEMBER_STATUS = {
+  PENDING: "PENDING",
+  INGROUP: "INGROUP",
+  OUT_GROUP: "OUTGROUP",
+};
 
 export const ACL_TYPE = {};
 export const ACL_ACTION_TYPE = {};

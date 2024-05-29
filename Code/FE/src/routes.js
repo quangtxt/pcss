@@ -2,10 +2,10 @@ import HomePage from "./pages/HomePage/HomePage";
 import RegNewsPage from "./pages/RegNewsPage/RegNewsPage";
 import TeamPage from "./pages/Registration/TeamPage/TeamPage";
 import ListRequestPage from "./pages/Registration/ListRequestPage/ListRequestPage";
-import RegCreateIdeaPage from "./pages/RegCreateIdeaPage/RegCreateIdeaPage";
+import CreateIdeaPage from "./pages/Registration/CreateIdeaPage/CreateIdeaPage";
 import ListSupervisorsPage from "./pages/Registration/ListSupervisorsPage/ListSupervisorsPage";
 import GroupInvitedMentorPage from "./pages/GroupInvitedMentorPage/GroupInvitedMentorPage";
-import RegProfilePage from "./pages/RegProfilePage/RegProfilePage";
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import DetailProfileSupervisorPage from "./pages/DetailProfileSupervisorPage";
 import ListStudentPage from "./pages/ListStudentPage";
 
@@ -50,8 +50,8 @@ export const routes = [
   },
   {
     path: "/registration/createIdea",
-    component: RegCreateIdeaPage,
-    name: "RegCreateIdeaPage",
+    component: CreateIdeaPage,
+    name: "CreateIdeaPage",
   },
   {
     path: "/registration/listSupervisors",
@@ -59,9 +59,9 @@ export const routes = [
     name: "ListSupervisorsPage",
   },
   {
-    path: "/registration/profile",
-    component: RegProfilePage,
-    name: "RegProfilePage",
+    path: "/profile",
+    component: ProfilePage,
+    name: "ProfilePage",
   },
   {
     path: "/registration/supervisor/detail",
@@ -75,6 +75,8 @@ export const routes = [
     component: GroupInvitedMentorPage,
     name: "GroupInvitedMentorPage",
   },
+
+  //staff
   {
     path: "/listStudent",
     component: ListStudentPage,

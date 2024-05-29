@@ -14,6 +14,7 @@ public interface MemberService {
     List<MemberResponse> getInvitations() throws ServiceException;
     MemberResponse updateStatus(UpdateInvitationStatusRequest updateInvitationStatusRequest) throws ServiceException;
     List<MemberDTO> getGroupMember(int groupId) throws ServiceException;
+    List<MemberDTO> getGroupMemberIncludePending(int groupId) throws ServiceException;
     List<MemberResponse> inviteMember(InviteMemberRequest inviteMemberRequest)throws ServiceException;
 
 }

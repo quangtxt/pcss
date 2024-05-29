@@ -5,7 +5,7 @@ import { UserOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Form, Input, message, Avatar, Space, Radio, Card } from "antd";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { Helmet } from "react-helmet/es/Helmet";
-import { Profile } from "../RegProfilePage/RegProfilePageStyled";
+import { Profile } from "../ProfilePage/ProfilePageStyled";
 import PageTitle from "../../components/PageTitle";
 
 const DetailProfileSupervisorPage = (props) => {

@@ -1,20 +1,13 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { UserOutlined, EditOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Form,
-  Input,
-  message,
-  Avatar, Space,
-  Radio,
-} from "antd";
+import { UserOutlined, EditOutlined } from "@ant-design/icons";
+import { Button, Form, Input, message, Avatar, Space, Radio } from "antd";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { Helmet } from "react-helmet/es/Helmet";
-import { Profile } from "./RegProfilePageStyled";
+import { Profile } from "./ProfilePageStyled";
 
-const RegProfilePage = (props) => {
+const ProfilePage = (props) => {
   const {
     history,
     authenticationStore,
@@ -108,41 +101,52 @@ const RegProfilePage = (props) => {
             </Space>
             <div className="contactInfor">
               <p className="bigTitle">Contact Information</p>
-              <div className={`inputForm important ${isEditing ? 'active' : ''}`}>
+              <div
+                className={`inputForm important ${isEditing ? "active" : ""}`}
+              >
                 <Form.Item
                   label="Phone Number"
                   name="name"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Input style={{ maxWidth: '100%' }} />
+                  <Input style={{ maxWidth: "100%" }} />
                 </Form.Item>
               </div>
-              <div className={`inputForm ${isEditing ? 'active' : ''}`}>
+              <div className={`inputForm ${isEditing ? "active" : ""}`}>
                 <Form.Item
                   label="Facebook"
                   name="name"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Input style={{ maxWidth: '100%' }} />
+                  <Input style={{ maxWidth: "100%" }} />
                 </Form.Item>
               </div>
-              <div className={`inputForm change important ${isEditing ? '' : ''}`}>
+              <div
+                className={`inputForm change important ${isEditing ? "" : ""}`}
+              >
                 <Form.Item
                   label="Alternative Email"
                   name="name"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Input style={{ maxWidth: '100%' }} value={"hieupbhe163832@fpt.edu.vn"} />
-                  <Button className="btnChange" onClick={handleChangeEmail}>Change</Button>
+                  <Input
+                    style={{ maxWidth: "100%" }}
+                    value={"hieupbhe163832@fpt.edu.vn"}
+                  />
+                  <Button className="btnChange" onClick={handleChangeEmail}>
+                    Change
+                  </Button>
                 </Form.Item>
               </div>
-              <div className={`inputForm ${isEditing ? 'active' : ''}`}>
+              <div className={`inputForm ${isEditing ? "active" : ""}`}>
                 <Form.Item
                   label="Password"
                   name="name"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Button className="btnChange" onClick={handleChangePass}>Change</Button>
+                  <Button className="btnChange" onClick={handleChangePass}>
+                    Change
+                  </Button>
                 </Form.Item>
               </div>
             </div>
@@ -151,15 +155,20 @@ const RegProfilePage = (props) => {
             <div className="basicInfor">
               <div className="title">
                 <p className="bigTitle">Basic Information</p>
-                <Button className={`btnEdit ${isEditing ? 'active' : ''}`} onClick={handleEditProfile}><EditOutlined /> Edit My Profile</Button>
+                <Button
+                  className={`btnEdit ${isEditing ? "active" : ""}`}
+                  onClick={handleEditProfile}
+                >
+                  <EditOutlined /> Edit My Profile
+                </Button>
               </div>
-              <div className={`inputForm ${isEditing ? 'active' : ''}`}>
+              <div className={`inputForm ${isEditing ? "active" : ""}`}>
                 <Form.Item
                   label="Name"
                   name="name"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Input style={{ maxWidth: '100%' }} />
+                  <Input style={{ maxWidth: "100%" }} />
                 </Form.Item>
               </div>
               <div className="inputForm">
@@ -168,7 +177,10 @@ const RegProfilePage = (props) => {
                   name="name"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Input style={{ maxWidth: '100%' }} value={"hieupbhe163832@fpt.edu.vn"} />
+                  <Input
+                    style={{ maxWidth: "100%" }}
+                    value={"hieupbhe163832@fpt.edu.vn"}
+                  />
                 </Form.Item>
               </div>
               <div className="inputForm">
@@ -177,7 +189,7 @@ const RegProfilePage = (props) => {
                   name="name"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Input style={{ maxWidth: '100%' }} />
+                  <Input style={{ maxWidth: "100%" }} />
                 </Form.Item>
               </div>
               <div className="inputForm">
@@ -186,7 +198,7 @@ const RegProfilePage = (props) => {
                   name="name"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Input style={{ maxWidth: '100%' }} />
+                  <Input style={{ maxWidth: "100%" }} />
                 </Form.Item>
               </div>
               <div className="inputForm">
@@ -195,14 +207,11 @@ const RegProfilePage = (props) => {
                   name="name"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Input style={{ maxWidth: '100%' }} />
+                  <Input style={{ maxWidth: "100%" }} />
                 </Form.Item>
               </div>
-              <div className={`inputForm ${isEditing ? 'active' : ''}`}>
-                <Form.Item
-                  label="Gender"
-                  name=""
-                >
+              <div className={`inputForm ${isEditing ? "active" : ""}`}>
+                <Form.Item label="Gender" name="">
                   <Radio.Group>
                     <Radio value=""> Male </Radio>
                     <Radio value=""> Female </Radio>
@@ -216,30 +225,28 @@ const RegProfilePage = (props) => {
                   name="name"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Input style={{ maxWidth: '100%' }} />
+                  <Input style={{ maxWidth: "100%" }} />
                 </Form.Item>
               </div>
-              <div className={`inputForm ${isEditing ? 'active' : ''}`}>
+              <div className={`inputForm ${isEditing ? "active" : ""}`}>
                 <Form.Item
                   label="Expect Role"
                   name="name"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Input style={{ maxWidth: '100%' }} />
+                  <Input style={{ maxWidth: "100%" }} />
                 </Form.Item>
               </div>
-              <div className={`inputForm ${isEditing ? 'active' : ''}`}>
+              <div className={`inputForm ${isEditing ? "active" : ""}`}>
                 <Form.Item
                   label="Bio"
                   name="name"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <TextArea
-                    rows={4}
-                    style={{ maxWidth: '100%' }} />
+                  <TextArea rows={4} style={{ maxWidth: "100%" }} />
                 </Form.Item>
               </div>
-              <div className={`radioForm ${isEditing ? 'active' : ''}`}>
+              <div className={`radioForm ${isEditing ? "active" : ""}`}>
                 <Form.Item label="Do you want to be grouped in a random group?">
                   <Radio.Group>
                     <Radio value="apple"> Yes </Radio>
@@ -247,8 +254,10 @@ const RegProfilePage = (props) => {
                   </Radio.Group>
                 </Form.Item>
               </div>
-              <div className={`grBtn ${isEditing ? 'active' : ''}`}>
-                <Button className="btnCancel" onClick={handleEditProfile}>Cancel</Button>
+              <div className={`grBtn ${isEditing ? "active" : ""}`}>
+                <Button className="btnCancel" onClick={handleEditProfile}>
+                  Cancel
+                </Button>
                 <Button className="btnEdit">Submit</Button>
               </div>
             </div>
@@ -258,12 +267,14 @@ const RegProfilePage = (props) => {
           {...formItemLayout}
           variant="filled"
           onFinish={handleSubmit}
-          className={`changeEmail ${isChangingEmail ? 'active' : ''}`}
+          className={`changeEmail ${isChangingEmail ? "active" : ""}`}
         >
           <p className="bigTitle">Verify Your Alternative Email</p>
           <div className="content">
             <p>Enter the verify code sent to</p>
-            <p><span>hieupbhe163832@fpt.edu.vn</span>. Did not get the code?</p>
+            <p>
+              <span>hieupbhe163832@fpt.edu.vn</span>. Did not get the code?
+            </p>
             <a href="">Resend</a>
           </div>
           <p className="verify">Verification Code</p>
@@ -272,19 +283,24 @@ const RegProfilePage = (props) => {
               name="name"
               rules={[{ required: true, message: "Please input!" }]}
             >
-              <Input style={{ maxWidth: '100%' }} placeholder="Enter verification code" />
+              <Input
+                style={{ maxWidth: "100%" }}
+                placeholder="Enter verification code"
+              />
             </Form.Item>
           </div>
           <div className="grBtn">
-                <Button className="btnCancel" onClick={handleChangeEmail}>Cancel</Button>
-                <Button className="btnEdit">Submit</Button>
-              </div>
+            <Button className="btnCancel" onClick={handleChangeEmail}>
+              Cancel
+            </Button>
+            <Button className="btnEdit">Submit</Button>
+          </div>
         </Form>
         <Form
           {...formItemLayout}
           variant="filled"
           onFinish={handleSubmit}
-          className={`changeEmail ${isChangingPass ? 'active' : ''}`}
+          className={`changeEmail ${isChangingPass ? "active" : ""}`}
         >
           <p className="bigTitle">Old Password</p>
           <div className="content">
@@ -296,15 +312,25 @@ const RegProfilePage = (props) => {
               name="name"
               rules={[{ required: true, message: "Please input!" }]}
             >
-              <Input style={{ maxWidth: '100%' }} placeholder="Enter your password" type="password"/>
+              <Input
+                style={{ maxWidth: "100%" }}
+                placeholder="Enter your password"
+                type="password"
+              />
             </Form.Item>
           </div>
           <div className="grBtn">
-                <Button className="btnCancel" onClick={handleChangePass}>Cancel</Button>
-                <Button className="btnEdit">Submit</Button>
-              </div>
+            <Button className="btnCancel" onClick={handleChangePass}>
+              Cancel
+            </Button>
+            <Button className="btnEdit">Submit</Button>
+          </div>
         </Form>
-        <div className={`overlay ${isChangingEmail ? 'active' : ''} ${isChangingPass ? 'active' : ''}`}></div>
+        <div
+          className={`overlay ${isChangingEmail ? "active" : ""} ${
+            isChangingPass ? "active" : ""
+          }`}
+        ></div>
       </Profile>
     </DashboardLayout>
   );
@@ -315,6 +341,6 @@ export default memo(
       "authenticationStore",
       "loadingAnimationStore",
       "groupStore"
-    )(observer(RegProfilePage))
+    )(observer(ProfilePage))
   )
 );

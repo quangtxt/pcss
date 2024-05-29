@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -118,6 +119,20 @@ public class MemberServiceImpl implements MemberService {
     public List<MemberDTO> getGroupMember(int groupId) throws ServiceException {
         try {
             List<Member> listMember = memberRepository.findAllByGroupIdAndStatus(Long.valueOf(groupId), Constants.MemberStatus.INGROUP);
+            List<MemberDTO> listMemberRes = new ArrayList<>();
+            for (Member mem : listMember
+            ) {
+                listMemberRes.add(modelMapper.map(mem, MemberDTO.class));
+            }
+            return listMemberRes;
+        } catch (Exception e) {
+            throw new ServiceException(ErrorCode.FAILED_GET_IVITATIONS);
+        }
+    }
+    @Override
+    public List<MemberDTO> getGroupMemberIncludePending(int groupId) throws ServiceException {
+        try {
+            List<Member> listMember = memberRepository.findAllByGroupIdAndStatusIn(Long.valueOf(groupId), Arrays.asList(Constants.MemberStatus.INGROUP, Constants.MemberStatus.PENDING));
             List<MemberDTO> listMemberRes = new ArrayList<>();
             for (Member mem : listMember
             ) {

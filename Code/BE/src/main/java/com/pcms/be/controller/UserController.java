@@ -3,6 +3,7 @@ package com.pcms.be.controller;
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
+import com.pcms.be.functions.Constants;
 import com.pcms.be.pojo.response.MentorPageResponse;
 import com.pcms.be.pojo.DTO.UserDTO;
 import com.pcms.be.service.UserService;
@@ -27,6 +28,12 @@ public class UserController {
         try {
             User currentUser = userService.getCurrentUser();
             UserDTO userDTO = modelMapper.map(currentUser, UserDTO.class);
+            boolean isStudent = currentUser.getRoles().contains(Constants.RoleConstants.STUDENT);
+//            if (isStudent) {
+//                userDTO.setGroup();
+//            } else {
+//                // Người dùng không có role "student"
+//            }
             return ResponseEntity.ok(userDTO);
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());

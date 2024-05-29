@@ -1,5 +1,9 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
-import { AudioOutlined, UserAddOutlined, FolderAddOutlined } from '@ant-design/icons';
+import {
+  AudioOutlined,
+  UserAddOutlined,
+  FolderAddOutlined,
+} from "@ant-design/icons";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import { Button, Pagination, Input, Form } from "antd";
@@ -10,7 +14,7 @@ import ContentBlockWrapper from "../../components/ContentBlockWrapper";
 import PageTitle from "../../components/PageTitle";
 import { Helmet } from "react-helmet/es/Helmet";
 import { ForContent, TableStudents } from "./ListStudentPageStyled";
-import { Profile } from "../RegProfilePage/RegProfilePageStyled";
+import { Profile } from "../ProfilePage/ProfilePageStyled";
 import TableComponent from "../../components/Common/TableComponent";
 
 const { Search } = Input;
@@ -73,7 +77,7 @@ const ListStudentPage = (props) => {
       render: (record) => record?.note,
     },
   ];
-  function navigateToDetail(record) { }
+  function navigateToDetail(record) {}
 
   const formItemLayout = {
     labelCol: {
@@ -134,13 +138,19 @@ const ListStudentPage = (props) => {
               <p>FE Email Or Name:</p>
               <Search
                 allowClear
-                placeholder={'FE Email or Name'}
+                placeholder={"FE Email or Name"}
                 className="searchInput"
               />
             </div>
             <div className="grBtn">
-              <Button className="btnAdd" onClick={handleAdd}><UserAddOutlined />Add a Student</Button>
-              <Button className="btnImport" onClick={handleImport}><FolderAddOutlined />Import Excel</Button>
+              <Button className="btnAdd" onClick={handleAdd}>
+                <UserAddOutlined />
+                Add a Student
+              </Button>
+              <Button className="btnImport" onClick={handleImport}>
+                <FolderAddOutlined />
+                Import Excel
+              </Button>
             </div>
             <TableComponent
               rowKey={(record) => record.id || uuid()}
@@ -172,7 +182,7 @@ const ListStudentPage = (props) => {
             {...formItemLayout}
             variant="filled"
             onFinish={handleSubmit}
-            className={`changeEmail ${isAdd ? 'active' : ''}`}
+            className={`changeEmail ${isAdd ? "active" : ""}`}
           >
             <p className="bigTitle">Enter Student's Information</p>
             <div className="inputForm">
@@ -181,7 +191,10 @@ const ListStudentPage = (props) => {
                 name=""
                 rules={[{ required: true, message: "Please input!" }]}
               >
-                <Input style={{ maxWidth: '100%' }} placeholder="Enter verification code" />
+                <Input
+                  style={{ maxWidth: "100%" }}
+                  placeholder="Enter verification code"
+                />
               </Form.Item>
             </div>
             <div className="inputForm">
@@ -190,7 +203,10 @@ const ListStudentPage = (props) => {
                 name=""
                 rules={[{ required: true, message: "Please input!" }]}
               >
-                <Input style={{ maxWidth: '100%' }} placeholder="Enter verification code" />
+                <Input
+                  style={{ maxWidth: "100%" }}
+                  placeholder="Enter verification code"
+                />
               </Form.Item>
             </div>
             <div className="inputForm">
@@ -199,13 +215,13 @@ const ListStudentPage = (props) => {
                 name=""
                 rules={[{ required: true, message: "Please input!" }]}
               >
-                <TextArea
-                  rows={4}
-                  style={{ maxWidth: '100%' }} />
+                <TextArea rows={4} style={{ maxWidth: "100%" }} />
               </Form.Item>
             </div>
             <div className="grBtn">
-              <Button className="btnCancel" onClick={handleAdd}>Cancel</Button>
+              <Button className="btnCancel" onClick={handleAdd}>
+                Cancel
+              </Button>
               <Button className="btnEdit">Submit</Button>
             </div>
           </Form>
@@ -213,12 +229,14 @@ const ListStudentPage = (props) => {
             {...formItemLayout}
             variant="filled"
             onFinish={handleSubmit}
-            className={`changeEmail ${isImport ? 'active' : ''}`}
+            className={`changeEmail ${isImport ? "active" : ""}`}
           >
             <p className="bigTitle">Verify Your Alternative Email</p>
             <div className="content">
               <p>Enter the verify code sent to</p>
-              <p><span>hieupbhe163832@fpt.edu.vn</span>. Did not get the code?</p>
+              <p>
+                <span>hieupbhe163832@fpt.edu.vn</span>. Did not get the code?
+              </p>
               <a href="">Resend</a>
             </div>
             <p className="verify">Verification Code</p>
@@ -227,15 +245,24 @@ const ListStudentPage = (props) => {
                 name="name"
                 rules={[{ required: true, message: "Please input!" }]}
               >
-                <Input style={{ maxWidth: '100%' }} placeholder="Enter verification code" />
+                <Input
+                  style={{ maxWidth: "100%" }}
+                  placeholder="Enter verification code"
+                />
               </Form.Item>
             </div>
             <div className="grBtn">
-              <Button className="btnCancel" onClick={handleImport}>Cancel</Button>
+              <Button className="btnCancel" onClick={handleImport}>
+                Cancel
+              </Button>
               <Button className="btnEdit">Submit</Button>
             </div>
           </Form>
-          <div className={`overlay ${isAdd ? 'active' : ''} ${isImport ? 'active' : ''}`}></div>
+          <div
+            className={`overlay ${isAdd ? "active" : ""} ${
+              isImport ? "active" : ""
+            }`}
+          ></div>
         </Profile>
       </ContentBlockWrapper>
     </DashboardLayout>

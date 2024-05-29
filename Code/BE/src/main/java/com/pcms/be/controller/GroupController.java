@@ -95,7 +95,7 @@ public class GroupController {
     public ResponseEntity<GroupResponse> getGroupByMemberId(){
         try {
             GroupResponse groupResponse = groupService.getGroupByMemberId();
-//            groupResponse.setMembers(memberService.getGroupMember(groupId));
+            groupResponse.setMembers(memberService.getGroupMemberIncludePending(Integer.parseInt(Long.toString(groupResponse.getId()))));
             return ResponseEntity.ok(groupResponse);
 
         } catch (ServiceException e) {
