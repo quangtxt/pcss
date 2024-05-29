@@ -47,12 +47,11 @@ public class Group implements Serializable {
     @Column(name = "updated_at")
     public OffsetDateTime updatedAt;
 
-    @OneToOne
-    @JoinColumn(name = "owner_id", nullable = false)
-    private Student owner;
-
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Member> members;
+
+    @ManyToMany(mappedBy = "groups",cascade = CascadeType.ALL)
+    private Set<Mentor> mentors = new HashSet<>();
 
     // Getters, setters, constructors, etc.
 }

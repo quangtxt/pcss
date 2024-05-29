@@ -91,7 +91,7 @@ public class MemberServiceImpl implements MemberService {
             }
             //Owner remove member or remove request
             else {
-                if (!user.getStudent().getId().equals(group.getOwner().getId())) {
+                if (!user.getStudent().getId().equals(0)) {
                     throw new ServiceException(ErrorCode.USER_NOT_ALLOW);
                 } else {
                     if (updateInvitationStatusRequest.getStatus().equals(Constants.MemberStatus.INGROUP)) {
@@ -139,9 +139,9 @@ public class MemberServiceImpl implements MemberService {
                 throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
             }
             Group group1 = group.get();
-            if (user.getStudent().getId() != group1.getOwner().getId()) {
-                throw new ServiceException(ErrorCode.FAILED_INVITE_MEMBER);
-            }
+//            if (user.getStudent().getId() != group1.getOwner().getId()) {
+//                throw new ServiceException(ErrorCode.FAILED_INVITE_MEMBER);
+//            }
             List<Member> members = memberRepository.findAllByGroupIdAndStatus(Long.valueOf(inviteMemberRequest.getGroupId()), Constants.MemberStatus.INGROUP);
             List<Member> members1 = memberRepository.findAllByGroupIdAndStatus(Long.valueOf(inviteMemberRequest.getGroupId()), Constants.MemberStatus.PENDING);
             if ((members.size() + members1.size() + inviteMemberRequest.getListStudentID().size()) > 5) {
@@ -176,7 +176,7 @@ public class MemberServiceImpl implements MemberService {
                 throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
             } else {
                 Group group1 = group.get();
-                if (!user.getId().equals(group1.getOwner().getId())) {
+                if (!user.getId().equals(0)) {
                     throw new ServiceException(ErrorCode.USER_NOT_ALLOW);
                 } else {
                     Member member = memberRepository.findByStudentIdAndGroupId(Long.valueOf(removeMemberRequest.getStudentId()), removeMemberRequest.getGroupId());

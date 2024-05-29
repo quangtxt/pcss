@@ -1,13 +1,16 @@
 package com.pcms.be.controller;
 
+import com.pcms.be.domain.user.Group;
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.pojo.*;
+import com.pcms.be.pojo.DTO.GroupDTO;
 import com.pcms.be.pojo.request.CreateGroupRequest;
 import com.pcms.be.pojo.request.EditGroupRequest;
 import com.pcms.be.pojo.request.SubmitGroupRequest;
 import com.pcms.be.pojo.response.GroupResponse;
 import com.pcms.be.pojo.response.SubmitGroupResponse;
+import com.pcms.be.repository.GroupRepository;
 import com.pcms.be.service.GroupService;
 import com.pcms.be.service.MemberService;
 import com.pcms.be.service.StudentService;
@@ -26,6 +29,7 @@ import java.util.List;
 
 public class GroupController {
     private final GroupService groupService;
+    private final GroupRepository groupRepository;
     private final StudentService studentService;
     private final MemberService memberService;
     private final ModelMapper modelMapper;
@@ -86,6 +90,17 @@ public class GroupController {
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
+    }
+    @GetMapping("/delete")
+    public ResponseEntity<Void> Delete(@RequestParam int groupId){
+
+        Group group = groupRepository.findById(Long.valueOf(groupId))
+                .orElseThrow(() -> new IllegalArgumentException("Group not found with id: " + groupId));
+
+        groupRepository.delete(group);
+            return ResponseEntity.noContent().build();
+
+
     }
     @PostMapping("inviteMember")
     public ResponseEntity<List<MemberResponse>> inviteMember(@Valid @RequestBody InviteMemberRequest inviteMemberRequest){

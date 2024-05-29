@@ -42,9 +42,6 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Member> members;
 
-    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Group ownedGroup;
-
     @ManyToOne
     @JoinColumn(name = "specificMajor_code", referencedColumnName = "id")
     private SpecificMajor specificMajor;

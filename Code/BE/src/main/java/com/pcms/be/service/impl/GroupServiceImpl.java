@@ -44,9 +44,9 @@ public class GroupServiceImpl implements GroupService {
     public GroupResponse createGroup(CreateGroupRequest createGroupDTO) throws ServiceException {
         try {
             User currentUser = userService.getCurrentUser();
-            if (groupRepository.findByOwnerId(currentUser.getStudent().getId()) != null) {
-                throw new ServiceException(ErrorCode.STUDENT_ALREADY_IN_A_GROUP);
-            }
+//            if (groupRepository.findByOwnerId(currentUser.getStudent().getId()) != null) {
+//                throw new ServiceException(ErrorCode.STUDENT_ALREADY_IN_A_GROUP);
+//            }
             if (memberRepository.findByStudentIdAndStatus(currentUser.getStudent().getId(), Constants.MemberStatus.INGROUP) != null) {
                 throw new ServiceException(ErrorCode.STUDENT_ALREADY_IN_A_GROUP);
             }
@@ -90,7 +90,7 @@ public class GroupServiceImpl implements GroupService {
         group.setKeywords(createGroupDTO.getKeywords());
         group.setName(createGroupDTO.getName());
         group.setVietnameseTitle(createGroupDTO.getVietnameseTitle());
-        group.setOwner(owner.getStudent());
+//        group.setOwner(owner.getStudent());
         group.setStatus(Constants.GroupStatus.PENDING);
         return groupRepository.save(group);
     }
@@ -107,8 +107,8 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public GroupResponse editGroup(EditGroupRequest editGroupDTO) throws ServiceException {
         try {
-
-            Group group = groupRepository.findByOwnerId(userService.getCurrentUser().getStudent().getId());
+Group group = null;
+//            Group group = groupRepository.findByOwnerId(userService.getCurrentUser().getStudent().getId());
             if (!group.getStatus().equals(Constants.GroupStatus.PENDING)) {
                 throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
             }
