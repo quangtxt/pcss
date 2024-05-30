@@ -16,7 +16,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     List<Member> findAllByStudentIdAndStatus(Long id, String status);
 
-    Member findByStudentIdAndGroupId(Long userId, int groupId);
+    Member findByStudentIdAndGroupId(Long studentId, int groupId);
 
     //    int deleteByUserIdAndGroupId(Long userId, int groupId);
     List<Member> findAllByGroupId(int groupId);
