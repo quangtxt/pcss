@@ -11,6 +11,7 @@ import PageTitle from "../../../components/PageTitle";
 import { Helmet } from "react-helmet/es/Helmet";
 import { ForContent } from "./ListRequestPageStyled";
 import TableComponent from "../../../components/Common/TableComponent";
+import { MEMBER_STATUS } from "../../../constants";
 
 const ListRequestPage = (props) => {
   const {
@@ -36,20 +37,21 @@ const ListRequestPage = (props) => {
     setListInvitationToJoinGroup(res.data);
   };
   const handleConfirm = async (values) => {
-    updateInvitationStatus(values, true);
+    updateInvitationStatus(values, MEMBER_STATUS.INGROUP);
   };
   const handleReject = async (values) => {
-    updateInvitationStatus(values, false);
+    updateInvitationStatus(values, MEMBER_STATUS.OUT_GROUP);
   };
   const updateInvitationStatus = async (values, status) => {
     try {
       loadingAnimationStore.showSpinner(true);
       const response = await groupStore.updateInvitationStatus(
         values?.group.id,
-        status
+        status,
+        values?.student.id
       );
       if (response.status === 200) {
-        if (status) {
+        if (status == MEMBER_STATUS.INGROUP) {
           message.success(`You have successfully joined the group!`);
         } else {
           message.success(`You refused to join the group!`);
@@ -59,8 +61,10 @@ const ListRequestPage = (props) => {
       }
     } catch (err) {
       message.error(err.en || "Login failed response status!");
+      loadingAnimationStore.showSpinner(false);
     }
   };
+  console.log("currentUser", authenticationStore.currentUser);
   const showConfirmModal = (action, record) => {
     Modal.confirm({
       title: `Are you sure you want to ${action} this group?`,
@@ -90,7 +94,7 @@ const ListRequestPage = (props) => {
     {
       title: "Invited By",
       width: 100,
-      render: (record) => record?.group.owner.username,
+      render: (record) => record?.student?.user?.name,
     },
     {
       title: "Action",

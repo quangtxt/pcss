@@ -45,7 +45,8 @@ export const GroupRequest = {
         "Content-Type": "application/json",
       },
     }),
-  updateInvitationStatus: (groupId, status) =>
+
+  updateInvitationStatus: (groupId, status, studentId) =>
     axios({
       method: "post",
       url: `${apiUrl}/api/v1/group/update/invitation/status`,
@@ -56,6 +57,7 @@ export const GroupRequest = {
       data: {
         groupId: groupId,
         status: status,
+        studentId: studentId,
       },
     }),
   inviteMember: (groupId, listStudentID) =>
@@ -83,6 +85,30 @@ export const GroupRequest = {
         groupId: groupId,
         status: status,
         studentId: studentId,
+      },
+    }),
+  empowerOwner: (groupId, studentId) =>
+    axios({
+      method: "post",
+      url: `${apiUrl}/api/v1/group/empowerOwner`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+      params: {
+        groupId: groupId,
+        studentId: studentId,
+      },
+    }),
+
+  //memtor
+  getGroupByMentorId: () =>
+    axios({
+      method: "get",
+      url: `${apiUrl}/api/v1/group-mentor/list`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
       },
     }),
 };

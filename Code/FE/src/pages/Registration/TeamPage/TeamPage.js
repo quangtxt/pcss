@@ -9,7 +9,7 @@ import PageTitle from "../../../components/PageTitle";
 import { Team } from "./TeamPageStyled";
 import MemberItem from "./MemberItem";
 import InviteForm from "../CreateIdeaPage/InviteForm";
-import { DATE_FORMAT_SLASH } from "../../../constants";
+import { DATE_FORMAT_SLASH, MEMBER_STATUS } from "../../../constants";
 import moment from "moment";
 import EmptyPage from "../../EmptyPage/EmptyPage";
 
@@ -158,17 +158,26 @@ const RegTeamPage = (props) => {
                         if (a.role.includes("OWNER")) return -1;
                         if (b.role.includes("OWNER")) return 1;
 
-                        // Nếu không phải "OWNER", ưu tiên "ingroup" giảm dần theo updateAt
-                        if (a.status === "ingroup" && b.status === "ingroup") {
+                        /// Nếu không phải "OWNER", ưu tiên "ingroup" giảm dần theo updateAt
+                        if (
+                          a.status === MEMBER_STATUS.INGROUP &&
+                          b.status === MEMBER_STATUS.INGROUP
+                        ) {
                           return b.updateAt - a.updateAt;
                         }
-                        if (a.status === "ingroup") return -1;
-                        if (b.status === "ingroup") return 1;
+                        if (a.status === MEMBER_STATUS.INGROUP) return -1;
+                        if (b.status === MEMBER_STATUS.INGROUP) return 1;
 
                         // Cuối cùng là những thành viên "pending"
-                        if (a.status === "pending" && b.status !== "pending")
+                        if (
+                          a.status === MEMBER_STATUS.PENDING &&
+                          b.status !== MEMBER_STATUS.PENDING
+                        )
                           return 1;
-                        if (b.status === "pending" && a.status !== "pending")
+                        if (
+                          b.status === MEMBER_STATUS.PENDING &&
+                          a.status !== MEMBER_STATUS.PENDING
+                        )
                           return -1;
 
                         // Nếu cùng status, giữ nguyên thứ tự

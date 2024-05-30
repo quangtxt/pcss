@@ -9,8 +9,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Entity
-@Table(name = "v_group_mentor_invitation")
-public class GroupMentorInvitation implements Serializable {
+@Table(name = "v_group_mentor")
+public class GroupMentor implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

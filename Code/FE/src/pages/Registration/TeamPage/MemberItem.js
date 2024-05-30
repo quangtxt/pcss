@@ -63,19 +63,38 @@ const MemberItem = (props) => {
   } = props;
   const { currentUser } = authenticationStore;
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLeader, setIsLeader] = useState(false);
 
   const handleEmailClick = (studentId) => {
     // history.push(`/profile`, { studentId });
+  };
+
+  useEffect(() => {
+    checkLeader();
+  }, [currentUser]);
+
+  const checkLeader = () => {
+    const owner = group.members[0];
+    if (currentUser.id === owner.student.user.id) setIsLeader(true);
   };
 
   const handleMenuClick = (e) => {
     if (e.key === "view-profile") {
       // handleRemoveMember();
     } else if (e.key === "change-to-leader") {
-      // handleRemoveMember();
+      handleChangeLeader();
     } else {
       handleRemoveMember();
+    }
+  };
+  const handleChangeLeader = async () => {
+    try {
+      console.log("groupId", group.id);
+      console.log("studentId", member?.student.id);
+      await groupStore.empowerOwner(group.id, member?.student.id);
+      setRefresh(true);
+    } catch (err) {
+      console.log(err);
     }
   };
   const handleRemoveMember = async () => {
@@ -93,8 +112,16 @@ const MemberItem = (props) => {
   const menu = (
     <Menu onClick={handleMenuClick}>
       <Menu.Item key="view-profile">View Profile</Menu.Item>
-      <Menu.Item key="change-to-leader">Change to Leader</Menu.Item>
-      <Menu.Item key="remove-member">Remove Member</Menu.Item>
+      {isLeader && (
+        <>
+          {member?.status === MEMBER_STATUS.INGROUP && (
+            <>
+              <Menu.Item key="change-to-leader">Change to Leader</Menu.Item>
+            </>
+          )}
+          <Menu.Item key="remove-member">Remove Member</Menu.Item>
+        </>
+      )}
     </Menu>
   );
   return (

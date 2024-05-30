@@ -53,9 +53,9 @@ class GroupStore {
         });
     });
   };
-  @action updateInvitationStatus = (groupId, status) => {
+  @action updateInvitationStatus = (groupId, status, studentId) => {
     return new Promise((resolve, reject) => {
-      GroupRequest.updateInvitationStatus(groupId, status)
+      GroupRequest.updateInvitationStatus(groupId, status, studentId)
         .then((response) => {
           resolve(response);
         })
@@ -78,6 +78,17 @@ class GroupStore {
   @action updateStatus = (groupId, status, studentId) => {
     return new Promise((resolve, reject) => {
       GroupRequest.updateStatus(groupId, status, studentId)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action empowerOwner = (groupId, studentId) => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.empowerOwner(groupId, studentId)
         .then((response) => {
           resolve(response);
         })

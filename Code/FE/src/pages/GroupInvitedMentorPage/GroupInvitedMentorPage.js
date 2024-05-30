@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { Button, Modal, message,Tooltip } from "antd";
+import { Button, Modal, message, Tooltip } from "antd";
 import { CloseCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import uuid from "uuid";
 import DashboardLayout from "../../layouts/DashboardLayout";
@@ -19,20 +19,20 @@ const GroupInvitedMentorPage = (props) => {
     mentorStore,
     authenticationStore,
   } = props;
-  
+
   const [listGroupMentorRegistered, setListGroupMentorRegistered] = useState();
-  useEffect( () => {
+  useEffect(() => {
     if (authenticationStore.currentUser) {
       getListMentorRegistered();
     }
   }, [authenticationStore.currentUser]);
   const getListMentorRegistered = async () => {
-    loadingAnimationStore.setTableLoading(true);
+    // loadingAnimationStore.setTableLoading(true);
     // const res = await mentorStore.getGroupMentorRegistered().finally(() => {
     //   loadingAnimationStore.setTableLoading(false);
     // });
     // setListGroupMentorRegistered(res.data);
-    console.log(res);
+    // console.log(res);
   };
 
   const showConfirmModal = (action, record) => {
@@ -62,62 +62,62 @@ const GroupInvitedMentorPage = (props) => {
       id: 1,
       name: "John Doe",
       vietnameseTitle: "Giám đốc",
-      studentLeader: "Alice Nguyen"
+      studentLeader: "Alice Nguyen",
     },
     {
       id: 2,
       name: "Jane Smith",
       vietnameseTitle: "Trưởng phòng",
-      studentLeader: "Bob Tran"
+      studentLeader: "Bob Tran",
     },
     {
       id: 3,
       name: "Michael Johnson",
       vietnameseTitle: "Kỹ sư trưởng",
-      studentLeader: "Charlie Lee"
+      studentLeader: "Charlie Lee",
     },
     {
       id: 4,
       name: "Sarah Lee",
       vietnameseTitle: "Nhân viên",
-      studentLeader: "David Pham"
+      studentLeader: "David Pham",
     },
     {
       id: 5,
       name: "David Kim",
       vietnameseTitle: "Quản lý",
-      studentLeader: "Emily Vu"
+      studentLeader: "Emily Vu",
     },
     {
       id: 6,
       name: "Emily Chen",
       vietnameseTitle: "Trợ lý",
-      studentLeader: "Frank Hoang"
+      studentLeader: "Frank Hoang",
     },
     {
       id: 7,
       name: "William Park",
       vietnameseTitle: "Chuyên viên",
-      studentLeader: "Gina Nguyen"
+      studentLeader: "Gina Nguyen",
     },
     {
       id: 8,
       name: "Jessica Nguyen",
       vietnameseTitle: "Trưởng phòng",
-      studentLeader: "Henry Tran"
+      studentLeader: "Henry Tran",
     },
     {
       id: 9,
       name: "Benjamin Lim",
       vietnameseTitle: "Kỹ sư",
-      studentLeader: "Isabella Phan"
+      studentLeader: "Isabella Phan",
     },
     {
       id: 10,
       name: "Olivia Tran",
       vietnameseTitle: "Nhân viên",
-      studentLeader: "Jacob Le"
-    }
+      studentLeader: "Jacob Le",
+    },
   ];
 
   const columns = [
@@ -128,22 +128,22 @@ const GroupInvitedMentorPage = (props) => {
     },
     {
       title: "Group Name",
-      width: "27%",
+      width: "25%",
       render: (record) => record?.name,
     },
     {
       title: "Vietnamese Title",
-      width: "27%",
+      width: "25%",
       render: (record) => record?.vietnameseTitle,
     },
     {
       title: "Student Leader",
-      width: "27%",
+      width: "25%",
       render: (record) => record?.studentLeader,
     },
     {
       title: "Action",
-      width: "14%",
+      width: "20%",
       align: "center",
       render: (record) => (
         <div>
