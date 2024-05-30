@@ -67,8 +67,8 @@ public class MemberServiceImpl implements MemberService {
             Long studentId = Long.valueOf(updateInvitationStatusRequest.getStudentId());
 
             Group group = groupRepository.findById(Long.valueOf(groupId)).orElseThrow(() -> new ServiceException(ErrorCode.GROUP_NOT_FOUND));
-            Member member1 = memberRepository.findByStudentIdAndGroupId(studentId,groupId);
-            if(member1 ==null){
+            Member member1 = memberRepository.findByStudentIdAndGroupId(studentId, groupId);
+            if (member1 == null) {
                 throw new ServiceException(ErrorCode.STUDENT_NOT_FOUND);
             }
             //student accept to join group or reject to join group // out group
@@ -92,7 +92,7 @@ public class MemberServiceImpl implements MemberService {
             }
             //Owner remove member or remove request
             else {
-                if (!memberRepository.findByStudentIdAndGroupId(user.getStudent().getId(),groupId).getRole().equals(Constants.MemberRole.OWNER)) {
+                if (!memberRepository.findByStudentIdAndGroupId(user.getStudent().getId(), groupId).getRole().equals(Constants.MemberRole.OWNER)) {
                     throw new ServiceException(ErrorCode.USER_NOT_ALLOW);
                 } else {
                     if (updateInvitationStatusRequest.getStatus().equals(Constants.MemberStatus.INGROUP)) {
@@ -100,8 +100,7 @@ public class MemberServiceImpl implements MemberService {
                         memberRepository.save(member1);
                         //set thong bao remove member
                         return modelMapper.map(member1, MemberResponse.class);
-                    }
-                    else if(updateInvitationStatusRequest.getStatus().equals(Constants.MemberStatus.PENDING)) {
+                    } else if (updateInvitationStatusRequest.getStatus().equals(Constants.MemberStatus.PENDING)) {
                         member1.setStatus(Constants.MemberStatus.OUTGROUP);
                         memberRepository.save(member1);
                         //set thong bao remove request
@@ -129,6 +128,7 @@ public class MemberServiceImpl implements MemberService {
             throw new ServiceException(ErrorCode.FAILED_GET_IVITATIONS);
         }
     }
+
     @Override
     public List<MemberDTO> getGroupMemberIncludePending(int groupId) throws ServiceException {
         try {
@@ -154,7 +154,7 @@ public class MemberServiceImpl implements MemberService {
                 throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
             }
             Group group1 = group.get();
-            if (!memberRepository.findByStudentIdAndGroupId(user.getStudent().getId(),Integer.parseInt(Long.toString(group1.getId()))).getRole().equals(Constants.MemberRole.OWNER)) {
+            if (!memberRepository.findByStudentIdAndGroupId(user.getStudent().getId(), Integer.parseInt(Long.toString(group1.getId()))).getRole().equals(Constants.MemberRole.OWNER)) {
                 throw new ServiceException(ErrorCode.FAILED_INVITE_MEMBER);
             }
             List<Member> members = memberRepository.findAllByGroupIdAndStatus(Long.valueOf(inviteMemberRequest.getGroupId()), Constants.MemberStatus.INGROUP);
@@ -172,8 +172,15 @@ public class MemberServiceImpl implements MemberService {
                     throw new ServiceException(ErrorCode.STUDENT_ALREADY_IN_A_GROUP);
                 }
                 Student student1 = invitedStudent.get();
-                Member newMember = inviteMember(group1, student1);
-                newMembers.add(modelMapper.map(newMember, MemberResponse.class));
+                Member member = memberRepository.findByStudentIdAndGroupId(student1.getId(), Integer.parseInt(Long.toString(group1.getId())));
+                if(member != null){
+                    member.setStatus(Constants.MemberStatus.PENDING);
+                    memberRepository.save(member);
+                    newMembers.add(modelMapper.map(member, MemberResponse.class));
+                }else {
+                    Member newMember = inviteMember(group1, student1);
+                    newMembers.add(modelMapper.map(newMember, MemberResponse.class));
+                }
             }
             return newMembers;
 
@@ -182,6 +189,39 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+    @Override
+    @Transactional
+    public List<MemberResponse> empowerOwner(int groupId, int studentId) throws ServiceException {
+        try {
+            User user = userService.getCurrentUser();
+            Optional<Group> group = groupRepository.findById(Long.valueOf(groupId));
+            if (!group.isPresent()) {
+                throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
+            }
+            Member owner = memberRepository.findByStudentIdAndGroupId(user.getStudent().getId(), groupId);
+            Member member = memberRepository.findByStudentIdAndGroupId(Long.valueOf(studentId), groupId);
+
+            if (!owner.getRole().equals(Constants.MemberRole.OWNER) || owner == null) {
+                throw new ServiceException(ErrorCode.STUDENT_NOT_FOUND);
+            }
+            if (!member.getStatus().equals(Constants.MemberStatus.INGROUP) || member == null) {
+                throw new ServiceException(ErrorCode.STUDENT_NOT_FOUND);
+            }
+            owner.setRole(Constants.MemberRole.MEMBER);
+            member.setRole(Constants.MemberRole.OWNER);
+            List<Member> members = new ArrayList<>();
+            members.add(owner);
+            members.add(member);
+            memberRepository.saveAll(members);
+            List<MemberResponse> memberResponses = new ArrayList<>();
+            for (Member member1 : members) {
+                memberResponses.add(modelMapper.map(member1, MemberResponse.class));
+            }
+            return memberResponses;
+        } catch (Exception e) {
+            throw new ServiceException(ErrorCode.FAILED_INVITE_MEMBER);
+        }
+    }
 
 
     private Member inviteMember(Group group, Student student) {

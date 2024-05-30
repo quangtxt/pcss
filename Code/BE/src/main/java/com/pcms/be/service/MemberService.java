@@ -16,5 +16,6 @@ public interface MemberService {
     List<MemberDTO> getGroupMember(int groupId) throws ServiceException;
     List<MemberDTO> getGroupMemberIncludePending(int groupId) throws ServiceException;
     List<MemberResponse> inviteMember(InviteMemberRequest inviteMemberRequest)throws ServiceException;
+    List<MemberResponse> empowerOwner(int groupId,int studentId) throws ServiceException;
 
 }

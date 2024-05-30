@@ -132,4 +132,13 @@ public class GroupController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+    @PostMapping("/empowerOwner")
+    public ResponseEntity<List<MemberResponse>> empowerOwner(@RequestParam int groupId, @RequestParam int studentId){
+        try {
+            List<MemberResponse> memberResponses = memberService.empowerOwner(groupId, studentId);
+            return ResponseEntity.ok(memberResponses);
+        } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
+    }
 }
