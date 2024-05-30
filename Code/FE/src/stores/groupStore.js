@@ -75,7 +75,7 @@ class GroupStore {
         });
     });
   };
-  @action inviteMember = (groupId, status, studentId) => {
+  @action updateStatus = (groupId, status, studentId) => {
     return new Promise((resolve, reject) => {
       GroupRequest.updateStatus(groupId, status, studentId)
         .then((response) => {

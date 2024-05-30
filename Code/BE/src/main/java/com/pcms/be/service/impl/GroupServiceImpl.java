@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,13 +57,14 @@ public class GroupServiceImpl implements GroupService {
                 m.setStatus(Constants.MemberStatus.OUTGROUP);
                 memberRepository.save(m);
             }
-            Group group = createGroupInternal(createGroupDTO, userService.getCurrentUser());
+            List<Member> memberList = new ArrayList<>();
             Member ownerGroup = new Member();
             ownerGroup.setRole(Constants.MemberRole.OWNER);
             ownerGroup.setStatus(Constants.MemberStatus.INGROUP);
             ownerGroup.setStudent(userService.getCurrentUser().getStudent());
-            ownerGroup.setGroup(group);
-            memberRepository.save(ownerGroup);
+            memberList.add(ownerGroup);    // add owner group
+
+            //add members pending
             for (Integer studentId : createGroupDTO.getListStudentID()) {
                 if (studentRepository.findById(Long.valueOf(studentId)) == null) {
                     throw new ServiceException(ErrorCode.STUDENT_NOT_FOUND);
@@ -71,8 +73,13 @@ public class GroupServiceImpl implements GroupService {
                         || memberRepository.findByStudentIdAndStatus(Long.valueOf(studentId), Constants.MemberStatus.INGROUP) != null) {
                     throw new ServiceException(ErrorCode.STUDENT_ALREADY_IN_A_GROUP);
                 }
-                inviteMember(group, studentId);
+                Member newInviteMember = new Member();
+                newInviteMember.setRole(Constants.MemberRole.MEMBER);
+                newInviteMember.setStatus(Constants.MemberStatus.PENDING);
+                newInviteMember.setStudent(studentRepository.findById(Long.valueOf(studentId)).orElse(null));
+                memberList.add(newInviteMember);
             }
+            Group group = createGroupInternal(createGroupDTO, memberList);
             GroupResponse groupResponse = modelMapper.map(group, GroupResponse.class);
             return groupResponse;
         } catch (Exception e) {
@@ -80,7 +87,10 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
-    private Group createGroupInternal(CreateGroupRequest createGroupDTO, User owner) {
+
+    @Transactional
+    @Override
+    public Group createGroupInternal(CreateGroupRequest createGroupDTO, List<Member> memberList) {
         Group group = new Group();
         group.setAbbreviations(createGroupDTO.getAbbreviations());
         group.setDescription(createGroupDTO.getDescription());
@@ -88,8 +98,16 @@ public class GroupServiceImpl implements GroupService {
         group.setName(createGroupDTO.getName());
         group.setVietnameseTitle(createGroupDTO.getVietnameseTitle());
         group.setStatus(Constants.GroupStatus.PENDING);
-        return groupRepository.save(group);
-    }
+        groupRepository.save(group);
+
+        for (Member member : memberList) {
+            member.setGroup(group);
+        }
+        group.setMembers(new HashSet<>(memberList));
+        groupRepository.save(group);
+        return group;
+    }  //tao list members
+
 
     private void inviteMember(Group group, Integer studentId) {
         Member newInviteMember = new Member();
@@ -139,7 +157,7 @@ public class GroupServiceImpl implements GroupService {
         try {
             User user = userService.getCurrentUser();
             Member member = memberRepository.findByStudentIdAndStatus(user.getStudent().getId(), Constants.MemberStatus.INGROUP);
-            if(member!= null){
+            if (member != null) {
                 GroupResponse groupResponse = modelMapper.map(member.getGroup(), GroupResponse.class);
                 return groupResponse;
             }

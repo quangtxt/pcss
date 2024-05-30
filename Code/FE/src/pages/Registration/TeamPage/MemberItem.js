@@ -57,7 +57,7 @@ const MemberItem = (props) => {
     authenticationStore,
     groupStore,
     history,
-    setSelectedStudent,
+    setRefresh,
     group,
     member,
   } = props;
@@ -80,12 +80,12 @@ const MemberItem = (props) => {
   };
   const handleRemoveMember = async () => {
     try {
-      await groupStore.inviteMember(
+      await groupStore.updateStatus(
         group.id,
         MEMBER_STATUS.PENDING,
         member?.student.id
       );
-      setSelectedStudent([]);
+      setRefresh(true);
     } catch (err) {
       console.log(err);
     }

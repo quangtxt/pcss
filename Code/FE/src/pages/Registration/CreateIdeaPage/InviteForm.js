@@ -21,6 +21,7 @@ const InviteForm = (props) => {
     loadingAnimationStore,
     groupStore,
     setSelectedStudent,
+    setRefresh,
     group,
   } = props;
   const { currentUser } = authenticationStore;
@@ -48,7 +49,7 @@ const InviteForm = (props) => {
       setStudentsToInvite(studentsToInviteFiltered);
     }
     if (authenticationStore.currentUser) getStudentList();
-  }, [authenticationStore.currentUser]);
+  }, [authenticationStore.currentUser, group]);
   const handleOptionChange = (option) => {
     setSelectedOption(option);
     const selectedIds = option.map((option) => option.value);
@@ -82,11 +83,14 @@ const InviteForm = (props) => {
       const selectedIds = selectedOption.map(
         (selectedOption) => selectedOption.value
       );
+      console.log("selectedIds", selectedIds);
       loadingAnimationStore.showSpinner(true);
       try {
         const res = await groupStore.inviteMember(group?.id, selectedIds);
         message.success("Invite members successfully.");
+        setRefresh(true);
         setSelectedStudent([]);
+        setSelectedOption(null);
       } catch (err) {
         console.log(err);
         loadingAnimationStore.showSpinner(false);

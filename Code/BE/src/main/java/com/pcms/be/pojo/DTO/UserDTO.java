@@ -1,5 +1,6 @@
 package com.pcms.be.pojo.DTO;
 
+import com.pcms.be.pojo.response.GroupResponse;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,5 +16,5 @@ public class UserDTO {
     public String email;
     private List<RoleDTO> roles = new ArrayList<>();
     public CampusDTO campus;
-    public GroupDTO group;
+    public GroupResponse group;
 }
