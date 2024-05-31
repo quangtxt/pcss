@@ -47,7 +47,7 @@ export const LoginWrapper = styled.div`
   `
 
 export const Profile = styled.div`
-.btnEdit, .btnCancel, .btnAdd, .btnImport {
+.btnEdit, .btnCancel, .btnAdd, .btnImport, .btnDownload, .btnUpload {
   border-radius: 8px;
   color: #fff;
   font-size: 14px;
@@ -88,6 +88,23 @@ export const Profile = styled.div`
   border: 1px solid rgb(204, 204, 204);
   background-color: rgb(204, 204, 204);
   color: #000;
+}
+.btnUpload {
+  border: 1px solid rgb(204, 204, 204, 0.6);
+  background-color: #fff;
+  color: #000;
+}
+..btnUpload:hover {  
+  background-color: rgb(204, 204, 204, 0.6);
+  color: #000;
+}
+.btnDownload {
+  border: 1px solid #f0062e;
+  background-color: #f0062e;
+}
+.btnDownload:hover {
+  border: 1px solid #f0062e;
+  background-color: #f0062e;
 }
 .grBtn {
   align-items: center;
@@ -265,7 +282,7 @@ export const Profile = styled.div`
   background: rgba(204, 204, 204, 0.8);
 }
 .changeEmail {
-  display: none;
+  display: block;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -382,4 +399,16 @@ export const Profile = styled.div`
     }
   }
 }
+`
+
+export const GroupButton = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+`
+export const BoldContent = styled.div`
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
 `

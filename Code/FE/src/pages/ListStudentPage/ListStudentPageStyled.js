@@ -105,7 +105,6 @@ export const TableStudents = styled.div`
 .grBtn {
   margin-top: 0 !important;
   margin-bottom: 20px !important;
-  
 }
 table {
   th, td {
@@ -127,4 +126,23 @@ table {
       width: 35%;
   }
 }
+`;
+export const FlexBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+export const PopupImport = styled.div`
+  .formImport {
+      max-width: 570px !important;
+      width: 100% !important; 
+  }
+  .tbStudent {
+    margin-bottom: 20px;
+    overflow: auto;
+    table {
+      width: 800px !important;
+    }
+  }
 `;

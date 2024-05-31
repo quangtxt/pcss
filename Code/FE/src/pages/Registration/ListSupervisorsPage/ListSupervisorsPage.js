@@ -107,7 +107,7 @@ const ListSupervisorsPage = (props) => {
           </div>
           <TableComponent
             rowKey={(record) => record.id || uuid()}
-            dataSource={mentorList}
+            // dataSource={mentorList}
             columns={columns}
             pagination={false}
             loading={loadingAnimationStore.tableLoading}

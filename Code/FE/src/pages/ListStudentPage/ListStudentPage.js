@@ -6,7 +6,7 @@ import {
 } from "@ant-design/icons";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { Button, Pagination, Input, Form } from "antd";
+import { Button, Pagination, Input } from "antd";
 import uuid from "uuid";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { TableBottomPaginationBlock } from "../../components/Common/Table";
@@ -14,8 +14,9 @@ import ContentBlockWrapper from "../../components/ContentBlockWrapper";
 import PageTitle from "../../components/PageTitle";
 import { Helmet } from "react-helmet/es/Helmet";
 import { ForContent, TableStudents } from "./ListStudentPageStyled";
-import { Profile } from "../ProfilePage/ProfilePageStyled";
+import { Profile, GroupButton } from "../RegProfilePage/RegProfilePageStyled";
 import TableComponent from "../../components/Common/TableComponent";
+import PopupImportExcel from "./PopupImportExcel";
 
 const { Search } = Input;
 const { TextArea } = Input;
@@ -38,6 +39,8 @@ const ListStudentPage = (props) => {
 
   const [isAdd, setIsAdd] = useState(false);
   const [isImport, setIsImport] = useState(false);
+
+  const [isVisiblePopup, setIsVisiblePopup] = useState(false);
 
   useEffect(() => {
     if (authenticationStore.currentUser) {
@@ -142,16 +145,10 @@ const ListStudentPage = (props) => {
                 className="searchInput"
               />
             </div>
-            <div className="grBtn">
-              <Button className="btnAdd" onClick={handleAdd}>
-                <UserAddOutlined />
-                Add a Student
-              </Button>
-              <Button className="btnImport" onClick={handleImport}>
-                <FolderAddOutlined />
-                Import Excel
-              </Button>
-            </div>
+            <GroupButton className="grBtn">
+              <Button className="btnAdd" onClick={setIsVisiblePopup}><UserAddOutlined />Add a Student</Button>
+              <Button className="btnImport" onClick={setIsVisiblePopup}><FolderAddOutlined />Import Excel</Button>
+            </GroupButton>
             <TableComponent
               rowKey={(record) => record.id || uuid()}
               dataSource={mentorList}
@@ -178,7 +175,7 @@ const ListStudentPage = (props) => {
               showLessItems
             />
           </div>
-          <Form
+          {/* <Form
             {...formItemLayout}
             variant="filled"
             onFinish={handleSubmit}
@@ -224,45 +221,13 @@ const ListStudentPage = (props) => {
               </Button>
               <Button className="btnEdit">Submit</Button>
             </div>
-          </Form>
-          <Form
-            {...formItemLayout}
-            variant="filled"
-            onFinish={handleSubmit}
-            className={`changeEmail ${isImport ? "active" : ""}`}
-          >
-            <p className="bigTitle">Verify Your Alternative Email</p>
-            <div className="content">
-              <p>Enter the verify code sent to</p>
-              <p>
-                <span>hieupbhe163832@fpt.edu.vn</span>. Did not get the code?
-              </p>
-              <a href="">Resend</a>
-            </div>
-            <p className="verify">Verification Code</p>
-            <div className="inputForm">
-              <Form.Item
-                name="name"
-                rules={[{ required: true, message: "Please input!" }]}
-              >
-                <Input
-                  style={{ maxWidth: "100%" }}
-                  placeholder="Enter verification code"
-                />
-              </Form.Item>
-            </div>
-            <div className="grBtn">
-              <Button className="btnCancel" onClick={handleImport}>
-                Cancel
-              </Button>
-              <Button className="btnEdit">Submit</Button>
-            </div>
-          </Form>
-          <div
-            className={`overlay ${isAdd ? "active" : ""} ${
-              isImport ? "active" : ""
-            }`}
-          ></div>
+          </Form> */}
+          <PopupImportExcel
+            isVisiblePopup={isVisiblePopup}
+            setIsVisiblePopup={setIsVisiblePopup}
+            handleClosePopup={() => setIsVisiblePopup(false)}
+          />
+          <div className={`overlay ${isAdd ? 'active' : ''} ${isImport ? 'active' : ''}`}></div>
         </Profile>
       </ContentBlockWrapper>
     </DashboardLayout>
