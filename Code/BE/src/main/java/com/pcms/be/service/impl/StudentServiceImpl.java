@@ -13,6 +13,7 @@ import com.pcms.be.pojo.request.AddMentorRequest;
 import com.pcms.be.pojo.request.AddStudentRequest;
 import com.pcms.be.repository.*;
 import com.pcms.be.service.StudentService;
+import com.pcms.be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -57,6 +58,8 @@ public class StudentServiceImpl implements StudentService {
     private MentorRepository mentorRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private UserService userService;
 
     private final ModelMapper modelMapper;
     private final ValidateData validateData;
@@ -164,6 +167,7 @@ public class StudentServiceImpl implements StudentService {
             if (studentRepository.findByEmail(addStudentRequest.getEmail()).isPresent()){
                 throw new ServiceException(ErrorCode.USER_DUPLICATE_EMAIL);
             }else {
+                Campus campus = userService.getCurrentUser().getCampus();
                 Set<Role> roles = new HashSet<>();
                 roles.add(roleRepository.findByName(Constants.RoleConstants.STUDENT).orElseThrow());
                 User newUser = new User();
@@ -173,6 +177,7 @@ public class StudentServiceImpl implements StudentService {
                 newUser.setStatus(true);
                 newUser.setIsAdmin(false);
                 newUser.setRoles(roles);
+                newUser.setCampus(campus);
                 userRepository.save(newUser);
                 Student newStudent = new Student();
                 newStudent.setUser(newUser);
@@ -194,6 +199,7 @@ public class StudentServiceImpl implements StudentService {
             //public final List<String> formatExcel = new ArrayList<>(List.of("RollNumber", "Email", "MemberCode", "FullName", "Status", "Note"));
             Workbook workbook = new XSSFWorkbook(file.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
+            Campus campus = userService.getCurrentUser().getCampus();
             for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
 
                 String userName = sheet.getRow(i).getCell(2).getStringCellValue();
@@ -211,6 +217,7 @@ public class StudentServiceImpl implements StudentService {
                     newUser.setStatus(true);
                     newUser.setIsAdmin(false);
                     newUser.setRoles(roles);
+                    newUser.setCampus(campus);
                     userRepository.save(newUser);
                     Student newStudent = new Student();
                     newStudent.setUser(newUser);
