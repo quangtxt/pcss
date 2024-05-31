@@ -6,7 +6,7 @@ import {
 } from "@ant-design/icons";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { Button, Pagination, Input } from "antd";
+import { Button, Pagination, Input, Form } from "antd";
 import uuid from "uuid";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { TableBottomPaginationBlock } from "../../components/Common/Table";
@@ -146,7 +146,7 @@ const ListStudentPage = (props) => {
               />
             </div>
             <GroupButton className="grBtn">
-              <Button className="btnAdd" onClick={setIsVisiblePopup}><UserAddOutlined />Add a Student</Button>
+              <Button className="btnAdd" onClick={handleAdd}><UserAddOutlined />Add a Student</Button>
               <Button className="btnImport" onClick={setIsVisiblePopup}><FolderAddOutlined />Import Excel</Button>
             </GroupButton>
             <TableComponent
@@ -175,7 +175,7 @@ const ListStudentPage = (props) => {
               showLessItems
             />
           </div>
-          {/* <Form
+          <Form
             {...formItemLayout}
             variant="filled"
             onFinish={handleSubmit}
@@ -221,7 +221,7 @@ const ListStudentPage = (props) => {
               </Button>
               <Button className="btnEdit">Submit</Button>
             </div>
-          </Form> */}
+          </Form>
           <PopupImportExcel
             isVisiblePopup={isVisiblePopup}
             setIsVisiblePopup={setIsVisiblePopup}
