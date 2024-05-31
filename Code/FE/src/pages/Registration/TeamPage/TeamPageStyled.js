@@ -203,7 +203,7 @@ export const Team = styled.div`
     display: flex;
     justify-content: center;
   }
-  .numMemberInfor{
+  .numMemberInfor {
     font-size: 15px;
   }
 `;

@@ -27,6 +27,31 @@ export const GroupRequest = {
         listStudentID: selectedStudent,
       },
     }),
+
+    editGroup: (
+      groupId,
+      abbreviations,
+      description,
+      keywords,
+      name,
+      vietnameseTitle,
+    ) =>
+      axios({
+        method: "post",
+        url: `${apiUrl}/api/v1/group/edit`,
+        headers: {
+          Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+          "Content-Type": "application/json",
+        },
+        data: {
+          groupId : groupId,
+          abbreviations: abbreviations,
+          description: description,
+          keywords: keywords,
+          name: name,
+          vietnameseTitle: vietnameseTitle,
+        },
+      }),
   getListInvitationToJoinGroup: () =>
     axios({
       method: "get",

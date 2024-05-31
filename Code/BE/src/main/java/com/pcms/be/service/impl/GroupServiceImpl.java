@@ -127,7 +127,7 @@ public class GroupServiceImpl implements GroupService {
             Group group = group1.get();
             User user = userService.getCurrentUser();
             Member member = memberRepository.findByStudentIdAndGroupId(user.getStudent().getId(), editGroupDTO.getGroupId());
-            if (!member.getStatus().equals(Constants.MemberRole.OWNER)) {
+            if (!member.getRole().equals(Constants.MemberRole.OWNER)) {
                 throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
             }
             if (!group.getStatus().equals(Constants.GroupStatus.PENDING)) {

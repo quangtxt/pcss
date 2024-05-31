@@ -12,6 +12,8 @@ import InviteForm from "../CreateIdeaPage/InviteForm";
 import { DATE_FORMAT_SLASH, MEMBER_STATUS } from "../../../constants";
 import moment from "moment";
 import EmptyPage from "../../EmptyPage/EmptyPage";
+import PopupEditTeam from "./PopupEditTeam";
+import PopupSendToMentor from "./PopupSendToMentor";
 
 const RegTeamPage = (props) => {
   const {
@@ -22,22 +24,15 @@ const RegTeamPage = (props) => {
   } = props;
   const { currentUser } = authenticationStore;
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVisiblePopup, setIsVisiblePopup] = useState(false);
+  const [isVisiblePopupSend, setIsVisiblePopupSend] = useState(false);
+
   const [members, setMembers] = useState([]);
   const [group, setGroup] = useState();
   const [availableSlotMember, setAvailableSlotMember] = useState(0);
   const [selectedStudent, setSelectedStudent] = useState([]);
   const [refresh, setRefresh] = useState(false);
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
   const [size, setSize] = useState("large");
 
   useEffect(() => {
@@ -60,6 +55,14 @@ const RegTeamPage = (props) => {
       loadingAnimationStore.showSpinner(false);
     }
   };
+
+  function navigateToEdit() {
+    setIsVisiblePopup(true);
+  }
+
+  function navigateToSend() {
+    setIsVisiblePopupSend(true);
+  }
   return (
     <DashboardLayout>
       <Helmet>
@@ -90,11 +93,19 @@ const RegTeamPage = (props) => {
                     </div>
                   </div>
                   <div className="btnAddMem">
-                    <form
-                      action="/MyGroup/LeaveGroup?projectId=3929"
-                      method="post"
-                      id="formLeaveGroup"
-                    ></form>
+                    <div className="centered-button">
+                      <Button
+                        group={group}
+                        style={{ marginTop: "20px " }}
+                        className="btnAdd"
+                        type="primary"
+                        shape="round"
+                        icon={<EditOutlined />}
+                        onClick={navigateToEdit}
+                      >
+                        Edit Team Profile
+                      </Button>
+                    </div>
                   </div>
                 </div>
                 <div className="someInforms">
@@ -201,36 +212,15 @@ const RegTeamPage = (props) => {
               </div>
               <div className="centered-button">
                 <Button
-                  type="primary"
+                  group={group}
                   shape="round"
                   icon={<SendOutlined />}
                   size={size}
+                  onClick={navigateToSend}
                 >
                   Send
                 </Button>
               </div>
-              <div className="centered-button">
-                <Button
-                  style={{ marginTop: "20px " }}
-                  className="btnAdd"
-                  type="primary"
-                  shape="round"
-                  icon={<EditOutlined />}
-                  onClick={showModal}
-                >
-                  Edit Team Profile
-                </Button>
-              </div>
-              <Modal
-                title="Basic Modal"
-                open={isModalOpen}
-                onOk={handleOk}
-                onCancel={handleCancel}
-              >
-                <p>Some contents...</p>
-                <p>Some contents...</p>
-                <p>Some contents...</p>
-              </Modal>
             </div>
           </div>
         </Team>
@@ -240,6 +230,20 @@ const RegTeamPage = (props) => {
           content={"Please join the group to see your group information"}
         />
       )}
+      <PopupEditTeam
+        group={group}
+        isVisiblePopup={isVisiblePopup}
+        setIsVisiblePopup={setIsVisiblePopup}
+        handleClosePopup={() => setIsVisiblePopup(false)}
+        setRefresh = {setRefresh}
+      />
+
+      <PopupSendToMentor
+        group={group}
+        isVisiblePopup={isVisiblePopupSend}
+        setIsVisiblePopup={setIsVisiblePopupSend}
+        handleClosePopup={() => setIsVisiblePopupSend(false)}
+      />
     </DashboardLayout>
   );
 };
