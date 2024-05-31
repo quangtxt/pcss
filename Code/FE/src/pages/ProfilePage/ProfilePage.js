@@ -1,8 +1,17 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { UserOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Form, Input, message, Avatar, Space, Radio } from "antd";
+import { UserOutlined, EditOutlined } from '@ant-design/icons';
+
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Avatar, Space,
+  Radio,
+  Modal,
+} from "antd";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { Helmet } from "react-helmet/es/Helmet";
 import { Profile } from "./ProfilePageStyled";
@@ -80,6 +89,19 @@ const ProfilePage = (props) => {
     setIsChangingPass((prevState) => !prevState);
   }, []);
 
+ // Sử dụng state để quản lý trạng thái hiển thị/ẩn modal
+ const [modalIsOpen, setModalIsOpen] = useState(false);
+
+ // Hàm mở modal
+ const openModal = () => {
+   setModalIsOpen(true);
+ };
+
+ // Hàm đóng modal
+ const closeModal = () => {
+   setModalIsOpen(false);
+ };
+
   return (
     <DashboardLayout>
       <Helmet>
@@ -129,13 +151,8 @@ const ProfilePage = (props) => {
                   name="name"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Input
-                    style={{ maxWidth: "100%" }}
-                    value={"hieupbhe163832@fpt.edu.vn"}
-                  />
-                  <Button className="btnChange" onClick={handleChangeEmail}>
-                    Change
-                  </Button>
+                  <Input style={{ maxWidth: '100%' }} value={"hieupbhe163832@fpt.edu.vn"} />
+                  <Button className="btnChange" onClick={showModal}>Change</Button>
                 </Form.Item>
               </div>
               <div className={`inputForm ${isEditing ? "active" : ""}`}>
@@ -263,40 +280,50 @@ const ProfilePage = (props) => {
             </div>
           </div>
         </Form>
-        <Form
-          {...formItemLayout}
-          variant="filled"
-          onFinish={handleSubmit}
-          className={`changeEmail ${isChangingEmail ? "active" : ""}`}
-        >
-          <p className="bigTitle">Verify Your Alternative Email</p>
-          <div className="content">
-            <p>Enter the verify code sent to</p>
-            <p>
-              <span>hieupbhe163832@fpt.edu.vn</span>. Did not get the code?
-            </p>
-            <a href="">Resend</a>
-          </div>
-          <p className="verify">Verification Code</p>
-          <div className="inputForm">
-            <Form.Item
-              name="name"
-              rules={[{ required: true, message: "Please input!" }]}
-            >
-              <Input
-                style={{ maxWidth: "100%" }}
-                placeholder="Enter verification code"
-              />
-            </Form.Item>
-          </div>
-          <div className="grBtn">
-            <Button className="btnCancel" onClick={handleChangeEmail}>
-              Cancel
-            </Button>
-            <Button className="btnEdit">Submit</Button>
-          </div>
-        </Form>
-        <Form
+        <div>
+          {/* Nút mở modal */}
+          <button onClick={openModal}>Mở Modal</button>
+
+          {/* Hiển thị modal */}
+          <Modal
+            isOpen={modalIsOpen}
+            onRequestClose={closeModal}
+            style={customStyles}
+            contentLabel="Example Modal"
+          >
+            <h2>Đây là modal</h2>
+            <p>Nội dung của modal</p>
+            {/* Nút đóng modal */}
+            <button onClick={closeModal}>Đóng</button>
+          </Modal>
+        </div>
+        {/* <Form
+            {...formItemLayout}
+            variant="filled"
+            onFinish={handleSubmit}
+            className="changeEmail"
+          >
+            <p className="bigTitle">Verify Your Alternative Email</p>
+            <div className="content">
+              <p>Enter the verify code sent to</p>
+              <p><span>hieupbhe163832@fpt.edu.vn</span>. Did not get the code?</p>
+              <a href="">Resend</a>
+            </div>
+            <p className="verify">Verification Code</p>
+            <div className="inputForm">
+              <Form.Item
+                name="name"
+                rules={[{ required: true, message: "Please input!" }]}
+              >
+                <Input style={{ maxWidth: '100%' }} placeholder="Enter verification code" />
+              </Form.Item>
+            </div>
+            <div className="grBtn">
+              <Button className="btnCancel" onClick={handleChangeEmail}>Cancel</Button>
+              <Button className="btnEdit">Submit</Button>
+            </div>
+          </Form> */}
+        {/* <Form
           {...formItemLayout}
           variant="filled"
           onFinish={handleSubmit}
@@ -312,25 +339,15 @@ const ProfilePage = (props) => {
               name="name"
               rules={[{ required: true, message: "Please input!" }]}
             >
-              <Input
-                style={{ maxWidth: "100%" }}
-                placeholder="Enter your password"
-                type="password"
-              />
+              <Input style={{ maxWidth: '100%' }} placeholder="Enter your password" type="password" />
             </Form.Item>
           </div>
           <div className="grBtn">
-            <Button className="btnCancel" onClick={handleChangePass}>
-              Cancel
-            </Button>
+            <Button className="btnCancel" onClick={handleChangePass}>Cancel</Button>
             <Button className="btnEdit">Submit</Button>
           </div>
-        </Form>
-        <div
-          className={`overlay ${isChangingEmail ? "active" : ""} ${
-            isChangingPass ? "active" : ""
-          }`}
-        ></div>
+        </Form> */}
+        <div className={`overlay ${isChangingEmail ? 'active' : ''} ${isChangingPass ? 'active' : ''}`}></div>
       </Profile>
     </DashboardLayout>
   );
