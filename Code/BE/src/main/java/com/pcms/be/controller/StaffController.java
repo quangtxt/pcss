@@ -1,5 +1,7 @@
 package com.pcms.be.controller;
 
+import com.pcms.be.domain.user.Group;
+import com.pcms.be.domain.user.Member;
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
@@ -7,6 +9,9 @@ import com.pcms.be.pojo.DTO.MentorDTO;
 import com.pcms.be.pojo.DTO.StudentDTO;
 import com.pcms.be.pojo.request.AddMentorRequest;
 import com.pcms.be.pojo.request.AddStudentRequest;
+import com.pcms.be.repository.GroupRepository;
+import com.pcms.be.repository.MemberRepository;
+import com.pcms.be.service.GroupService;
 import com.pcms.be.service.MentorService;
 import com.pcms.be.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -26,6 +34,13 @@ public class StaffController {
 
     @Autowired
     private MentorService mentorService;
+    @Autowired
+    private GroupService groupService;
+
+    @Autowired
+    private GroupRepository groupRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
     @GetMapping("/checkFormatStudentsExcel")//done
     public  ResponseEntity<String> checkFormatExcel_Students(@RequestParam("file") MultipartFile file) throws ServiceException {
@@ -56,7 +71,7 @@ public class StaffController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
-    @PostMapping("/addMentor")
+    @PostMapping("/addMentor")//done
     public ResponseEntity<MentorDTO> addMentor(@RequestBody AddMentorRequest addMentorRequest) throws ServiceException {
         try {
             return mentorService.addMentor(addMentorRequest);
@@ -69,8 +84,19 @@ public class StaffController {
         return mentorService.addMentorsByExcel(file);
     }
 
-    @PostMapping("/student/automatically-sort")
-    public ResponseEntity<String> automaticallySortStudentNoneGroup(){
-        return null;
+    @PostMapping("/student/automatically/create/groups")
+    public ResponseEntity<String> automaticallyCreateGroups() throws ServiceException {
+        try {
+            return groupService.automaticallyCreateGroups();
+        } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
+
+    }
+    @DeleteMapping("/delete/group")
+    public ResponseEntity<String> deleteGroupById(@RequestParam int id){
+        Group group = groupRepository.findById(Long.valueOf(id)).orElseThrow();
+        groupRepository.delete(group);
+        return ResponseEntity.ok("ok");
     }
 }

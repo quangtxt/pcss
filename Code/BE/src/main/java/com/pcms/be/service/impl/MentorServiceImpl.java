@@ -1,5 +1,6 @@
 package com.pcms.be.service.impl;
 
+import com.pcms.be.domain.Campus;
 import com.pcms.be.domain.user.Mentor;
 import com.pcms.be.domain.user.Role;
 import com.pcms.be.domain.user.User;
@@ -15,6 +16,7 @@ import com.pcms.be.repository.MentorRepository;
 import com.pcms.be.repository.RoleRepository;
 import com.pcms.be.repository.UserRepository;
 import com.pcms.be.service.MentorService;
+import com.pcms.be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -42,6 +44,8 @@ public class MentorServiceImpl implements MentorService {
     private MentorRepository mentorRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private UserService userService;
     @Override
     public MentorProfileResponse getMentorProfile(int Id) throws ServiceException {
         Optional<User> user = userRepository.findById((long) Id);
@@ -147,6 +151,7 @@ public class MentorServiceImpl implements MentorService {
             if (userRepository.findByEmail(addMentorRequest.getFuEmail()).isPresent()){
                 throw new ServiceException(ErrorCode.USER_DUPLICATE_EMAIL);
             } else {
+                Campus campus = userService.getCurrentUser().getCampus();
                 Set<Role> roles = new HashSet<>();
                 roles.add(roleRepository.findByName(Constants.RoleConstants.MENTOR).orElseThrow());
                 User newUser = new User();
@@ -156,6 +161,7 @@ public class MentorServiceImpl implements MentorService {
                 newUser.setStatus(true);
                 newUser.setIsAdmin(false);
                 newUser.setRoles(roles);
+                newUser.setCampus(campus);
                 userRepository.save(newUser);
                 Mentor newMentor = new Mentor();
                 newMentor.setUser(newUser);
@@ -178,6 +184,7 @@ public class MentorServiceImpl implements MentorService {
             //("Empl_ID", "Name", "Gender", "Branch", "Parent Department", "Child Department", "Job Title", "Email FPT", "Email FE", "Telephone", "Contract type");
             Workbook workbook = new XSSFWorkbook(file.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
+            Campus campus = userService.getCurrentUser().getCampus();
             for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++){
 
                 String emailFE = sheet.getRow(i).getCell(8).getStringCellValue();
@@ -199,6 +206,7 @@ public class MentorServiceImpl implements MentorService {
                     newUser.setStatus(true);
                     newUser.setIsAdmin(false);
                     newUser.setRoles(roles);
+                    newUser.setCampus(campus);
                     userRepository.save(newUser);
                     Mentor mentor = new Mentor();
                     mentor.setUser(newUser);

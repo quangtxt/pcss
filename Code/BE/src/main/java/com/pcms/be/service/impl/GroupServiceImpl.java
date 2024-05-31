@@ -16,7 +16,9 @@ import com.pcms.be.service.GroupService;
 import com.pcms.be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -233,4 +235,144 @@ public class GroupServiceImpl implements GroupService {
             throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
         }
     }
+    public ResponseEntity<String> automaticallyCreateGroups() throws ServiceException {
+        try {
+            //Lấy danh sách student chưa có group (danh sách sv1)
+            List<Student> listStudentNoneGroup = studentRepository.findStudentsNotInMemberOrInactive();
+            if(!listStudentNoneGroup.isEmpty()){
+                Collections.shuffle(listStudentNoneGroup);
+
+            }
+            //Lấy danh sách nhóm chưa đầy đủ thành viên (danh sách gr1)
+            List<Group> listGroupIsNotEnoughMember = groupRepository.findGroupsWithMemberCountLessThan(5);
+            clearGroup(listGroupIsNotEnoughMember);
+
+            // Lấy các sinh viên từ sv1 lấp đầy vào gr1.
+            setStudentsToGroup(listGroupIsNotEnoughMember, listStudentNoneGroup);
+
+//            // Sau khi thực hiện sẽ xảy ra 3 trường hợp
+//            // TH1: danh sách sv1 vẫn còn, danh sách gr1 đã bị lấp đầy thành các group hoàn chỉnh có 5 thành viên
+//            // TH2: danh sách sv1 đã hết, danh sách gr1 vẫn còn những nhóm chưa đủ thành viên
+//            // TH3: perfect case
+            listGroupIsNotEnoughMember = groupRepository.findGroupsWithMemberCountLessThan(5);
+//            // TH1
+            if (!listStudentNoneGroup.isEmpty()){
+                if (listStudentNoneGroup.size() >= 5){ //DONE:  Nếu lượng sinh viên lớn hơn hoặc bằng 5 thì khởi tạo nhiều nhóm
+                    createGroups(listStudentNoneGroup);
+                }else{ //DONE:  Nếu lượng sinh viên nhỏ hơn 5 thì sếp các sinh viên vào các nhóm random
+                    setEachStudentToEachGroup(listStudentNoneGroup);
+                }
+            }else if (!listGroupIsNotEnoughMember.isEmpty()){ //TH2
+               int totalMember = listGroupIsNotEnoughMember.stream()
+                       .mapToInt(group -> group.getMembers().size())
+                       .sum();
+                List<Student> students = new ArrayList<>();
+                //Lấy các danh sách sinh viên và xoá nhóm chưa đầy sinh viên
+                for (Group gr : listGroupIsNotEnoughMember){
+                    for (Member member : gr.getMembers()){
+                        students.add(member.getStudent());
+                    }
+                    groupRepository.delete(gr);
+                }
+               if (totalMember >= 5){ //
+                   createGroups(students);
+               }else{// Cho các sinh viên này vào các nhóm random
+                   setEachStudentToEachGroup(students);
+               }
+            }
+        }catch (Exception e){
+            throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
+        }
+        return ResponseEntity.ok("Automatically grouped successfully");
+    }
+    public void createGroup(List<Student> students){
+        Group group = new Group();
+        group.setName("Auto");
+        groupRepository.save(group);
+        for (Student student : students) {
+            Member member = new Member();
+            member.setRole(Constants.MemberRole.MEMBER);
+            member.setGroup(group);
+            member.setStatus(Constants.MemberStatus.INGROUP);
+            member.setStudent(student);
+            memberRepository.save(member);
+        }
+    }
+    public void createGroups(List<Student> students){
+        List<Student> listStudentToCreateNewGroup = students.subList(0, students.size() - students.size()%5);
+        for (int i = 0; i < listStudentToCreateNewGroup.size(); i += 5) {
+            createGroup(listStudentToCreateNewGroup.subList(i, i + 5));
+        }
+        if (students.size() % 5 != 0){
+            setEachStudentToEachGroup(students.subList(students.size() - students.size()%5, students.size()));
+        }
+    }
+    public void setEachStudentToEachGroup(List<Student> students){
+        List<Group> allGroup = groupRepository.findAll();
+        Collections.shuffle(allGroup);
+        for (int i = 0; i < students.size(); i++){
+            Member member = new Member();
+            member.setRole(Constants.MemberRole.MEMBER);
+            member.setGroup(allGroup.get(i));
+            member.setStatus(Constants.MemberStatus.INGROUP);
+            member.setStudent(students.get(i));
+            memberRepository.save(member);
+        }
+    }
+//    public void setStudentsToGroup(Group group, List<Student> students){
+//        List<Student> tempStudent = students;
+//        for (Student student : tempStudent){
+//            Member member = new Member();
+//            member.setRole(Constants.MemberRole.MEMBER);
+//            member.setGroup(group);
+//            member.setStatus(Constants.MemberStatus.INGROUP);
+//            member.setStudent(student);
+//            memberRepository.save(member);
+//        }
+//    }
+    public void setStudentsToGroup(List<Group> group, List<Student> students){
+        List<Student> recordStudents = new ArrayList<>();
+        if (!group.isEmpty() && !students.isEmpty()){
+            int indexStudent = 0;
+            for (Group gr : group){
+                if (indexStudent == students.size()){
+                    break;
+                }
+                int limit = 5 - gr.getMembers().size();
+                for (int i = 0; i < limit; i++) {
+
+                    Member member = new Member();
+                    member.setRole(Constants.MemberRole.MEMBER);
+                    member.setGroup(gr);
+                    member.setStatus(Constants.MemberStatus.INGROUP);
+                    member.setStudent(students.get(indexStudent));
+                    memberRepository.save(member);
+                    recordStudents.add(students.get(indexStudent));
+                    indexStudent++;
+                    if (indexStudent == students.size() || gr.getMembers().size() == 5 || students.isEmpty()){
+                        break;
+                    }
+                }
+            }
+            students.removeAll(recordStudents);
+        }
+        groupRepository.saveAll(group);
+    }
+
+    public void clearGroup(List<Group> groups){//test done
+        for (Group group : groups) {
+            List<Member> memberListToRemove = new ArrayList<>();
+            for (Member m : group.getMembers()) {
+                if (!m.getStatus().equalsIgnoreCase(Constants.MemberStatus.INGROUP)) {
+                    memberListToRemove.add(m);
+                }
+            }
+            if(!memberListToRemove.isEmpty()){
+                group.getMembers().removeAll(memberListToRemove);
+                groupRepository.save(group);
+            }
+        }
+    }
+
+
 }
