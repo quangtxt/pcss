@@ -31,6 +31,34 @@ class GroupStore {
         });
     });
   };
+
+  @action editGroup = (
+    groupId,
+    abbreviations,
+    description,
+    keywords,
+    name,
+    vietnameseTitle,
+  ) => {
+    
+    return new Promise((resolve, reject) => {
+      console.log("editGroup", groupId, abbreviations, name, vietnameseTitle,keywords,description);
+      GroupRequest.editGroup(
+        groupId,
+        abbreviations,
+        description,
+        keywords,
+        name,
+        vietnameseTitle,
+      )
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   @action getListInvitationToJoinGroup = () => {
     return new Promise((resolve, reject) => {
       GroupRequest.getListInvitationToJoinGroup()
