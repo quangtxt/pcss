@@ -282,7 +282,7 @@ export const Profile = styled.div`
   background: rgba(204, 204, 204, 0.8);
 }
 .changeEmail {
-  display: block;
+  display: none;
   position: fixed;
   top: 50%;
   left: 50%;

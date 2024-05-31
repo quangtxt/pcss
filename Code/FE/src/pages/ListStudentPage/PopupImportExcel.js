@@ -92,7 +92,7 @@ const PopupImportExcel = (props) => {
       visible={isVisiblePopup}
       onCancel={handleClosePopup}
       className="formImport"
-      style={{ maxWidth: "570px !important" }}
+      style={{ width: "570px !important" }}
     >
       <Profile>
         <Form
