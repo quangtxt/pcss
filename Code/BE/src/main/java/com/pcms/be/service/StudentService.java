@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 public interface StudentService {
     List<StudentResponse> getAllStudentToInvite();
@@ -24,5 +25,6 @@ public interface StudentService {
     public ResponseEntity<String> checkFormatExcel_Student(MultipartFile file) throws ServiceException;
     public ResponseEntity<StudentDTO> addStudent(AddStudentRequest addStudentRequest) throws ServiceException;
     public ResponseEntity<String> addStudentsByExcel(MultipartFile file);
+    ResponseEntity<Map<String, Object>> getListStudent(Pageable pageable);
 
 }

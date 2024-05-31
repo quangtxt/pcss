@@ -22,10 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -249,6 +246,7 @@ public class GroupServiceImpl implements GroupService {
 
             // Lấy các sinh viên từ sv1 lấp đầy vào gr1.
             setStudentsToGroup(listGroupIsNotEnoughMember, listStudentNoneGroup);
+            int size = listStudentNoneGroup.size();
 
 //            // Sau khi thực hiện sẽ xảy ra 3 trường hợp
 //            // TH1: danh sách sv1 vẫn còn, danh sách gr1 đã bị lấp đầy thành các group hoàn chỉnh có 5 thành viên
@@ -289,12 +287,17 @@ public class GroupServiceImpl implements GroupService {
         Group group = new Group();
         group.setName("Auto");
         groupRepository.save(group);
-        for (Student student : students) {
+        for (int i = 0; i < students.size() ; i++) {
             Member member = new Member();
-            member.setRole(Constants.MemberRole.MEMBER);
+
+            if (i == 0){
+                member.setRole(Constants.MemberRole.OWNER);
+            }else{
+                member.setRole(Constants.MemberRole.MEMBER);
+            }
             member.setGroup(group);
             member.setStatus(Constants.MemberStatus.INGROUP);
-            member.setStudent(student);
+            member.setStudent(students.get(i));
             memberRepository.save(member);
         }
     }
@@ -356,7 +359,6 @@ public class GroupServiceImpl implements GroupService {
             }
             students.removeAll(recordStudents);
         }
-        groupRepository.saveAll(group);
     }
 
     public void clearGroup(List<Group> groups){//test done
