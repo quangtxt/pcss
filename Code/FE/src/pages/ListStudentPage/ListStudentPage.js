@@ -14,7 +14,7 @@ import ContentBlockWrapper from "../../components/ContentBlockWrapper";
 import PageTitle from "../../components/PageTitle";
 import { Helmet } from "react-helmet/es/Helmet";
 import { ForContent, TableStudents } from "./ListStudentPageStyled";
-import { Profile, GroupButton } from "../RegProfilePage/RegProfilePageStyled";
+import { Profile, GroupButton } from "../ProfilePage/ProfilePageStyled";
 import TableComponent from "../../components/Common/TableComponent";
 import PopupImportExcel from "./PopupImportExcel";
 
