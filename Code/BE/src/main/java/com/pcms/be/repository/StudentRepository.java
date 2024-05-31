@@ -27,4 +27,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             "INNER JOIN v_user u ON u.id = s.user_id " +
             "WHERE u.email = :email", nativeQuery = true)
     Optional<Student> findByEmail(String email);
+
+    Page<Student> findAll(Pageable pageable);
 }

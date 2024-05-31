@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 @CrossOrigin(origins = "*")
@@ -41,6 +43,11 @@ public class StaffController {
     private GroupRepository groupRepository;
     @Autowired
     private MemberRepository memberRepository;
+
+    @GetMapping("/students")
+    public ResponseEntity<Map<String, Object>> getStudents(Pageable pageable){
+        return studentService.getListStudent(pageable);
+    }
 
     @GetMapping("/checkFormatStudentsExcel")//done
     public  ResponseEntity<String> checkFormatExcel_Students(@RequestParam("file") MultipartFile file) throws ServiceException {

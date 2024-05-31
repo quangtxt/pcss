@@ -236,4 +236,19 @@ public class StudentServiceImpl implements StudentService {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public ResponseEntity<Map<String, Object>> getListStudent(Pageable pageable) {
+        Page<Student> studentPage = studentRepository.findAll(pageable);
+        Map<String, Object> result = new HashMap<>();
+            List<Student> students = studentPage.getContent();
+            List<StudentDTO> studentDTOs = new ArrayList<>();
+            for (Student student : students){
+                studentDTOs.add(modelMapper.map(student, StudentDTO.class));
+            }
+            result.put("totalCount: ", studentPage.getTotalElements());
+            result.put("totalPage: ", studentPage.getTotalPages());
+            result.put("data: ", studentDTOs);
+        return ResponseEntity.ok(result);
+    }
 }
