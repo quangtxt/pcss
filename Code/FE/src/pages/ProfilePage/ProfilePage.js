@@ -1,14 +1,15 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { UserOutlined, EditOutlined } from '@ant-design/icons';
+import { UserOutlined, EditOutlined } from "@ant-design/icons";
 
 import {
   Button,
   Form,
   Input,
   message,
-  Avatar, Space,
+  Avatar,
+  Space,
   Radio,
   Modal,
 } from "antd";
@@ -22,28 +23,21 @@ const ProfilePage = (props) => {
     authenticationStore,
     loadingAnimationStore,
     groupStore,
+    studentStore,
   } = props;
 
+  const { currentUser } = authenticationStore;
   const { TextArea } = Input;
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingEmail, setIsChangingEmail] = useState(false);
   const [isChangingPass, setIsChangingPass] = useState(false);
 
+  console.log("user", currentUser.id);
   useEffect(() => {
-    (async () => {
-      loadingAnimationStore.showSpinner(true);
-      try {
-        const { data } = await authenticationStore.checkCurrentUser();
-        console.log("response", data);
-        setUser(data);
-      } catch (err) {
-        console.log(err);
-        loadingAnimationStore.showSpinner(false);
-      } finally {
-        loadingAnimationStore.showSpinner(false);
-      }
-    })();
+    getStudentProfile(currentUser.id);
+    console.log("mess");
   }, []);
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -53,30 +47,6 @@ const ProfilePage = (props) => {
       xs: { span: 24 },
       sm: { span: 14 },
     },
-  };
-  const handleSubmit = async (values) => {
-    try {
-      loadingAnimationStore.showSpinner(true);
-
-      const response = await groupStore.createGroup(
-        values.abbreviations,
-        values.description,
-        values.keywords,
-        values.name,
-        values.vietnameseTitle
-      );
-      if (response.status === 200) {
-        //neu tao gr thanh cong
-        message.success("create ok");
-        console.log(response);
-      }
-    } catch (err) {
-      console.log(err);
-      loadingAnimationStore.showSpinner(false);
-      message.error(err.en || "Login failed response status!");
-    } finally {
-      loadingAnimationStore.showSpinner(false);
-    }
   };
 
   const handleEditProfile = useCallback(() => {
@@ -89,6 +59,73 @@ const ProfilePage = (props) => {
     setIsChangingPass((prevState) => !prevState);
   }, []);
 
+  const [form] = Form.useForm();
+
+  const [student, setStudent] = useState();
+
+  const getStudentProfile = async (userId) => {
+    try {
+      loadingAnimationStore.showSpinner(true);
+      const response = await studentStore.getStudentProfileById(userId);
+      console.log("profile", response.data);
+
+      if (response.status === 200) {
+        setStudent(response.data);
+        console.log("profile", response.data.alternativeEmail);
+        form.setFieldsValue({
+          alternativeEmail: response.data.alternativeEmail,
+          facebook: response.data.facebook,
+          gender: response.data.gender,
+          phone: response.data.phone,
+          profession: response.data.profession,
+          rollNumber: response.data.rollNumber,
+          fullName: response.data.fullName,
+          email: response.data.email,
+          semester: response.data.semester,
+          specialty: response.data.specialty,
+        });
+      }
+    } catch (err) {
+      loadingAnimationStore.showSpinner(false);
+      message.error(err.en);
+      console.log("log", err);
+    } finally {
+      loadingAnimationStore.showSpinner(false);
+    }
+  };
+
+  const handleSubmit = async (values) => {
+    try {
+      loadingAnimationStore.showSpinner(true);
+      console.log("values", values.fullName);
+      const response = await studentStore.updateStudent(
+        currentUser?.id,
+        values.alternativeEmail,
+        values.facebook,
+        values.gender,
+        values.phone,
+        values.profession,
+        values.rollNumber,
+        values.fullName,
+        values.email,
+        values.semester,
+        values.specialty
+      );
+      if (response.status === 200) {
+        //sua gr thanh cong
+        setRefresh(true);
+        setIsVisiblePopup(false);
+        message.success("Update profile successfully");
+      }
+    } catch (err) {
+      console.log(err);
+      loadingAnimationStore.showSpinner(false);
+      message.error(err.en || "Login failed response status!");
+    } finally {
+      loadingAnimationStore.showSpinner(false);
+    }
+  };
+
   return (
     <DashboardLayout>
       <Helmet>
@@ -97,9 +134,11 @@ const ProfilePage = (props) => {
       <Profile>
         <Form
           {...formItemLayout}
-          variant="filled"
           onFinish={handleSubmit}
+          
           className="formProfile"
+          form={form}
+          scrollToFirstError
         >
           <div className="left">
             <p className="bigTitle">Avatar</p>
@@ -115,7 +154,7 @@ const ProfilePage = (props) => {
               >
                 <Form.Item
                   label="Phone Number"
-                  name="name"
+                  name="phone"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
                   <Input style={{ maxWidth: "100%" }} />
@@ -124,7 +163,7 @@ const ProfilePage = (props) => {
               <div className={`inputForm ${isEditing ? "active" : ""}`}>
                 <Form.Item
                   label="Facebook"
-                  name="name"
+                  name="facebook"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
                   <Input style={{ maxWidth: "100%" }} />
@@ -135,14 +174,16 @@ const ProfilePage = (props) => {
               >
                 <Form.Item
                   label="Alternative Email"
-                  name="name"
+                  name="alternativeEmail"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Input style={{ maxWidth: '100%' }} value={"hieupbhe163832@fpt.edu.vn"} />
-                  <Button className="btnChange" onClick={handleChangeEmail}>Change</Button>
+                  <Input style={{ maxWidth: "100%" }} />
+                  <Button className="btnChange" onClick={handleChangeEmail}>
+                    Change
+                  </Button>
                 </Form.Item>
               </div>
-              <div className={`inputForm ${isEditing ? "active" : ""}`}>
+              {/* <div className={`inputForm ${isEditing ? "active" : ""}`}>
                 <Form.Item
                   label="Password"
                   name="name"
@@ -152,7 +193,7 @@ const ProfilePage = (props) => {
                     Change
                   </Button>
                 </Form.Item>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="right">
@@ -169,7 +210,7 @@ const ProfilePage = (props) => {
               <div className={`inputForm ${isEditing ? "active" : ""}`}>
                 <Form.Item
                   label="Name"
-                  name="name"
+                  name="fullName"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
                   <Input style={{ maxWidth: "100%" }} />
@@ -178,7 +219,7 @@ const ProfilePage = (props) => {
               <div className="inputForm">
                 <Form.Item
                   label="Roll Number"
-                  name="name"
+                  name="rollNumber"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
                   <Input
@@ -190,7 +231,7 @@ const ProfilePage = (props) => {
               <div className="inputForm">
                 <Form.Item
                   label="Semester"
-                  name="name"
+                  name="semester"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
                   <Input style={{ maxWidth: "100%" }} />
@@ -199,7 +240,7 @@ const ProfilePage = (props) => {
               <div className="inputForm">
                 <Form.Item
                   label="Profession"
-                  name="name"
+                  name="profession"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
                   <Input style={{ maxWidth: "100%" }} />
@@ -208,14 +249,14 @@ const ProfilePage = (props) => {
               <div className="inputForm">
                 <Form.Item
                   label="Specialty"
-                  name="name"
+                  name="specialty"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
                   <Input style={{ maxWidth: "100%" }} />
                 </Form.Item>
               </div>
               <div className={`inputForm ${isEditing ? "active" : ""}`}>
-                <Form.Item label="Gender" name="">
+                <Form.Item label="Gender" name="gender">
                   <Radio.Group>
                     <Radio value=""> Male </Radio>
                     <Radio value=""> Female </Radio>
@@ -226,28 +267,10 @@ const ProfilePage = (props) => {
               <div className="inputForm">
                 <Form.Item
                   label="Email"
-                  name="name"
+                  name="email"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
                   <Input style={{ maxWidth: "100%" }} />
-                </Form.Item>
-              </div>
-              <div className={`inputForm ${isEditing ? "active" : ""}`}>
-                <Form.Item
-                  label="Expect Role"
-                  name="name"
-                  rules={[{ required: true, message: "Please input!" }]}
-                >
-                  <Input style={{ maxWidth: "100%" }} />
-                </Form.Item>
-              </div>
-              <div className={`inputForm ${isEditing ? "active" : ""}`}>
-                <Form.Item
-                  label="Bio"
-                  name="name"
-                  rules={[{ required: true, message: "Please input!" }]}
-                >
-                  <TextArea rows={4} style={{ maxWidth: "100%" }} />
                 </Form.Item>
               </div>
               <div className={`radioForm ${isEditing ? "active" : ""}`}>
@@ -262,7 +285,9 @@ const ProfilePage = (props) => {
                 <Button className="btnCancel" onClick={handleEditProfile}>
                   Cancel
                 </Button>
-                <Button className="btnEdit">Submit</Button>
+                <Button className="btnEdit" htmlType={"submit"}>
+                  Submit
+                </Button>
               </div>
             </div>
           </div>
@@ -276,7 +301,9 @@ const ProfilePage = (props) => {
           <p className="bigTitle">Verify Your Alternative Email</p>
           <div className="content">
             <p>Enter the verify code sent to</p>
-            <p><span>hieupbhe163832@fpt.edu.vn</span>. Did not get the code?</p>
+            <p>
+              <span>hieupbhe163832@fpt.edu.vn</span>. Did not get the code?
+            </p>
             <a href="">Resend</a>
           </div>
           <p className="verify">Verification Code</p>
@@ -285,11 +312,16 @@ const ProfilePage = (props) => {
               name="name"
               rules={[{ required: true, message: "Please input!" }]}
             >
-              <Input style={{ maxWidth: '100%' }} placeholder="Enter verification code" />
+              <Input
+                style={{ maxWidth: "100%" }}
+                placeholder="Enter verification code"
+              />
             </Form.Item>
           </div>
           <div className="grBtn">
-            <Button className="btnCancel" onClick={handleChangeEmail}>Cancel</Button>
+            <Button className="btnCancel" onClick={handleChangeEmail}>
+              Cancel
+            </Button>
             <Button className="btnEdit">Submit</Button>
           </div>
         </Form>
@@ -309,15 +341,25 @@ const ProfilePage = (props) => {
               name="name"
               rules={[{ required: true, message: "Please input!" }]}
             >
-              <Input style={{ maxWidth: '100%' }} placeholder="Enter your password" type="password" />
+              <Input
+                style={{ maxWidth: "100%" }}
+                placeholder="Enter your password"
+                type="password"
+              />
             </Form.Item>
           </div>
           <div className="grBtn">
-            <Button className="btnCancel" onClick={handleChangePass}>Cancel</Button>
+            <Button className="btnCancel" onClick={handleChangePass}>
+              Cancel
+            </Button>
             <Button className="btnEdit">Submit</Button>
           </div>
         </Form>
-        <div className={`overlay ${isChangingEmail ? 'active' : ''} ${isChangingPass ? 'active' : ''}`}></div>
+        <div
+          className={`overlay ${isChangingEmail ? "active" : ""} ${
+            isChangingPass ? "active" : ""
+          }`}
+        ></div>
       </Profile>
     </DashboardLayout>
   );
@@ -327,7 +369,7 @@ export default memo(
     inject(
       "authenticationStore",
       "loadingAnimationStore",
-      "groupStore"
+      "studentStore"
     )(observer(ProfilePage))
   )
 );

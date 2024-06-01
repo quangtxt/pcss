@@ -162,7 +162,7 @@ const MainHeaderBar = (props) => {
   const menu = (
     <Menu>
       <Menu.Item
-        onClick={() => history.push("/registration/profile")}
+        onClick={() => history.push("/profile")}
         style={{ color: blue }}
       >
         <UserOutlined style={{ color: blue, marginRight: "5px" }} />
