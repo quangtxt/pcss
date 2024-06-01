@@ -32,11 +32,11 @@ const ProfilePage = (props) => {
   const [isChangingEmail, setIsChangingEmail] = useState(false);
   const [isChangingPass, setIsChangingPass] = useState(false);
 
-  console.log("user", currentUser.id);
   useEffect(() => {
-    getStudentProfile(currentUser.id);
-    console.log("mess");
-  }, []);
+    if (authenticationStore.currentUser) {
+      getStudentProfile(currentUser?.id);
+    }
+  }, [authenticationStore.currentUser]);
 
   const formItemLayout = {
     labelCol: {
@@ -61,21 +61,15 @@ const ProfilePage = (props) => {
 
   const [form] = Form.useForm();
 
-  const [student, setStudent] = useState();
-
   const getStudentProfile = async (userId) => {
     try {
       loadingAnimationStore.showSpinner(true);
       const response = await studentStore.getStudentProfileById(userId);
-      console.log("profile", response.data);
-
       if (response.status === 200) {
-        setStudent(response.data);
-        console.log("profile", response.data.alternativeEmail);
         form.setFieldsValue({
-          alternativeEmail: response.data.alternativeEmail,
+          // alternativeEmail: response.data.alternativeEmail,
           facebook: response.data.facebook,
-          gender: response.data.gender,
+          gender: response.data.gender ? "male" : "female",
           phone: response.data.phone,
           profession: response.data.profession,
           rollNumber: response.data.rollNumber,
@@ -97,24 +91,16 @@ const ProfilePage = (props) => {
   const handleSubmit = async (values) => {
     try {
       loadingAnimationStore.showSpinner(true);
-      console.log("values", values.fullName);
       const response = await studentStore.updateStudent(
-        currentUser?.id,
-        values.alternativeEmail,
-        values.facebook,
-        values.gender,
-        values.phone,
-        values.profession,
-        values.rollNumber,
         values.fullName,
-        values.email,
-        values.semester,
-        values.specialty
+        values.gender == "male" ? true : false,
+        values.phone,
+        values.facebook,
+        values.alternativeEmail
       );
       if (response.status === 200) {
-        //sua gr thanh cong
-        setRefresh(true);
-        setIsVisiblePopup(false);
+        getStudentProfile(currentUser?.id);
+        handleEditProfile();
         message.success("Update profile successfully");
       }
     } catch (err) {
@@ -135,7 +121,6 @@ const ProfilePage = (props) => {
         <Form
           {...formItemLayout}
           onFinish={handleSubmit}
-          
           className="formProfile"
           form={form}
           scrollToFirstError
@@ -169,7 +154,7 @@ const ProfilePage = (props) => {
                   <Input style={{ maxWidth: "100%" }} />
                 </Form.Item>
               </div>
-              <div
+              {/* <div
                 className={`inputForm change important ${isEditing ? "" : ""}`}
               >
                 <Form.Item
@@ -182,11 +167,11 @@ const ProfilePage = (props) => {
                     Change
                   </Button>
                 </Form.Item>
-              </div>
+              </div> */}
               {/* <div className={`inputForm ${isEditing ? "active" : ""}`}>
                 <Form.Item
                   label="Password"
-                  name="name"
+                  name="pass"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
                   <Button className="btnChange" onClick={handleChangePass}>
@@ -222,10 +207,7 @@ const ProfilePage = (props) => {
                   name="rollNumber"
                   rules={[{ required: true, message: "Please input!" }]}
                 >
-                  <Input
-                    style={{ maxWidth: "100%" }}
-                    value={"hieupbhe163832@fpt.edu.vn"}
-                  />
+                  <Input style={{ maxWidth: "100%" }} />
                 </Form.Item>
               </div>
               <div className="inputForm">
@@ -258,9 +240,8 @@ const ProfilePage = (props) => {
               <div className={`inputForm ${isEditing ? "active" : ""}`}>
                 <Form.Item label="Gender" name="gender">
                   <Radio.Group>
-                    <Radio value=""> Male </Radio>
-                    <Radio value=""> Female </Radio>
-                    <Radio value=""> Other </Radio>
+                    <Radio value="male"> Male </Radio>
+                    <Radio value="female"> Female </Radio>
                   </Radio.Group>
                 </Form.Item>
               </div>
@@ -276,8 +257,8 @@ const ProfilePage = (props) => {
               <div className={`radioForm ${isEditing ? "active" : ""}`}>
                 <Form.Item label="Do you want to be grouped in a random group?">
                   <Radio.Group>
-                    <Radio value="apple"> Yes </Radio>
-                    <Radio value="pear"> No </Radio>
+                    <Radio value="yes"> Yes </Radio>
+                    <Radio value="no"> No </Radio>
                   </Radio.Group>
                 </Form.Item>
               </div>
@@ -309,7 +290,8 @@ const ProfilePage = (props) => {
           <p className="verify">Verification Code</p>
           <div className="inputForm">
             <Form.Item
-              name="name"
+              label="Code"
+              name="code"
               rules={[{ required: true, message: "Please input!" }]}
             >
               <Input
@@ -329,16 +311,21 @@ const ProfilePage = (props) => {
           {...formItemLayout}
           variant="filled"
           onFinish={handleSubmit}
-          className={`changeEmail ${isChangingPass ? "active" : ""}`}
+          className="changeEmail"
         >
-          <p className="bigTitle">Old Password</p>
+          <p className="bigTitle">Verify Your Alternative Email</p>
           <div className="content">
-            <p>Input Your Password</p>
+            <p>Enter the verify code sent to</p>
+            <p>
+              <span>hieupbhe163832@fpt.edu.vn</span>. Did not get the code?
+            </p>
+            <a href="">Resend</a>
           </div>
-          <p className="verify">Password</p>
+          <p className="verify">Verification Code</p>
           <div className="inputForm">
             <Form.Item
-              name="name"
+              label="Password"
+              name="password"
               rules={[{ required: true, message: "Please input!" }]}
             >
               <Input

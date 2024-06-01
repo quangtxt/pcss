@@ -41,19 +41,7 @@ export const StudentRequest = {
         Id: studentId,
       },
     }),
-  updateStudent: (
-    id,
-    alternativeEmail,
-    facebook,
-    gender,
-    phone,
-    profession,
-    rollNumber,
-    fullName,
-    email,
-    semester,
-    specialty
-  ) =>
+  updateStudent: (fullName, gender, phone, facebook, alternativeEmail) =>
     axios({
       method: "post",
       url: `${apiUrl}/api/v1/profile/update/student`,
@@ -62,17 +50,24 @@ export const StudentRequest = {
         "Content-Type": "application/json",
       },
       data: {
-        id: id,
-        alternativeEmail: alternativeEmail,
-        facebook: facebook,
+        fullName: fullName,
         gender: gender,
         phone: phone,
-        profession: profession,
-        rollNumber: rollNumber,
-        fullName: fullName,
+        facebook: facebook,
+        alternativeEmail: alternativeEmail,
+      },
+    }),
+  createStudent: (email, name) =>
+    axios({
+      method: "post",
+      url: `${apiUrl}/api/v1/staff/addStudent`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+      data: {
         email: email,
-        semester: semester,
-        specialty: specialty,
+        fullName: name,
       },
     }),
 };

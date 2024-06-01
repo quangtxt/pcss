@@ -2,8 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Button, Form, message, Modal, Space, Input, Upload } from "antd";
 import { withRouter } from "react-router-dom";
 import { inject, observer } from "mobx-react";
-import { CheckOutlined, CloseOutlined, UploadOutlined, VerticalAlignBottomOutlined } from "@ant-design/icons";
-import { Profile, GroupButton, BoldContent } from "../ProfilePage/ProfilePageStyled";
+import {
+  CheckOutlined,
+  CloseOutlined,
+  UploadOutlined,
+  VerticalAlignBottomOutlined,
+} from "@ant-design/icons";
+import {
+  Profile,
+  GroupButton,
+  BoldContent,
+} from "../ProfilePage/ProfilePageStyled";
 import { FlexBox, PopupImport } from "./ListStudentPageStyled";
 import TableComponent from "../../components/Common/TableComponent";
 
@@ -83,27 +92,29 @@ const PopupImportExcel = (props) => {
     // setIsVisiblePopup(true);
   }
 
-
   return (
-
     <Modal
       footer={null}
+      className="custom-modal"
       closable={true}
       visible={isVisiblePopup}
       onCancel={handleClosePopup}
-      className="formImport"
-      style={{ width: "570px !important" }}
+      width={1200}
     >
       <Profile>
-        <Form
-          form={form}
-        >
+        <Form form={form}>
           <FlexBox style={{ margin: "20px 0", gap: "20px" }}>
             <BoldContent>Import file excel:</BoldContent>
             <Upload>
-              <Button className="btnUpload"><UploadOutlined />Click to Upload</Button>
+              <Button className="btnUpload">
+                <UploadOutlined />
+                Click to Upload
+              </Button>
             </Upload>
-            <Button className="btnDownload"><VerticalAlignBottomOutlined />Download template</Button>
+            <Button className="btnDownload">
+              <VerticalAlignBottomOutlined />
+              Download template
+            </Button>
           </FlexBox>
           <PopupImport>
             <TableComponent
@@ -116,7 +127,9 @@ const PopupImportExcel = (props) => {
             />
           </PopupImport>
           <GroupButton>
-            <Button className="btnCancel" onClick={handleClosePopup}>Cancel</Button>
+            <Button className="btnCancel" onClick={handleClosePopup}>
+              Cancel
+            </Button>
             <Button className="btnEdit">Submit</Button>
           </GroupButton>
         </Form>

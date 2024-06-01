@@ -25,62 +25,69 @@ const ListStudentPage = (props) => {
   const {
     history,
     loadingAnimationStore,
-    mentorStore,
+    studentStore,
     authenticationStore,
   } = props;
 
   const {
-    mentorList,
-    mentorListTotalCount,
-    mentorListPageSize,
-    mentorListPageIndex,
+    studentList,
+    studentListTotalCount,
+    studentListPageSize,
+    studentListPageIndex,
     setFilter,
-  } = mentorStore;
+  } = studentStore;
 
+  // useEffect(() => {
+  //   if (authenticationStore.currentUser) {
+  //     loadingAnimationStore.setTableLoading(true);
+  //     studentStore.getStudentList().finally(() => {
+  //       loadingAnimationStore.setTableLoading(false);
+  //     });
+  //   }
+  //   return () => {
+  //     studentStore.clearStore();
+  //   };
+  // }, [authenticationStore.currentUser]);
+
+  const onSearchByEmailOrName = (keyword) => {
+    setFilter("studentListPageIndex", 0);
+    setFilter("studentListKeyword", keyword);
+    loadingAnimationStore.setTableLoading(true);
+    studentStore.getStudentList().finally(() => {
+      loadingAnimationStore.setTableLoading(false);
+    });
+  };
+
+  const onChangePagination = (e) => {
+    setFilter("studentListPageIndex", e - 1);
+    loadingAnimationStore.setTableLoading(true);
+    studentStore
+      .getStudentList()
+      .finally(() => loadingAnimationStore.setTableLoading(false));
+  };
   const [isAdd, setIsAdd] = useState(false);
   const [isImport, setIsImport] = useState(false);
 
   const [isVisiblePopup, setIsVisiblePopup] = useState(false);
 
-  useEffect(() => {
-    if (authenticationStore.currentUser) {
-      loadingAnimationStore.setTableLoading(true);
-      mentorStore.getMentorList().finally(() => {
-        loadingAnimationStore.setTableLoading(false);
-      });
-    }
-
-    return () => {
-      mentorStore.clearStore();
-    };
-  }, [authenticationStore.currentUser]);
-  const onChangePagination = (e) => {
-    setFilter("mentorListPageIndex", e - 1);
-    loadingAnimationStore.setTableLoading(true);
-    mentorStore
-      .getMentorList()
-      .finally(() => loadingAnimationStore.setTableLoading(false));
-  };
-  console.log("mentorListPageSize", mentorListPageSize);
   const columns = [
     {
-      title: "No.",
+      title: "Roll number",
       render: (record, index, dataSource) => dataSource + 1,
-    },
-    {
-      title: "Full Name",
-      render: (record) => record?.name,
     },
     {
       title: "Email",
       render: (record) => record?.email,
     },
     {
-      title: "Note",
-      render: (record) => record?.note,
+      title: "Full Name",
+      render: (record) => record?.name,
+    },
+    {
+      title: "Status",
+      render: (record) => record?.status,
     },
   ];
-  function navigateToDetail(record) { }
 
   const formItemLayout = {
     labelCol: {
@@ -97,16 +104,12 @@ const ListStudentPage = (props) => {
     try {
       loadingAnimationStore.showSpinner(true);
 
-      const response = await groupStore.createGroup(
-        values.abbreviations,
-        values.description,
-        values.keywords,
-        values.name,
-        values.vietnameseTitle
+      const response = await studentStore.createStudent(
+        values.email,
+        values.name
       );
       if (response.status === 200) {
-        //neu tao gr thanh cong
-        message.success("create ok");
+        message.success("Add student successfully");
         console.log(response);
       }
     } catch (err) {
@@ -137,24 +140,28 @@ const ListStudentPage = (props) => {
       <ContentBlockWrapper>
         <Profile>
           <TableStudents>
-            <FlexBox style={{marginBottom: "20px"}}>
+            <FlexBox>
               <div className="searchSupervisors">
-                <p>FE Email Or Name:</p>
                 <Search
                   allowClear
                   placeholder={"FE Email or Name"}
                   className="searchInput"
                 />
               </div>
-              <GroupButton>
-                <Button className="btnAdd" onClick={handleAdd}><UserAddOutlined />Add a Student</Button>
-                <Button className="btnImport" onClick={setIsVisiblePopup}><FolderAddOutlined />Import Excel</Button>
+              <GroupButton className="grBtn">
+                <Button className="btnAdd" onClick={handleAdd}>
+                  <UserAddOutlined />
+                  Add a Student
+                </Button>
+                <Button className="btnImport" onClick={setIsVisiblePopup}>
+                  <FolderAddOutlined />
+                  Import Excel
+                </Button>
               </GroupButton>
             </FlexBox>
-
             <TableComponent
               rowKey={(record) => record.id || uuid()}
-              dataSource={mentorList}
+              dataSource={studentList}
               columns={columns}
               pagination={false}
               loading={loadingAnimationStore.tableLoading}
@@ -171,9 +178,9 @@ const ListStudentPage = (props) => {
             <Pagination
               onChange={(e) => onChangePagination(e)}
               hideOnSinglePage={true}
-              total={mentorListTotalCount}
-              pageSize={mentorListPageSize}
-              current={mentorListPageIndex + 1}
+              total={studentListTotalCount}
+              pageSize={studentListPageSize}
+              current={studentListPageIndex + 1}
               showSizeChanger={false}
               showLessItems
             />
@@ -188,34 +195,22 @@ const ListStudentPage = (props) => {
             <div className="inputForm">
               <Form.Item
                 label="Email"
-                name=""
+                name="email"
                 rules={[{ required: true, message: "Please input!" }]}
               >
-                <Input
-                  style={{ maxWidth: "100%" }}
-                  placeholder="Enter verification code"
-                />
+                <Input style={{ maxWidth: "100%" }} placeholder="Enter email" />
               </Form.Item>
             </div>
             <div className="inputForm">
               <Form.Item
-                label="Fullname"
-                name=""
+                label="fullName"
+                name="name"
                 rules={[{ required: true, message: "Please input!" }]}
               >
                 <Input
                   style={{ maxWidth: "100%" }}
-                  placeholder="Enter verification code"
+                  placeholder="Enter full name"
                 />
-              </Form.Item>
-            </div>
-            <div className="inputForm">
-              <Form.Item
-                label="Note"
-                name=""
-                rules={[{ required: true, message: "Please input!" }]}
-              >
-                <TextArea rows={4} style={{ maxWidth: "100%" }} />
               </Form.Item>
             </div>
             <div className="grBtn">
@@ -230,7 +225,11 @@ const ListStudentPage = (props) => {
             setIsVisiblePopup={setIsVisiblePopup}
             handleClosePopup={() => setIsVisiblePopup(false)}
           />
-          <div className={`overlay ${isAdd ? 'active' : ''} ${isImport ? 'active' : ''}`}></div>
+          <div
+            className={`overlay ${isAdd ? "active" : ""} ${
+              isImport ? "active" : ""
+            }`}
+          ></div>
         </Profile>
       </ContentBlockWrapper>
     </DashboardLayout>
@@ -241,7 +240,7 @@ export default memo(
     inject(
       "authenticationStore",
       "loadingAnimationStore",
-      "mentorStore"
+      "studentStore"
     )(observer(ListStudentPage))
   )
 );

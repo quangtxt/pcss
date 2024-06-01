@@ -92,11 +92,14 @@ public class StudentServiceImpl implements StudentService {
             studentProfileResponse.setFullName(infoUser.getName());
             studentProfileResponse.setGender(infoUser.getStudent().isGender());
             studentProfileResponse.setRollNumber(infoUser.getEmail().split("@")[0]);
-            studentProfileResponse.setProfession(infoUser.getStudent().getSpecificMajor().getMajor().getName());
-            studentProfileResponse.setSpecialty(infoUser.getStudent().getSpecificMajor().getName());
+            if(infoUser.getStudent().getSpecificMajor() != null) {
+                studentProfileResponse.setProfession(infoUser.getStudent().getSpecificMajor().getMajor().getName());
+                studentProfileResponse.setSpecialty(infoUser.getStudent().getSpecificMajor().getName());
+            }
             studentProfileResponse.setSemester(semesterRepository.findByCurrent(now).orElseThrow(null).getName());
             studentProfileResponse.setEmail(infoUser.getEmail());
             studentProfileResponse.setPhone(infoUser.getStudent().getPhone());
+            studentProfileResponse.setAlternativeEmail(infoUser.getStudent().getAlternativeEmail());
             studentProfileResponse.setFacebook(infoUser.getStudent().getFacebook());
             return studentProfileResponse;
         }
@@ -105,7 +108,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentProfileResponse editStudentProfile(EditStudentProfileRequest editStudentProfileRequest) throws ServiceException {
-        Optional<User> user = userRepository.findById(editStudentProfileRequest.getUserId());
+        Optional<User> user = userRepository.findById(userService.getCurrentUser().getId());
         if (user.isEmpty()){
             throw new ServiceException(ErrorCode.USER_NOT_FOUND);
         }else{
@@ -118,7 +121,6 @@ public class StudentServiceImpl implements StudentService {
             infoUser.getStudent().setPhone(editStudentProfileRequest.getPhone());
             infoUser.getStudent().setFacebook(editStudentProfileRequest.getFacebook());
             infoUser.getStudent().setAlternativeEmail(editStudentProfileRequest.getAlternativeEmail());
-            infoUser.setEmail(editStudentProfileRequest.getEmail());
             userRepository.save(infoUser);
 
             OffsetDateTime now = OffsetDateTime.now();

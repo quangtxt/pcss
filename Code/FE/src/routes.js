@@ -78,7 +78,7 @@ export const routes = [
 
   //staff
   {
-    path: "/listStudent",
+    path: "/student/list",
     component: ListStudentPage,
     name: "ListStudentPage",
   },

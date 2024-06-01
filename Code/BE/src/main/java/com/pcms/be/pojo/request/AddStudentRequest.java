@@ -11,8 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AddStudentRequest {
     private String email;
-    private String memberCode;
     private String fullName;
-    private String status;
-    private String note;
 }

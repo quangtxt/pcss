@@ -39,6 +39,17 @@ class StudentStore {
         });
     });
   };
+  @action createStudent = (email, name) => {
+    return new Promise((resolve, reject) => {
+      StudentRequest.createStudent(email, name)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
 
   @action setFilter = (filterName, filterValue) => {
     if (typeof filterName !== "string") return;
@@ -58,7 +69,6 @@ class StudentStore {
 
   @action getStudentProfileById = (studentId) => {
     return new Promise((resolve, reject) => {
-      console.log("studentId", studentId);
       StudentRequest.getStudentProfileById(studentId)
         .then((response) => {
           resolve(response);
@@ -70,44 +80,20 @@ class StudentStore {
   };
   @action updateStudent = (
     id,
-    alternativeEmail,
-    facebook,
+    fullName,
     gender,
     phone,
-    profession,
-    rollNumber,
-    fullName,
-    email,
-    semester,
-    specialty
+    facebook,
+    alternativeEmail
   ) => {
     return new Promise((resolve, reject) => {
-      // console.log(
-      //   "updateStudent",
-      //   id,
-      //   alternativeEmail,
-      //   facebook,
-      //   gender,
-      //   phone,
-      //   profession,
-      //   rollNumber,
-      //   fullName,
-      //   email,
-      //   semester,
-      //   specialty
-      // );
       StudentRequest.updateStudent(
         id,
-        alternativeEmail,
-        facebook,
+        fullName,
         gender,
         phone,
-        profession,
-        rollNumber,
-        fullName,
-        email,
-        semester,
-        specialty
+        facebook,
+        alternativeEmail
       )
         .then((response) => {
           resolve(response);
