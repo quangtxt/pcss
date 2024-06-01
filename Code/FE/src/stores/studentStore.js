@@ -56,6 +56,67 @@ class StudentStore {
     this.studentListPageSize = pageSize;
   };
 
+  @action getStudentProfileById = (studentId) => {
+    return new Promise((resolve, reject) => {
+      console.log("studentId", studentId);
+      StudentRequest.getStudentProfileById(studentId)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action updateStudent = (
+    id,
+    alternativeEmail,
+    facebook,
+    gender,
+    phone,
+    profession,
+    rollNumber,
+    fullName,
+    email,
+    semester,
+    specialty
+  ) => {
+    return new Promise((resolve, reject) => {
+      // console.log(
+      //   "updateStudent",
+      //   id,
+      //   alternativeEmail,
+      //   facebook,
+      //   gender,
+      //   phone,
+      //   profession,
+      //   rollNumber,
+      //   fullName,
+      //   email,
+      //   semester,
+      //   specialty
+      // );
+      StudentRequest.updateStudent(
+        id,
+        alternativeEmail,
+        facebook,
+        gender,
+        phone,
+        profession,
+        rollNumber,
+        fullName,
+        email,
+        semester,
+        specialty
+      )
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   /** Clear store */
   @action clearStore = () => {
     this.studentList = [];

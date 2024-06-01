@@ -72,7 +72,6 @@ export const TableStudents = styled.div`
   align-items: center;
   justify-content: center;
   gap: 20px;
-  margin-bottom: 20px;
   p {
     font-size: 16px;
     font-weight: 600;

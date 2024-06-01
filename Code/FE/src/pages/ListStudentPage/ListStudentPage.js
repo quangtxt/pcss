@@ -13,7 +13,7 @@ import { TableBottomPaginationBlock } from "../../components/Common/Table";
 import ContentBlockWrapper from "../../components/ContentBlockWrapper";
 import PageTitle from "../../components/PageTitle";
 import { Helmet } from "react-helmet/es/Helmet";
-import { ForContent, TableStudents } from "./ListStudentPageStyled";
+import { FlexBox, ForContent, TableStudents } from "./ListStudentPageStyled";
 import { Profile, GroupButton } from "../ProfilePage/ProfilePageStyled";
 import TableComponent from "../../components/Common/TableComponent";
 import PopupImportExcel from "./PopupImportExcel";
@@ -80,7 +80,7 @@ const ListStudentPage = (props) => {
       render: (record) => record?.note,
     },
   ];
-  function navigateToDetail(record) {}
+  function navigateToDetail(record) { }
 
   const formItemLayout = {
     labelCol: {
@@ -137,18 +137,21 @@ const ListStudentPage = (props) => {
       <ContentBlockWrapper>
         <Profile>
           <TableStudents>
-            <div className="searchSupervisors">
-              <p>FE Email Or Name:</p>
-              <Search
-                allowClear
-                placeholder={"FE Email or Name"}
-                className="searchInput"
-              />
-            </div>
-            <GroupButton className="grBtn">
-              <Button className="btnAdd" onClick={handleAdd}><UserAddOutlined />Add a Student</Button>
-              <Button className="btnImport" onClick={setIsVisiblePopup}><FolderAddOutlined />Import Excel</Button>
-            </GroupButton>
+            <FlexBox style={{marginBottom: "20px"}}>
+              <div className="searchSupervisors">
+                <p>FE Email Or Name:</p>
+                <Search
+                  allowClear
+                  placeholder={"FE Email or Name"}
+                  className="searchInput"
+                />
+              </div>
+              <GroupButton>
+                <Button className="btnAdd" onClick={handleAdd}><UserAddOutlined />Add a Student</Button>
+                <Button className="btnImport" onClick={setIsVisiblePopup}><FolderAddOutlined />Import Excel</Button>
+              </GroupButton>
+            </FlexBox>
+
             <TableComponent
               rowKey={(record) => record.id || uuid()}
               dataSource={mentorList}
