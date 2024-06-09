@@ -28,5 +28,5 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             "WHERE u.email = :email", nativeQuery = true)
     Optional<Student> findByEmail(String email);
 
-    Page<Student> findAll(Pageable pageable);
+    //Page<Student> findAll(Pageable pageable, String keyword);
 }

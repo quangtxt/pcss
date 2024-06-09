@@ -77,4 +77,8 @@ public interface Constants {
         String Da_Nang = "DN";
         String Quy_Nhon = "QN";
     }
+    interface FilterStudents{
+        String ByName = "NAME";
+        String ByEmail = "EMAIL";
+    }
 }

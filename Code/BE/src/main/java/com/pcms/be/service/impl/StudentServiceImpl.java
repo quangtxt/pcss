@@ -9,11 +9,14 @@ import com.pcms.be.functions.ValidateData;
 import com.pcms.be.pojo.*;
 import com.pcms.be.pojo.DTO.MentorDTO;
 import com.pcms.be.pojo.DTO.StudentDTO;
-import com.pcms.be.pojo.request.AddMentorRequest;
-import com.pcms.be.pojo.request.AddStudentRequest;
+import com.pcms.be.pojo.request.*;
 import com.pcms.be.repository.*;
 import com.pcms.be.service.StudentService;
 import com.pcms.be.service.UserService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -26,7 +29,6 @@ import org.springframework.stereotype.Service;
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
-import com.pcms.be.pojo.request.EditStudentProfileRequest;
 import com.pcms.be.pojo.response.StudentProfileResponse;
 import com.pcms.be.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,18 +63,22 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private UserService userService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final ModelMapper modelMapper;
     private final ValidateData validateData;
+
     @Override
     public List<StudentResponse> getAllStudentToInvite() {
 
-            List<Student> listStudentToInvite= studentRepository.findStudentsNotInMemberOrInactive();
-            List<StudentResponse> studentResponseList = new ArrayList<>();
-            for (Student student: listStudentToInvite) {
-                StudentResponse studentResponse = modelMapper.map(student, StudentResponse.class);
-                studentResponseList.add(studentResponse);
-            }
-            return studentResponseList;
+        List<Student> listStudentToInvite = studentRepository.findStudentsNotInMemberOrInactive();
+        List<StudentResponse> studentResponseList = new ArrayList<>();
+        for (Student student : listStudentToInvite) {
+            StudentResponse studentResponse = modelMapper.map(student, StudentResponse.class);
+            studentResponseList.add(studentResponse);
+        }
+        return studentResponseList;
 
     }
 
@@ -80,11 +86,11 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentProfileResponse getStudentProfile(int Id) throws ServiceException {
         Optional<User> user = userRepository.findById((long) Id);
-        if (user.isEmpty()){
+        if (user.isEmpty()) {
             throw new ServiceException(ErrorCode.USER_NOT_FOUND);
-        }else{
+        } else {
             User infoUser = user.orElseThrow();
-            if (infoUser.getStudent() == null){
+            if (infoUser.getStudent() == null) {
                 throw new ServiceException(ErrorCode.AUTHORITY_LEVEL_NOT_FOUND);
             }
             OffsetDateTime now = OffsetDateTime.now();
@@ -92,7 +98,7 @@ public class StudentServiceImpl implements StudentService {
             studentProfileResponse.setFullName(infoUser.getName());
             studentProfileResponse.setGender(infoUser.getStudent().isGender());
             studentProfileResponse.setRollNumber(infoUser.getEmail().split("@")[0]);
-            if(infoUser.getStudent().getSpecificMajor() != null) {
+            if (infoUser.getStudent().getSpecificMajor() != null) {
                 studentProfileResponse.setProfession(infoUser.getStudent().getSpecificMajor().getMajor().getName());
                 studentProfileResponse.setSpecialty(infoUser.getStudent().getSpecificMajor().getName());
             }
@@ -109,11 +115,11 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentProfileResponse editStudentProfile(EditStudentProfileRequest editStudentProfileRequest) throws ServiceException {
         Optional<User> user = userRepository.findById(userService.getCurrentUser().getId());
-        if (user.isEmpty()){
+        if (user.isEmpty()) {
             throw new ServiceException(ErrorCode.USER_NOT_FOUND);
-        }else{
+        } else {
             User infoUser = user.orElseThrow();
-            if (infoUser.getStudent() == null){
+            if (infoUser.getStudent() == null) {
                 throw new ServiceException(ErrorCode.AUTHORITY_LEVEL_NOT_FOUND);
             }
             infoUser.setName(editStudentProfileRequest.getFullName());
@@ -137,23 +143,24 @@ public class StudentServiceImpl implements StudentService {
             return studentProfileResponse;
         }
     }
+
     @Override
-    public ResponseEntity<String> checkFormatExcel_Student(MultipartFile file) throws ServiceException{
+    public ResponseEntity<String> checkFormatExcel_Student(MultipartFile file) throws ServiceException {
         try {
             Workbook workbook = new XSSFWorkbook(file.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
             //Kiểm tra xem tên các trường dữ liệu trong Excel đã đúng hay chưa
-            if (!validateData.checkFormatExcel(file, formatExcel_listStudent)){
+            if (!validateData.checkFormatExcel(file, formatExcel_listStudent)) {
                 throw new ServiceException(ErrorCode.EXCEL_IS_NOT_IN_THE_CORRECT_FORMAT);
             }
             List<String> listInValidEmail = new ArrayList<>();
             for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
                 String email = sheet.getRow(i).getCell(1).getStringCellValue();
-                if(!validateData.isValidEmail(email)){
+                if (!validateData.isValidEmail(email)) {
                     listInValidEmail.add(email);
                 }
             }
-            if (!listInValidEmail.isEmpty()){
+            if (!listInValidEmail.isEmpty()) {
                 return ResponseEntity.badRequest().body("Danh sách email không hợp lệ: " + listInValidEmail.toString());
             }
 
@@ -164,11 +171,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public ResponseEntity<StudentDTO> addStudent(AddStudentRequest addStudentRequest) throws ServiceException{
-        try{
-            if (studentRepository.findByEmail(addStudentRequest.getEmail()).isPresent()){
+    public ResponseEntity<StudentDTO> addStudent(AddStudentRequest addStudentRequest) throws ServiceException {
+        try {
+            if (studentRepository.findByEmail(addStudentRequest.getEmail()).isPresent()) {
                 throw new ServiceException(ErrorCode.USER_DUPLICATE_EMAIL);
-            }else {
+            } else {
                 Campus campus = userService.getCurrentUser().getCampus();
                 Set<Role> roles = new HashSet<>();
                 roles.add(roleRepository.findByName(Constants.RoleConstants.STUDENT).orElseThrow());
@@ -186,7 +193,7 @@ public class StudentServiceImpl implements StudentService {
                 studentRepository.save(newStudent);
                 return ResponseEntity.ok(modelMapper.map(newStudent, StudentDTO.class));
             }
-        }catch (ServiceException e) {
+        } catch (ServiceException e) {
             throw new RuntimeException(e);
         }
     }
@@ -240,17 +247,56 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public ResponseEntity<Map<String, Object>> getListStudent(Pageable pageable) {
-        Page<Student> studentPage = studentRepository.findAll(pageable);
+    public ResponseEntity<Map<String, Object>> getListStudent(Pageable pageable, FilterStudentsRequest filterStudentsRequest) {
+        String sql = "SELECT s.* FROM v_student s " +
+                "INNER JOIN v_user u ON s.user_id = u.id ";
+        if (filterStudentsRequest.getFindBy().equals(Constants.FilterStudents.ByName)) {
+            sql += "WHERE u.username LIKE CONCAT('%', :keyword, '%') ";
+        } else {
+            sql += "WHERE u.email LIKE CONCAT('%', :keyword, '%') ";
+        }
+        TypedQuery<Student> query = (TypedQuery<Student>) entityManager.createNativeQuery(sql, Student.class);
+        query.setParameter("keyword", filterStudentsRequest.getKeyword());
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+        query.setFirstResult(pageNumber * pageSize);
+        query.setMaxResults(pageSize);
+        List<Student> students = query.getResultList();
+
+//        Page<Student> studentPage = studentRepository.findAll(pageable, String keyword);
+        long totalCount = getTotalRows(sql, filterStudentsRequest);
+        int totalPages = (int) Math.ceil((double) totalCount / pageable.getPageSize());
         Map<String, Object> result = new HashMap<>();
-            List<Student> students = studentPage.getContent();
-            List<StudentDTO> studentDTOs = new ArrayList<>();
-            for (Student student : students){
-                studentDTOs.add(modelMapper.map(student, StudentDTO.class));
-            }
-            result.put("totalCount", studentPage.getTotalElements());
-            result.put("totalPage", studentPage.getTotalPages());
-            result.put("data", studentDTOs);
+//            List<Student> students = studentPage.getContent();
+        List<StudentDTO> studentDTOs = new ArrayList<>();
+        for (Student student : students) {
+            studentDTOs.add(modelMapper.map(student, StudentDTO.class));
+        }
+        result.put("totalCount", totalCount);
+        result.put("totalPage", totalPages);
+        result.put("data", studentDTOs);
         return ResponseEntity.ok(result);
     }
+
+    @Override
+    public ResponseEntity<StudentDTO> setActiveStudent(SetActiveStudentRequest setActiveStudentRequest) {
+        Optional<Student> optionalStudent = studentRepository.findById(Long.valueOf(setActiveStudentRequest.getId()));
+        if (optionalStudent.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            Student student = optionalStudent.orElseThrow();
+            student.getUser().setStatus(setActiveStudentRequest.isStatus());
+            studentRepository.save(student);
+            return ResponseEntity.ok(modelMapper.map(student, StudentDTO.class));
+        }
+    }
+
+    private long getTotalRows(String sql, FilterStudentsRequest filterStudentsRequest) {
+        // Tính tổng số hàng trong truy vấn (không giới hạn phân trang)
+        String countSql = "SELECT COUNT(*) FROM (" + sql + ") AS countQuery";
+        Query query = entityManager.createNativeQuery(countSql);
+        query.setParameter("keyword", filterStudentsRequest.getKeyword());
+        return ((Number) query.getSingleResult()).longValue();
+    }
 }
+
