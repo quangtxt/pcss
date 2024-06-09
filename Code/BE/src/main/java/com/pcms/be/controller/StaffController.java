@@ -9,6 +9,8 @@ import com.pcms.be.pojo.DTO.MentorDTO;
 import com.pcms.be.pojo.DTO.StudentDTO;
 import com.pcms.be.pojo.request.AddMentorRequest;
 import com.pcms.be.pojo.request.AddStudentRequest;
+import com.pcms.be.pojo.request.FilterStudentsRequest;
+import com.pcms.be.pojo.request.SetActiveStudentRequest;
 import com.pcms.be.repository.GroupRepository;
 import com.pcms.be.repository.MemberRepository;
 import com.pcms.be.service.GroupService;
@@ -45,8 +47,19 @@ public class StaffController {
     private MemberRepository memberRepository;
 
     @GetMapping("/students")
-    public ResponseEntity<Map<String, Object>> getStudents(Pageable pageable){
-        return studentService.getListStudent(pageable);
+    public ResponseEntity<Map<String, Object>> getStudents(Pageable pageable,
+                                                           @RequestParam(defaultValue = "") String keyword,
+                                                           @RequestParam String findBy) {
+        return studentService.getListStudent(pageable, new FilterStudentsRequest(keyword, findBy));
+    }
+    @GetMapping("/groups")
+    public ResponseEntity<Map<String, Object>> getGroups(Pageable pageable,
+                                            @RequestParam(defaultValue = "") String keyword){
+        return groupService.getGroups(pageable, keyword);
+    }
+    @PostMapping("/student/is_active")
+    public ResponseEntity<StudentDTO> setActiveStudent(@RequestBody SetActiveStudentRequest setActiveStudentRequest){
+        return studentService.setActiveStudent(setActiveStudentRequest);
     }
 
     @GetMapping("/checkFormatStudentsExcel")//done

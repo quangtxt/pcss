@@ -6,9 +6,7 @@ import com.pcms.be.pojo.DTO.StudentDTO;
 import com.pcms.be.pojo.StudentResponse;
 import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ServiceException;
-import com.pcms.be.pojo.request.AddMentorRequest;
-import com.pcms.be.pojo.request.AddStudentRequest;
-import com.pcms.be.pojo.request.EditStudentProfileRequest;
+import com.pcms.be.pojo.request.*;
 import com.pcms.be.pojo.response.StudentProfileResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +23,7 @@ public interface StudentService {
     public ResponseEntity<String> checkFormatExcel_Student(MultipartFile file) throws ServiceException;
     public ResponseEntity<StudentDTO> addStudent(AddStudentRequest addStudentRequest) throws ServiceException;
     public ResponseEntity<String> addStudentsByExcel(MultipartFile file);
-    ResponseEntity<Map<String, Object>> getListStudent(Pageable pageable);
+    ResponseEntity<Map<String, Object>> getListStudent(Pageable pageable, FilterStudentsRequest filterStudentsRequest);
+    ResponseEntity<StudentDTO> setActiveStudent(SetActiveStudentRequest setActiveStudentRequest);
 
 }

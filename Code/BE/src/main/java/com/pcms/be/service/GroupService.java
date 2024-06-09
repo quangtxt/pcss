@@ -9,9 +9,11 @@ import com.pcms.be.pojo.request.EditGroupRequest;
 import com.pcms.be.pojo.request.SubmitGroupRequest;
 import com.pcms.be.pojo.response.GroupResponse;
 import com.pcms.be.pojo.response.SubmitGroupResponse;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GroupService {
 
@@ -23,5 +25,6 @@ public interface GroupService {
     GroupResponse getGroupById(int groupId) throws  ServiceException;
     SubmitGroupResponse submitGroup(SubmitGroupRequest submitGroupRequest) throws ServiceException;
     ResponseEntity<String> automaticallyCreateGroups() throws ServiceException;
+    ResponseEntity<Map<String, Object>> getGroups(Pageable pageable, String keyword);
 
 }

@@ -4,6 +4,7 @@ import com.pcms.be.domain.user.*;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.functions.Constants;
+import com.pcms.be.pojo.DTO.GroupDTO;
 import com.pcms.be.pojo.DTO.GroupMentorDTO;
 import com.pcms.be.pojo.DTO.MemberDTO;
 import com.pcms.be.pojo.request.CreateGroupRequest;
@@ -18,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.A;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -283,6 +286,21 @@ public class GroupServiceImpl implements GroupService {
         }
         return ResponseEntity.ok("Automatically grouped successfully");
     }
+
+    @Override
+    public ResponseEntity<Map<String, Object>> getGroups(Pageable pageable, String keyword) {
+        Page<Group> groups = groupRepository.findAllByNameContaining(pageable, keyword);
+        List<GroupDTO> groupDTOs = new ArrayList<>();
+        Map<String, Object> result = new HashMap<>();
+        for (Group group : groups.getContent()){
+            groupDTOs.add(modelMapper.map(group, GroupDTO.class));
+        }
+        result.put("totalCount", groups.getTotalElements());
+        result.put("totalPage", groups.getTotalElements());
+        result.put("data", groupDTOs);
+        return ResponseEntity.ok(result);
+    }
+
     public void createGroup(List<Student> students){
         Group group = new Group();
         group.setName("Auto");
