@@ -14,7 +14,7 @@ public interface GroupMentorRepository extends JpaRepository<GroupMentor, Long> 
 
     Optional<GroupMentor> findById(Long id);
 
-    List<GroupMentor> findByMentorIdAndStatus(Mentor mentorId, String status);
+    List<GroupMentor> findByMentorAndStatus(Mentor mentor, String status);
     List<GroupMentor> findAllByStatus(String status);
 
 

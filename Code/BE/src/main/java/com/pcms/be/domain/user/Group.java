@@ -1,5 +1,6 @@
 package com.pcms.be.domain.user;
 
+import com.pcms.be.domain.meeting.Meeting;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 @Getter
 @Setter
@@ -49,6 +51,9 @@ public class Group implements Serializable {
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Member> members;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    private List<Meeting> meetings;
 
     @ManyToMany(mappedBy = "groups",cascade = CascadeType.ALL)
     private Set<Mentor> mentors = new HashSet<>();

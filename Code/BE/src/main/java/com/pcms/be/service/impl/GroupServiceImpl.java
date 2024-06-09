@@ -217,8 +217,8 @@ public class GroupServiceImpl implements GroupService {
                     Optional<Mentor> m = mentorRepository.findById(Long.valueOf(mentorId));
                     if (m.isPresent()) {
                         GroupMentor groupMentor = new GroupMentor();
-                        groupMentor.setGroupId(group);
-                        groupMentor.setMentorId(m.get());
+                        groupMentor.setGroup(group);
+                        groupMentor.setMentor(m.get());
                         groupMentor.setStatus(Constants.MentorStatus.PENDING_MENTOR);
                         groupMentorRepository.save(groupMentor);
                         groupMentorDTOS.add(modelMapper.map(groupMentor, GroupMentorDTO.class));

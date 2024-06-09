@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class GroupMentorResponse {
     private Long id;
-    private GroupDTO groupId;
-    private MentorDTO mentorId;
+    private GroupDTO group;
+    private MentorDTO mentor;
     private String status;
 }

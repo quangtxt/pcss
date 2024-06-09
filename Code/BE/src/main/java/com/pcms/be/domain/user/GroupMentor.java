@@ -17,11 +17,11 @@ public class GroupMentor implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
-    private Group groupId;
+    private Group group;
 
     @ManyToOne
     @JoinColumn(name = "mentor_id", nullable = false)
-    private Mentor mentorId;
+    private Mentor mentor;
 
     @Column(name = "status", nullable = false)
     private String status;

@@ -2,6 +2,7 @@ package com.pcms.be.domain.user;
 
 import com.pcms.be.domain.Campus;
 import com.pcms.be.domain.SpecificMajor;
+import com.pcms.be.domain.meeting.Note;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -67,6 +69,8 @@ public class User implements UserDetails, Serializable {
     @JoinColumn(name = "campus_code", referencedColumnName = "campus_code")
     private Campus campus;
 
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private List<Note> notes;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
