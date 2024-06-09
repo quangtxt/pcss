@@ -248,9 +248,9 @@ public class StudentServiceImpl implements StudentService {
             for (Student student : students){
                 studentDTOs.add(modelMapper.map(student, StudentDTO.class));
             }
-            result.put("totalCount: ", studentPage.getTotalElements());
-            result.put("totalPage: ", studentPage.getTotalPages());
-            result.put("data: ", studentDTOs);
+            result.put("totalCount", studentPage.getTotalElements());
+            result.put("totalPage", studentPage.getTotalPages());
+            result.put("data", studentDTOs);
         return ResponseEntity.ok(result);
     }
 }

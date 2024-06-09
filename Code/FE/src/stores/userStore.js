@@ -4,6 +4,7 @@ import { message } from "antd";
 import utils from "../utils";
 
 class UserStore {
+  
   /** Get users list */
   @action clearStore = () => {
     console.log("clearStore userStore");

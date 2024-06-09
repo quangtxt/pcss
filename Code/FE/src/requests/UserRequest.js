@@ -21,9 +21,8 @@ export const UserRequest = {
       method: "get",
       url: `${apiUrl}/api/v1/users`,
       headers: {
-        Authorization: `Bearer ${
-          JSON.parse(authenticationStore.appToken).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken).access_token
+          }`,
         "Content-Type": "application/json",
       },
       params: {
@@ -48,9 +47,8 @@ export const UserRequest = {
       method: "put",
       url: `${apiUrl}/api/v1/users/${userCode}`,
       headers: {
-        Authorization: `Bearer ${
-          JSON.parse(authenticationStore.appToken).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken).access_token
+          }`,
         "Content-Type": "application/json",
       },
       data: {
@@ -73,9 +71,8 @@ export const UserRequest = {
       method: "patch",
       url: `${apiUrl}/api/v1/users/${userCode}/roles`,
       headers: {
-        Authorization: `Bearer ${
-          JSON.parse(authenticationStore.appToken).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken).access_token
+          }`,
         "Content-Type": "application/json",
       },
       data: {
@@ -87,9 +84,8 @@ export const UserRequest = {
       method: "post",
       url: `${apiUrl}/api/v1/users`,
       headers: {
-        Authorization: `Bearer ${
-          JSON.parse(authenticationStore.appToken).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken).access_token
+          }`,
         "Content-Type": "application/json",
       },
       data: {
@@ -110,9 +106,8 @@ export const UserRequest = {
       method: "patch",
       url: `${apiUrl}/api/v1/users/${userCode}/commands`,
       headers: {
-        Authorization: `Bearer ${
-          JSON.parse(authenticationStore.appToken).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken).access_token
+          }`,
         "Content-Type": "application/json",
       },
       data: {
@@ -124,9 +119,8 @@ export const UserRequest = {
       method: "patch",
       url: `${apiUrl}/api/v1/users/${userCode}`,
       headers: {
-        Authorization: `Bearer ${
-          JSON.parse(authenticationStore.appToken).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken).access_token
+          }`,
         "Content-Type": "application/json",
       },
       data: {
@@ -138,9 +132,8 @@ export const UserRequest = {
       method: "put",
       url: `${apiUrl}/api/v1/users/current-user`,
       headers: {
-        Authorization: `Bearer ${
-          JSON.parse(authenticationStore.appToken).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken).access_token
+          }`,
         "Content-Type": "application/json",
       },
       data: userInfo,
@@ -150,9 +143,8 @@ export const UserRequest = {
       method: "patch",
       url: `${apiUrl}/api/v1/users/current-user/password`,
       headers: {
-        Authorization: `Bearer ${
-          JSON.parse(authenticationStore.appToken).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken).access_token
+          }`,
         "Content-Type": "application/json",
       },
       data: submitData,
@@ -163,9 +155,8 @@ export const UserRequest = {
       method: "post",
       url: `${apiUrl}/api/v1/users/getListImage`,
       headers: {
-        Authorization: `Bearer ${
-          JSON.parse(authenticationStore.appToken).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken).access_token
+          }`,
         "Content-Type": "application/json",
       },
       data: {
@@ -178,9 +169,8 @@ export const UserRequest = {
       method: "get",
       url: `${apiUrl}/api/v1/users/user-details`,
       headers: {
-        Authorization: `Bearer ${
-          JSON.parse(authenticationStore.appToken).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken).access_token
+          }`,
         "Content-Type": "application/json",
       },
       params: {
@@ -193,10 +183,10 @@ export const UserRequest = {
       method: "post",
       url: `${apiUrl}/api/v1/users/cloud`,
       headers: {
-        Authorization: `Bearer ${
-          JSON.parse(authenticationStore.appToken).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken).access_token
+          }`,
         "Content-Type": "application/json",
       },
     }),
+  
 };

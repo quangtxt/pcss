@@ -5,18 +5,18 @@ import utils from "../utils";
 import { update } from "lodash";
 
 export const StudentRequest = {
-  getStudentList: (pageSize, pageNumber, keyword) =>
+  getStudentList: (pageSize, pageNumber) =>
     axios({
       method: "get",
-      url: `${apiUrl}/api/v1/students`,
+      url: `${apiUrl}/api/v1/staff/students`,
       headers: {
         Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
         "Content-Type": "application/json",
       },
       params: {
         page: pageNumber,
-        size: pageSize,
-        keyword: keyword || "",
+        size: pageSize
+        // keyword: keyword || "",
       },
     }),
 

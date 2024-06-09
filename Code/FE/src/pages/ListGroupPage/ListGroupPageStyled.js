@@ -66,64 +66,9 @@ export const LoginWrapper = styled.div`
   }
 `;
 
-export const TableStudents = styled.div`
-.searchSupervisors {
-  display: flex;
-  align-items: center;
+export const ListGroup = styled.div`
+.ant-tabs-nav-wrap {
   justify-content: center;
-  gap: 20px;
-  p {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 0 !important;
-  }
-  .searchInput {
-    width: 300px;
-    .ant-input-affix-wrapper {
-      border-radius: 360px 0 0 360px;
-    }
-    input {
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      
-    }
-    input::placeholder {
-      font-size: 16px;
-    }
-    svg {
-      height: 16px;
-    }
-    button { 
-      width: 37.94px;
-      height: 37.94px;
-      border-radius: 0 360px 360px 0 !important;
-    }
-  }
-}
-.grBtn {
-  margin-top: 0 !important;
-  // margin-bottom: 20px !important;
-}
-table {
-  th, td {
-      font-size: 16px;
-  }
-  th {
-      font-weight: 600;
-  }
-  th:nth-child(1) {
-      width: 10%;
-  }
-  th:nth-child(4) {
-      width: 20%;
-  }
-  th:nth-child(1), th:nth-child(4){
-      text-align: center;
-  }
-  th:nth-child(2), th:nth-child(3) {
-      width: 35%;
-  }
 }
 `;
 export const FlexBox = styled.div`
