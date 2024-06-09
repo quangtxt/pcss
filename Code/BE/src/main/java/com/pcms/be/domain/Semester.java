@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -37,9 +38,6 @@ public class Semester implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "specificMajor_id"))
     private Set<SpecificMajor> specificMajors = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "semester_milestone",
-            joinColumns = @JoinColumn(name = "semester_code"),
-            inverseJoinColumns = @JoinColumn(name = "milestone_id"))
-    private Set<Milestone> milestones = new HashSet<>();
+    @OneToMany(mappedBy = "semester", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CapstonePhase> phases;
 }

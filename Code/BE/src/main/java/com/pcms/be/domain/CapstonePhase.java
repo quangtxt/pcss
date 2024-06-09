@@ -7,15 +7,14 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "milestone")
-public class Milestone implements Serializable {
+@Table(name = "capstonePhase")
+public class CapstonePhase implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
@@ -30,9 +29,9 @@ public class Milestone implements Serializable {
     public OffsetDateTime endAt;
 
     @ManyToOne
-    @JoinColumn(name = "phase_id")
-    private CapstonePhase phase;
+    @JoinColumn(name = "semester_id")
+    private Semester semester;
 
-    @OneToMany(mappedBy = "milestone", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Submission> submissions;
+    @OneToMany(mappedBy = "phase", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Milestone> milestones;
 }

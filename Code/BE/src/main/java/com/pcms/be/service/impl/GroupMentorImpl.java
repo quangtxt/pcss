@@ -21,7 +21,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class GroupMetorImpl implements GroupMentorService {
+public class GroupMentorImpl implements GroupMentorService {
     private final GroupMentorRepository groupMentorRepository;
     private final UserService userService;
     private final ModelMapper modelMapper;
@@ -29,21 +29,21 @@ public class GroupMetorImpl implements GroupMentorService {
     public List<GroupMentorResponse> getListInvitationByStatus(String status) throws ServiceException {
         if(status.equals(Constants.MentorStatus.PENDING_MENTOR)){
             User currentUser = userService.getCurrentUser();
-            List<GroupMentor> listInvitation = groupMentorRepository.findByMentorIdAndStatus(currentUser.getMentor(), status);
-            List<GroupMentorResponse> groupMentorRespons = new ArrayList<>();
+            List<GroupMentor> listInvitation = groupMentorRepository.findByMentorAndStatus(currentUser.getMentor(), status);
+            List<GroupMentorResponse> groupMentorResponse = new ArrayList<>();
             for (GroupMentor groupMentor : listInvitation
             ) {
-                groupMentorRespons.add(modelMapper.map(groupMentor, GroupMentorResponse.class));
+                groupMentorResponse.add(modelMapper.map(groupMentor, GroupMentorResponse.class));
             }
-            return groupMentorRespons;
+            return groupMentorResponse;
         }else if(status.equals(Constants.MentorStatus.PENDING_LEADER_TEACHER)){
             List<GroupMentor> listInvitation = groupMentorRepository.findAllByStatus(status);
-            List<GroupMentorResponse> groupMentorRespons = new ArrayList<>();
+            List<GroupMentorResponse> groupMentorResponse = new ArrayList<>();
             for (GroupMentor groupMentor : listInvitation
             ) {
-                groupMentorRespons.add(modelMapper.map(groupMentor, GroupMentorResponse.class));
+                groupMentorResponse.add(modelMapper.map(groupMentor, GroupMentorResponse.class));
             }
-            return groupMentorRespons;
+            return groupMentorResponse;
         }
         return null;
     }
