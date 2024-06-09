@@ -149,6 +149,13 @@ export const Profile = styled.div`
       pointer-events: none;
       resize: none;
     }
+    .ant-radio-group {
+      display: none;
+      label {
+        font-size: 16px;
+        font-weight: 400;
+      }
+    }
   }
   .formProfile {
     max-width: 100%;
@@ -244,6 +251,9 @@ export const Profile = styled.div`
       }
     }
     .inputForm.active {
+      .ant-radio-group {
+        display: inline-block;
+      }
       input {
         border: 1px solid #d9d9d9;
         pointer-events: all;
@@ -253,7 +263,6 @@ export const Profile = styled.div`
         pointer-events: all;
       }
     }
-
     .inputForm.change {
       .ant-form-item-control-input-content {
         display: flex;
@@ -274,6 +283,24 @@ export const Profile = styled.div`
         font-size: 16px;
         line-height: 1;
         content: "*";
+      }
+    }
+    .inputForm.inputGender {
+      .showGender {
+        display: inline-block;
+      }
+      .showGender.active {
+        display: none;
+      }
+      p {
+        display: none;
+        margin-bottom: 0 !important;
+        font-size: 16px;
+        font-weight: 400;
+        padding-left: 6.4px;
+      }
+      p.active {
+        display: inline-block;
       }
     }
   }

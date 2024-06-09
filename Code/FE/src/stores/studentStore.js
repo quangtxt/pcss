@@ -15,12 +15,15 @@ class StudentStore {
     return new Promise((resolve, reject) => {
       StudentRequest.getStudentList(
         this.studentListPageSize,
-        this.studentListPageIndex,
-        this.studentListKeyword
+        this.studentListPageIndex
+        // this.studentListKeyword
       )
         .then((response) => {
           this.studentListTotalCount = response.data.totalCount;
           this.studentList = response.data.data;
+          console.log("count", response.data.totalCount);
+          console.log("data", response.data.data);
+          console.log("respon", response.data);
           resolve(response);
         })
         .catch((error) => {

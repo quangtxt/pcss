@@ -6,7 +6,7 @@ import {
 } from "@ant-design/icons";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { Button, Pagination, Input, Form } from "antd";
+import { Button, Pagination, Input, Form, Switch, Modal } from "antd";
 import uuid from "uuid";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { TableBottomPaginationBlock } from "../../components/Common/Table";
@@ -37,26 +37,27 @@ const ListStudentPage = (props) => {
     setFilter,
   } = studentStore;
 
-  // useEffect(() => {
-  //   if (authenticationStore.currentUser) {
-  //     loadingAnimationStore.setTableLoading(true);
-  //     studentStore.getStudentList().finally(() => {
-  //       loadingAnimationStore.setTableLoading(false);
-  //     });
-  //   }
-  //   return () => {
-  //     studentStore.clearStore();
-  //   };
-  // }, [authenticationStore.currentUser]);
+  useEffect(() => {
+    if (authenticationStore.currentUser) {
+      loadingAnimationStore.setTableLoading(true);
+      studentStore.getStudentList().finally(() => {
+        console.log("list", studentList);
+        loadingAnimationStore.setTableLoading(false);
+      });
+    }
+    return () => {
+      studentStore.clearStore();
+    };
+  }, [authenticationStore.currentUser]);
 
-  const onSearchByEmailOrName = (keyword) => {
-    setFilter("studentListPageIndex", 0);
-    setFilter("studentListKeyword", keyword);
-    loadingAnimationStore.setTableLoading(true);
-    studentStore.getStudentList().finally(() => {
-      loadingAnimationStore.setTableLoading(false);
-    });
-  };
+  // const onSearchByEmailOrName = (keyword) => {
+  //   setFilter("studentListPageIndex", 0);
+  //   setFilter("studentListKeyword", keyword);
+  //   loadingAnimationStore.setTableLoading(true);
+  //   studentStore.getStudentList().finally(() => {
+  //     loadingAnimationStore.setTableLoading(false);
+  //   });
+  // };
 
   const onChangePagination = (e) => {
     setFilter("studentListPageIndex", e - 1);
@@ -69,7 +70,23 @@ const ListStudentPage = (props) => {
   const [isImport, setIsImport] = useState(false);
 
   const [isVisiblePopup, setIsVisiblePopup] = useState(false);
-
+  const showConfirmModal = (action, record) => {
+    Modal.confirm({
+      title: `Are you sure you want to ${action} this group?`,
+      onOk: () => {
+        if (action === "confirm") {
+          console.log(`switch to ${checked}`);
+        } else {
+        }
+      },
+      onCancel: () => {},
+      okText: "Yes",
+      cancelText: "No",
+    });
+  };
+  const onChange = (checked) => {
+    showConfirmModal
+  };
   const columns = [
     {
       title: "Roll number",
@@ -77,18 +94,18 @@ const ListStudentPage = (props) => {
     },
     {
       title: "Email",
-      render: (record) => record?.email,
+      render: (record) => record?.user.email,
     },
     {
       title: "Full Name",
-      render: (record) => record?.name,
+      render: (record) => record?.user.name,
     },
     {
       title: "Status",
-      render: (record) => record?.status,
+      render: (record) => <Switch checked={record?.user.status}
+      onClick={() => showConfirmModal("confirm", record)} />,
     },
   ];
-
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -140,7 +157,7 @@ const ListStudentPage = (props) => {
       <ContentBlockWrapper>
         <Profile>
           <TableStudents>
-            <FlexBox>
+            <FlexBox style={{ marginBottom: "20px" }}>
               <div className="searchSupervisors">
                 <Search
                   allowClear

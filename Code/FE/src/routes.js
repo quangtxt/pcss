@@ -8,6 +8,7 @@ import GroupInvitedMentorPage from "./pages/GroupInvitedMentorPage/GroupInvitedM
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import DetailProfileSupervisorPage from "./pages/DetailProfileSupervisorPage";
 import ListStudentPage from "./pages/ListStudentPage";
+import ListGroupPage from "./pages/ListGroupPage";
 
 export const normalRoutes = [
   {
@@ -81,5 +82,10 @@ export const routes = [
     path: "/student/list",
     component: ListStudentPage,
     name: "ListStudentPage",
+  },
+  {
+    path: "/group/list",
+    component: ListGroupPage,
+    name: "ListGroupPage",
   },
 ];

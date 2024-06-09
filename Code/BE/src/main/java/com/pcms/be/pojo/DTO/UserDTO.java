@@ -17,4 +17,5 @@ public class UserDTO {
     private List<RoleDTO> roles = new ArrayList<>();
     public CampusDTO campus;
     public GroupResponse group;
+    public boolean status;
 }

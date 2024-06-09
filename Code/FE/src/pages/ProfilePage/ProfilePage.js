@@ -31,6 +31,7 @@ const ProfilePage = (props) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingEmail, setIsChangingEmail] = useState(false);
   const [isChangingPass, setIsChangingPass] = useState(false);
+  const [showGender] = useState(false);
 
   useEffect(() => {
     if (authenticationStore.currentUser) {
@@ -237,12 +238,18 @@ const ProfilePage = (props) => {
                   <Input style={{ maxWidth: "100%" }} />
                 </Form.Item>
               </div>
-              <div className={`inputForm ${isEditing ? "active" : ""}`}>
+              <div
+                className={`inputForm inputGender ${isEditing ? "active" : ""}`}
+              >
                 <Form.Item label="Gender" name="gender">
                   <Radio.Group>
                     <Radio value="male"> Male </Radio>
                     <Radio value="female"> Female </Radio>
                   </Radio.Group>
+                  <div className={`showGender ${isEditing ? "active" : ""}`}>
+                    <p className={`${showGender ? "active" : ""}`}>Male</p>
+                    <p className={`${showGender ? "" : "active"}`}>Female</p>
+                  </div>
                 </Form.Item>
               </div>
               <div className="inputForm">
