@@ -48,6 +48,12 @@ export const MEMBER_STATUS = {
   OUT_GROUP: "OUTGROUP",
 };
 
+export const MENTOR_STATUS = {
+  PENDING: "PENDING_MENTOR",
+  REJECT: "REJECT_MENTOR",
+  ACCEPT: "ACCEPT_MENTOR",
+};
+
 export const ACL_TYPE = {};
 export const ACL_ACTION_TYPE = {};
 export const MODULE_CODE = {};

@@ -55,11 +55,6 @@ export const routes = [
     name: "CreateIdeaPage",
   },
   {
-    path: "/registration/listSupervisors",
-    component: ListSupervisorsPage,
-    name: "ListSupervisorsPage",
-  },
-  {
     path: "/profile",
     component: ProfilePage,
     name: "ProfilePage",
