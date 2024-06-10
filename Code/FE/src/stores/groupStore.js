@@ -39,18 +39,25 @@ class GroupStore {
     description,
     keywords,
     name,
-    vietnameseTitle,
+    vietnameseTitle
   ) => {
-    
     return new Promise((resolve, reject) => {
-      console.log("editGroup", groupId, abbreviations, name, vietnameseTitle,keywords,description);
+      console.log(
+        "editGroup",
+        groupId,
+        abbreviations,
+        name,
+        vietnameseTitle,
+        keywords,
+        description
+      );
       GroupRequest.editGroup(
         groupId,
         abbreviations,
         description,
         keywords,
         name,
-        vietnameseTitle,
+        vietnameseTitle
       )
         .then((response) => {
           resolve(response);
@@ -158,6 +165,28 @@ class GroupStore {
   @action updateGroupMentorStatus = (id, status) => {
     return new Promise((resolve, reject) => {
       GroupRequest.updateGroupMentorStatus(id, status)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action createNote = (meetingId, title, content) => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.createNote(meetingId, title, content)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action getNoteListByMeeting = (meetingId) => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.getNoteListByMeeting(meetingId)
         .then((response) => {
           resolve(response);
         })

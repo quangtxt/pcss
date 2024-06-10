@@ -55,7 +55,10 @@ public class Group implements Serializable {
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     private List<Meeting> meetings;
 
-    @ManyToMany(mappedBy = "groups",cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(name = "v_group_mentor",
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "mentor_id"))
     private Set<Mentor> mentors = new HashSet<>();
 
     // Getters, setters, constructors, etc.

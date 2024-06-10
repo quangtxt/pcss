@@ -125,7 +125,6 @@ const ListRequestPage = (props) => {
       ),
     },
   ];
-  function navigateToDetail(record) {}
   return (
     <DashboardLayout>
       <Helmet>

@@ -173,4 +173,27 @@ export const GroupRequest = {
         status: status,
       },
     }),
+  getNoteListByMeeting: (meetingId) =>
+    axios({
+      method: "get",
+      url: `${apiUrl}/api/v1/meeting/notes/${meetingId}`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+    }),
+  createNote: (meetingId, title, content) =>
+    axios({
+      method: "post",
+      url: `${apiUrl}/api/v1/meeting/note/create`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+      data: {
+        meetingId: meetingId,
+        title: title,
+        content: content,
+      },
+    }),
 };

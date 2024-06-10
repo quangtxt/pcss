@@ -22,7 +22,7 @@ import java.util.List;
 public class MeetingController {
     public final NoteService noteService;
     public final ModelMapper modelMapper;
-    @PostMapping("/create-note")
+    @PostMapping("/note/create")
     public ResponseEntity<NoteResponse> createNote(@RequestBody CreateNoteRequest createNoteRequest) {
         try {
             Note note = noteService.createNote(createNoteRequest);
@@ -32,7 +32,7 @@ public class MeetingController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
-    @PostMapping("/edit-note")
+    @PutMapping("note/edit")
     public ResponseEntity<NoteResponse> editNote(@RequestBody EditNoteRequest editNoteRequest) {
         try {
             Note note = noteService.editNote(editNoteRequest);
@@ -42,7 +42,7 @@ public class MeetingController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
-    @DeleteMapping("/remove-note")
+    @DeleteMapping("/note")
     public ResponseEntity<NoteResponse> removeNote(@RequestParam int noteId) {
         try {
             Note note = noteService.removeNote(noteId);
@@ -52,8 +52,8 @@ public class MeetingController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
-    @GetMapping("/view-notes")
-    public ResponseEntity<List<NoteResponse>> viewNotes(@RequestParam int meetingId) {
+    @GetMapping("/notes/{meetingId}")
+    public ResponseEntity<List<NoteResponse>> viewNotes(@PathVariable int meetingId) {
         try {
             List<Note> notes = noteService.viewNotes(meetingId);
             List<NoteResponse> noteResponseList = new ArrayList<>();
