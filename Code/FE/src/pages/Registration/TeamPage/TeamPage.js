@@ -26,6 +26,7 @@ const RegTeamPage = (props) => {
 
   const [isVisiblePopup, setIsVisiblePopup] = useState(false);
   const [isVisiblePopupSend, setIsVisiblePopupSend] = useState(false);
+  
 
   const [members, setMembers] = useState([]);
   const [group, setGroup] = useState();
@@ -56,6 +57,18 @@ const RegTeamPage = (props) => {
     }
   };
 
+  const showConfirmModal = () => {
+    Modal.confirm({
+      title: `Are you sure you want to cancel request submit group?`,
+      onOk: () => {
+        
+      },
+      onCancel: () => {},
+      okText: "Confirm request cancel",
+      cancelText: "No",
+    });
+  };
+
   function navigateToEdit() {
     setIsVisiblePopup(true);
   }
@@ -63,6 +76,7 @@ const RegTeamPage = (props) => {
   function navigateToSend() {
     setIsVisiblePopupSend(true);
   }
+
   return (
     <DashboardLayout>
       <Helmet>
@@ -210,17 +224,32 @@ const RegTeamPage = (props) => {
               <div className="inforGro">
                 <p style={{ padding: "20px 20px" }}>Register Group</p>
               </div>
-              <div className="centered-button">
-                <Button
-                  group={group}
-                  shape="round"
-                  icon={<SendOutlined />}
-                  size={size}
-                  onClick={navigateToSend}
-                >
-                  Send
-                </Button>
-              </div>
+              {group?.status === "SUBMITTED" ? (
+                <div className="centered-button">
+                  <Button
+                    shape="round"
+                    icon={<SendOutlined />}
+                    size={size}
+                    onClick={showConfirmModal}
+                  >
+                    Cancel Request
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <div className="centered-button">
+                    <Button
+                      group={group}
+                      shape="round"
+                      icon={<SendOutlined />}
+                      size={size}
+                      onClick={navigateToSend}
+                    >
+                      Send
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </Team>
@@ -235,7 +264,7 @@ const RegTeamPage = (props) => {
         isVisiblePopup={isVisiblePopup}
         setIsVisiblePopup={setIsVisiblePopup}
         handleClosePopup={() => setIsVisiblePopup(false)}
-        setRefresh = {setRefresh}
+        setRefresh={setRefresh}
       />
 
       <PopupSendToMentor

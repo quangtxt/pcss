@@ -11,28 +11,35 @@ import PageTitle from "../../components/PageTitle";
 import { Helmet } from "react-helmet/es/Helmet";
 import { ForContent } from "./GroupInvitedMentorPageStyled";
 import TableComponent from "../../components/Common/TableComponent";
+import moment from "moment";
+import { DATE_FORMAT_SLASH, MENTOR_STATUS } from "../../constants";
+
 
 const GroupInvitedMentorPage = (props) => {
   const {
     history,
     loadingAnimationStore,
-    mentorStore,
+    groupStore,
     authenticationStore,
   } = props;
+
+  const { groupInvitation } = groupStore;
 
   const [listGroupMentorRegistered, setListGroupMentorRegistered] = useState();
   useEffect(() => {
     if (authenticationStore.currentUser) {
-      getListMentorRegistered();
+      getListInvitation();
     }
+    return () => {
+      groupStore.clearStore();
+    };
   }, [authenticationStore.currentUser]);
-  const getListMentorRegistered = async () => {
-    // loadingAnimationStore.setTableLoading(true);
-    // const res = await mentorStore.getGroupMentorRegistered().finally(() => {
-    //   loadingAnimationStore.setTableLoading(false);
-    // });
-    // setListGroupMentorRegistered(res.data);
-    // console.log(res);
+  const getListInvitation = async () => {
+    loadingAnimationStore.setTableLoading(true);
+    const res = await groupStore.getGroupInvitation().finally(() => {
+      loadingAnimationStore.setTableLoading(false);
+    });
+    setListGroupMentorRegistered(res.data);
   };
 
   const showConfirmModal = (action, record) => {
@@ -52,73 +59,33 @@ const GroupInvitedMentorPage = (props) => {
   };
 
   const handleAgree = async (values) => {
-    // updateInvitationStatus(values, true);
+     updateInvitationStatus(values, MENTOR_STATUS.ACCEPT);
   };
   const handleRefuse = async (values) => {
-    // updateInvitationStatus(values, false);
+     updateInvitationStatus(values, MENTOR_STATUS.REJECT);
   };
-  const dataSource = [
-    {
-      id: 1,
-      name: "John Doe",
-      vietnameseTitle: "Giám đốc",
-      studentLeader: "Alice Nguyen",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      vietnameseTitle: "Trưởng phòng",
-      studentLeader: "Bob Tran",
-    },
-    {
-      id: 3,
-      name: "Michael Johnson",
-      vietnameseTitle: "Kỹ sư trưởng",
-      studentLeader: "Charlie Lee",
-    },
-    {
-      id: 4,
-      name: "Sarah Lee",
-      vietnameseTitle: "Nhân viên",
-      studentLeader: "David Pham",
-    },
-    {
-      id: 5,
-      name: "David Kim",
-      vietnameseTitle: "Quản lý",
-      studentLeader: "Emily Vu",
-    },
-    {
-      id: 6,
-      name: "Emily Chen",
-      vietnameseTitle: "Trợ lý",
-      studentLeader: "Frank Hoang",
-    },
-    {
-      id: 7,
-      name: "William Park",
-      vietnameseTitle: "Chuyên viên",
-      studentLeader: "Gina Nguyen",
-    },
-    {
-      id: 8,
-      name: "Jessica Nguyen",
-      vietnameseTitle: "Trưởng phòng",
-      studentLeader: "Henry Tran",
-    },
-    {
-      id: 9,
-      name: "Benjamin Lim",
-      vietnameseTitle: "Kỹ sư",
-      studentLeader: "Isabella Phan",
-    },
-    {
-      id: 10,
-      name: "Olivia Tran",
-      vietnameseTitle: "Nhân viên",
-      studentLeader: "Jacob Le",
-    },
-  ];
+
+  const updateInvitationStatus = async (values, status) => {
+    try {
+      loadingAnimationStore.showSpinner(true);
+      const response = await groupStore.updateGroupMentorStatus(
+        values?.id,
+        status,
+      );
+      if (response.status === 200) {
+        if (status == MENTOR_STATUS.ACCEPT) {
+          message.success(`You have successfully accepted to become a mentor for this group!`);
+        } else {
+          message.success(`You refused to become a mentor for this group!`);
+        }
+        await getListInvitation();
+        loadingAnimationStore.showSpinner(false);
+      }
+    } catch (err) {
+      message.error(err.en || "Login failed response status!");
+      loadingAnimationStore.showSpinner(false);
+    }
+  };
 
   const columns = [
     {
@@ -129,23 +96,24 @@ const GroupInvitedMentorPage = (props) => {
     {
       title: "Group Name",
       width: "25%",
-      render: (record) => record?.name,
+      render: (record) => record?.group.name,
     },
     {
       title: "Vietnamese Title",
       width: "25%",
-      render: (record) => record?.vietnameseTitle,
+      render: (record) => record?.group.vietnameseTitle,
     },
     {
-      title: "Student Leader",
+      title: "Create At",
       width: "25%",
-      render: (record) => record?.studentLeader,
+      render: (record) =>  moment(record?.group.createdAt).format(DATE_FORMAT_SLASH),
     },
     {
       title: "Action",
       width: "20%",
       align: "center",
       render: (record) => (
+        console.log(record),
         <div>
           <Tooltip title="Confirm">
             <Button
@@ -185,7 +153,7 @@ const GroupInvitedMentorPage = (props) => {
       <ContentBlockWrapper>
         <TableComponent
           rowKey={(record) => record.id || uuid()}
-          dataSource={dataSource}
+          dataSource={groupInvitation}
           columns={columns}
           pagination={false}
           loading={loadingAnimationStore.tableLoading}
@@ -199,7 +167,7 @@ export default memo(
     inject(
       "authenticationStore",
       "loadingAnimationStore",
-      "mentorStore"
+      "groupStore"
     )(observer(GroupInvitedMentorPage))
   )
 );

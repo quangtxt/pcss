@@ -24,18 +24,17 @@ const PopupSendToMentor = (props) => {
     mentorStore,
     authenticationStore,
     loadingAnimationStore,
+    groupStore,
   } = props;
 
-  const {
-    mentorList,
-    setFilter,
-  } = mentorStore;
+  const { mentorList, setFilter } = mentorStore;
 
   const { TextArea } = Input;
   const [form] = Form.useForm();
   const [mentor, setMentor] = useState();
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [mentorsToInvite, setMentorsToInvite] = useState([]);
+  const [selectedOption1, setSelectedOption1] = useState(null);
+  const [selectedOption2, setSelectedOption2] = useState(null);
+  const [listMentor, setListMentor] = useState([]);
 
   useEffect(() => {
     if (authenticationStore.currentUser) {
@@ -56,12 +55,41 @@ const PopupSendToMentor = (props) => {
     };
   }, [authenticationStore.currentUser, group]);
 
-
-  const handleOptionChange = (option) => {
-    setSelectedOption(option);
-    const selectedIds = option.map((option) => option.value);
-    setSelectedStudent(selectedIds);
+  const handleOptionChange1 = (option) => {
+    setSelectedOption1(option);
+    setListMentor((prevList) => [...prevList, option]);
   };
+
+  const handleOptionChange2 = (option) => {
+    setSelectedOption2(option);
+    setListMentor((prevList) => [...prevList, option]);
+    setOptions(getOptions().filter((opt) => !prevMentors.includes(opt)));
+  };
+  
+  
+  const handleSend = async () => {
+    try {
+      console.log("ListMentor : ", listMentor);
+      loadingAnimationStore.showSpinner(true);
+      const response = await groupStore.submitGroup(
+        group?.id,
+        listMentor,
+      );
+      if (response.status === 200) {
+        //sua gr thanh cong
+        // setRefresh(true);
+        setIsVisiblePopup(false);
+        message.success("Submit group successfully");
+      }
+    } catch (err) {
+      console.log(err);
+      loadingAnimationStore.showSpinner(false);
+      message.error(err.en || "Login failed response status!");
+    } finally {
+      loadingAnimationStore.showSpinner(false);
+    }
+  };
+
   const getOptions = () => {
     if (mentorList.length > 0) {
       return mentorList.map((mentor) => ({
@@ -83,7 +111,7 @@ const PopupSendToMentor = (props) => {
       event.preventDefault();
     }
   };
-  console.log(group?.abbreviations);
+  
   return (
     <Modal
       title="Send Invitation for Mentor"
@@ -94,21 +122,21 @@ const PopupSendToMentor = (props) => {
       width="60%"
       style={{ top: 20 }}
     >
-      <Form form={form}>
+      <Form form={form} onFinish={handleSend} scrollToFirstError>
         <Profile>
           <div className="contactInfor">
             <div className="groupInput">
               <Form.Item label="Name" name="name">
-                <Input disabled/>
+                <Input disabled />
               </Form.Item>
               <Form.Item label="Vietnamese Title" name="vietnameseTitle">
-                <Input  disabled/>
+                <Input disabled />
               </Form.Item>
               <Form.Item label="Abbreviations" name="abbreviations">
-                <Input  disabled/>
+                <Input disabled />
               </Form.Item>
               <Form.Item label="Keywords" name="keywords">
-                <Input  disabled/>
+                <Input disabled />
               </Form.Item>
             </div>
             <div className="textarea-form">
@@ -123,21 +151,50 @@ const PopupSendToMentor = (props) => {
             </div>
           </div>
         </Profile>
+        <p className="title" style={{ fontSize: "14px" }}>
+          Send invite to mentor
+        </p>
+        <p
+          className="title"
+          style={{
+            fontSize: "12px",
+            fontWeight: "400",
+            color: "rgba(100, 100, 111, 0.8)",
+          }}
+        >
+          You have to select your mentor's FPT email below
+        </p>
+        <p className="title" style={{ fontSize: "14px" }}>
+          Supervisor 1
+        </p>
         <InviteContainer>
           <InviteInput>
             <Select
-              value={selectedOption}
+              value={selectedOption1}
               components={{
                 DropdownIndicator: () => null,
                 IndicatorSeparator: () => null,
               }}
-              onChange={handleOptionChange}
+              onChange={handleOptionChange1}
               options={getOptions()}
               placeholder="Example@fpt.edu.vn"
-              openMenuOnClick={false}
-              onMenuOpen={handleMenuOpen}
-              onMenuClose={handleMenuClose}
-              onKeyDown={handleKeyDown}
+            />
+          </InviteInput>
+        </InviteContainer>
+        <p className="title" style={{ fontSize: "14px", marginTop: "10px" }}>
+          Supervisor 2
+        </p>
+        <InviteContainer>
+          <InviteInput>
+            <Select
+              value={selectedOption2}
+              components={{
+                DropdownIndicator: () => null,
+                IndicatorSeparator: () => null,
+              }}
+              onChange={handleOptionChange2}
+              options={getOptions()}
+              placeholder="Example@fpt.edu.vn"
             />
           </InviteInput>
         </InviteContainer>
@@ -166,6 +223,7 @@ export default withRouter(
   inject(
     "loadingAnimationStore",
     "authenticationStore",
-    "mentorStore"
+    "mentorStore",
+    "groupStore"
   )(observer(PopupSendToMentor))
 );

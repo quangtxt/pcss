@@ -4,6 +4,7 @@ import utils from "../utils";
 import { GroupRequest } from "../requests/GroupRequest";
 
 class GroupStore {
+  @observable groupInvitation = [];
   @action createGroup = (
     abbreviations,
     description,
@@ -114,9 +115,49 @@ class GroupStore {
         });
     });
   };
+  @action submitGroup = (groupId, mentorIds) => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.submitGroup(groupId, mentorIds)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   @action empowerOwner = (groupId, studentId) => {
     return new Promise((resolve, reject) => {
       GroupRequest.empowerOwner(groupId, studentId)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+
+  @action getGroupInvitation = () => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.getGroupInvitation()
+        .then((response) => {
+          this.groupInvitation = response.data;
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+
+  @action clearStore = () => {
+    this.groupInvitation = [];
+  };
+
+  @action updateGroupMentorStatus = (id, status) => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.updateGroupMentorStatus(id, status)
         .then((response) => {
           resolve(response);
         })
