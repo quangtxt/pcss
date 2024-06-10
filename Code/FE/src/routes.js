@@ -6,9 +6,11 @@ import CreateIdeaPage from "./pages/Registration/CreateIdeaPage/CreateIdeaPage";
 import ListSupervisorsPage from "./pages/Registration/ListSupervisorsPage/ListSupervisorsPage";
 import GroupInvitedMentorPage from "./pages/GroupInvitedMentorPage/GroupInvitedMentorPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
+import CreateNotePage from "./pages/Meeting/Note/CreateNotePage";
 import DetailProfileSupervisorPage from "./pages/DetailProfileSupervisorPage";
 import ListStudentPage from "./pages/ListStudentPage";
 import ListGroupPage from "./pages/ListGroupPage";
+import NotePage from "./pages/Meeting/Note/NotePage";
 
 export const normalRoutes = [
   {
@@ -63,6 +65,19 @@ export const routes = [
     path: "/registration/supervisor/detail",
     component: DetailProfileSupervisorPage,
     name: "DetailProfileSupervisorPage",
+  },
+
+  //student-phase-2
+
+  {
+    path: "/guidance/meeting/note/create",
+    component: CreateNotePage,
+    name: "CreateNotePage",
+  },
+  {
+    path: "/guidance/meeting/notes",
+    component: NotePage,
+    name: "NotePage",
   },
 
   //mentor

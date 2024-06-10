@@ -33,10 +33,7 @@ public class Mentor implements Serializable {
     @Column(name = "self_description")
     public String selfDescription;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "v_group_mentor_invitation",
-            joinColumns = @JoinColumn(name = "mentor_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id"))
+    @ManyToMany(mappedBy = "mentors")
     private Set<Group> groups = new HashSet<>();
 
 }
