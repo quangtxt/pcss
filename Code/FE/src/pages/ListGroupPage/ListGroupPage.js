@@ -30,9 +30,17 @@ const ListGroupPage = (props) => {
   const {
     history,
     loadingAnimationStore,
+    groupStore,
     studentStore,
     authenticationStore,
   } = props;
+
+  const {
+    groupList,
+    groupListTotalCount,
+    groupListPageSize,
+    groupListPageIndex,
+  } = groupStore;
 
   const {
     studentList,
@@ -43,18 +51,25 @@ const ListGroupPage = (props) => {
   } = studentStore;
 
   useEffect(() => {
+    async function getStudentList() {
+      const res = await studentStore.getStudentsToInvite();
+      let studentsToInviteFiltered;
+      setStudentsToInvite(studentsToInviteFiltered);
+    }
     if (authenticationStore.currentUser) {
       loadingAnimationStore.setTableLoading(true);
-      studentStore.getStudentList().finally(() => {
-        console.log("list", studentList);
+      groupStore.getGroupList().finally(() => {
+        loadingAnimationStore.setTableLoading(false);
+      });
+      getStudentList().finally(() => {
         loadingAnimationStore.setTableLoading(false);
       });
     }
     return () => {
-      studentStore.clearStore();
+      groupStore.clearStore();
     };
   }, [authenticationStore.currentUser]);
-
+  console.log("list", studentList);
   const [activeTab, setActiveTab] = useState("tab1");
 
   const onChange = (key) => {
@@ -63,41 +78,41 @@ const ListGroupPage = (props) => {
 
   const columnsGroup = [
     {
-      title: "Roll number",
-      render: (record, index, dataSource) => dataSource + 1,
+      title: "Group Name",
+      render: (record) => record?.name,
     },
     {
-      title: "Email",
-      render: (record) => record?.user.email,
+      title: "Vietnamese Title",
+      render: (record) => record?.vietnameseTitle,
     },
     {
-      title: "Full Name",
-      render: (record) => record?.user.name,
+      title: "Create at",
+      render: (record) => record?.createdAt,
     },
     {
-      title: "Status",
-      render: (record) => record?.user.name,
+      title: "Description",
+      render: (record) => record?.description,
     },
   ];
 
-  const columnsStudent = [
-    {
-      title: "Roll number",
-      render: (record, index, dataSource) => dataSource + 1,
-    },
-    {
-      title: "Email",
-      render: (record) => record?.user.email,
-    },
-    {
-      title: "Full Name",
-      render: (record) => record?.user.name,
-    },
-    {
-      title: "Status",
-      render: (record) => record?.user.name,
-    },
-  ];
+  // const columnsStudent = [
+  //   {
+  //     title: "Roll number",
+  //     render: (record, index, dataSource) => dataSource + 1,
+  //   },
+  //   {
+  //     title: "Email",
+  //     render: (record) => record?.user.email,
+  //   },
+  //   {
+  //     title: "Full Name",
+  //     render: (record) => record?.user.name,
+  //   },
+  //   {
+  //     title: "Status",
+  //     render: (record) => record?.user.name,
+  //   },
+  // ];
   return (
     <DashboardLayout>
       <Helmet>
@@ -113,8 +128,8 @@ const ListGroupPage = (props) => {
           <Tabs activeKey={activeTab} onChange={onChange}>
             <TabPane tab="List Group" key="tab1">
               <TableComponent
-                // rowKey={(record) => record.id || uuid()}
-                // dataSource={studentList}
+                rowKey={(record) => record.id || uuid()}
+                dataSource={groupList}
                 columns={columnsGroup}
                 pagination={false}
                 loading={loadingAnimationStore.tableLoading}
@@ -122,9 +137,9 @@ const ListGroupPage = (props) => {
             </TabPane>
             <TabPane tab="Student" key="tab2">
               <TableComponent
-                // rowKey={(record) => record.id || uuid()}
-                // dataSource={studentList}
-                columns={columnsStudent}
+                rowKey={(record) => record.id || uuid()}
+                dataSource={studentList}
+                // columns={columnsStudent}
                 pagination={false}
                 loading={loadingAnimationStore.tableLoading}
               />
@@ -140,7 +155,8 @@ export default memo(
     inject(
       "authenticationStore",
       "loadingAnimationStore",
-      "studentStore"
+      "studentStore",
+      "groupStore"
     )(observer(ListGroupPage))
   )
 );

@@ -34,7 +34,8 @@ class StudentStore {
   @action getStudentsToInvite = () => {
     return new Promise((resolve, reject) => {
       StudentRequest.getStudentsToInvite()
-        .then((response) => {
+        .then((response) => {       
+          console.log("dataStudent", response);
           resolve(response);
         })
         .catch((error) => {
