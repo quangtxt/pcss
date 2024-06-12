@@ -40,7 +40,6 @@ class GroupStore {
     keywords,
     name,
     vietnameseTitle
-    vietnameseTitle
   ) => {
     return new Promise((resolve, reject) => {
       console.log(
@@ -58,7 +57,6 @@ class GroupStore {
         description,
         keywords,
         name,
-        vietnameseTitle
         vietnameseTitle
       )
         .then((response) => {
@@ -164,59 +162,59 @@ class GroupStore {
     });
   };
   @action getGroupInvitation = () => {
-      return new Promise((resolve, reject) => {
-        GroupRequest.getGroupInvitation()
-          .then((response) => {
-            this.groupInvitation = response.data;
-            resolve(response);
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
+    return new Promise((resolve, reject) => {
+      GroupRequest.getGroupInvitation()
+        .then((response) => {
+          this.groupInvitation = response.data;
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   };
-  
+
   @action clearStore = () => {
-      this.groupInvitation = [];
-      this.groupList = [];
+    this.groupInvitation = [];
+    this.groupList = [];
     this.groupListPageIndex = 0;
     this.groupListPageSize = 5;
     this.groupListTotalCount = 0;
     this.groupListKeyword = undefined;
   };
-  
+
   @action updateGroupMentorStatus = (id, status) => {
-      return new Promise((resolve, reject) => {
-        GroupRequest.updateGroupMentorStatus(id, status)
-          .then((response) => {
-            resolve(response);
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
-    };
-    @action createNote = (meetingId, title, content) => {
-      return new Promise((resolve, reject) => {
-        GroupRequest.createNote(meetingId, title, content)
-          .then((response) => {
-            resolve(response);
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
-    };
-    @action getNoteListByMeeting = (meetingId) => {
-      return new Promise((resolve, reject) => {
-        GroupRequest.getNoteListByMeeting(meetingId)
-          .then((response) => {
-            resolve(response);
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
-    };
-  }
+    return new Promise((resolve, reject) => {
+      GroupRequest.updateGroupMentorStatus(id, status)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action createNote = (meetingId, title, content) => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.createNote(meetingId, title, content)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action getNoteListByMeeting = (meetingId) => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.getNoteListByMeeting(meetingId)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+}
 export default new GroupStore();
