@@ -151,6 +151,21 @@ export const GroupRequest = {
       },
     }),
 
+  getGroupList: (pageSize, pageNumber) =>
+    axios({
+      method: "get",
+      url: `${apiUrl}/api/v1/staff/groups`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+      params: {
+        page: pageNumber,
+        size: pageSize,
+        // keyword: keyword || "",
+      },
+    }),
+
   getGroupInvitation: () =>
     axios({
       method: "get",
