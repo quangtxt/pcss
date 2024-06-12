@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.DateTimeException;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -49,5 +52,13 @@ public class ValidateData {
             }
         }
         return true;
+    }
+    public boolean isOffsetDateTimeValid(OffsetDateTime offsetDateTime) {
+        try {
+            OffsetDateTime.parse(offsetDateTime.toString());
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
     }
 }
