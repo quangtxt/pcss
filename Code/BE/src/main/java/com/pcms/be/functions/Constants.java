@@ -81,4 +81,8 @@ public interface Constants {
         String ByName = "NAME";
         String ByEmail = "EMAIL";
     }
+    interface MeetingStatus {
+        String PENDING = "PENDING";
+
+    }
 }

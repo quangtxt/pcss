@@ -3,9 +3,13 @@ package com.pcms.be.controller;
 import com.pcms.be.domain.meeting.Note;
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
+import com.pcms.be.pojo.DTO.MeetingDTO;
 import com.pcms.be.pojo.request.CreateNoteRequest;
+import com.pcms.be.pojo.request.EditMeetingRequest;
 import com.pcms.be.pojo.request.EditNoteRequest;
+import com.pcms.be.pojo.request.CreateMeetingRequest;
 import com.pcms.be.pojo.response.NoteResponse;
+import com.pcms.be.service.MeetingService;
 import com.pcms.be.service.NoteService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -21,6 +25,7 @@ import java.util.List;
 @RequestMapping("/api/v1/meeting")
 public class MeetingController {
     public final NoteService noteService;
+    public final MeetingService meetingService;
     public final ModelMapper modelMapper;
     @PostMapping("/note/create")
     public ResponseEntity<NoteResponse> createNote(@RequestBody CreateNoteRequest createNoteRequest) {
@@ -67,4 +72,30 @@ public class MeetingController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+    @GetMapping("/view/{groupId}")
+    public ResponseEntity<List<MeetingDTO>> viewMeetings(@PathVariable int groupId){
+        try {
+            List<MeetingDTO> meetings = meetingService.viewMeetings(groupId);
+
+            return ResponseEntity.ok(meetings);
+        } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
+    }
+
+//    @PostMapping("/create")
+//    public ResponseEntity<List<MeetingDTO>> createMeeting(@RequestBody List<MeetingRequest> meetingRequests){
+//        try {
+//            List<MeetingDTO> newMeetings = meetingService.createMeeting(meetingRequests);
+//            return ResponseEntity.ok(newMeetings);
+//        } catch (ServiceException e) {
+//            throw new ApiException(e.getErrorCode(), e.getParams());
+//        }
+//    }
+
+//    @PutMapping("/update")
+//    public ResponseEntity<List<MeetingDTO>> updateMeeting(@RequestBody EditMeetingRequest editMeetingRequest){
+//        return null;
+//    }
+
 }
