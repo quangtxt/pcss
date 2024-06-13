@@ -1,5 +1,6 @@
 package com.pcms.be.repository;
 
+import com.pcms.be.domain.user.Group;
 import com.pcms.be.domain.user.GroupMentor;
 import com.pcms.be.domain.user.Mentor;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,13 +11,9 @@ import java.util.Optional;
 
 @Repository
 public interface GroupMentorRepository extends JpaRepository<GroupMentor, Long> {
-
-
     Optional<GroupMentor> findById(Long id);
-
     List<GroupMentor> findByMentorAndStatus(Mentor mentor, String status);
     List<GroupMentor> findAllByStatus(String status);
-
-
+    GroupMentor findByGroupAndMentorAndStatus(Group group, Mentor mentor, String status);
 
 }
