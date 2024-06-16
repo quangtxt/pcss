@@ -2,6 +2,7 @@ package com.pcms.be.pojo.DTO;
 
 import com.pcms.be.domain.meeting.Note;
 import com.pcms.be.domain.user.Group;
+import com.pcms.be.pojo.response.NoteResponse;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,4 +19,5 @@ public class MeetingDTO {
     private String type;
     private String location;
     private GroupDTO group;
+    private List<NoteResponse> notes;
 }

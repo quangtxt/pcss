@@ -13,8 +13,6 @@ class GroupStore {
     vietnameseTitle,
     selectedStudent
   ) => {
-    console.log("selectedStudent", selectedStudent);
-
     return new Promise((resolve, reject) => {
       GroupRequest.createGroup(
         abbreviations,
@@ -42,15 +40,6 @@ class GroupStore {
     vietnameseTitle
   ) => {
     return new Promise((resolve, reject) => {
-      console.log(
-        "editGroup",
-        groupId,
-        abbreviations,
-        name,
-        vietnameseTitle,
-        keywords,
-        description
-      );
       GroupRequest.editGroup(
         groupId,
         abbreviations,
