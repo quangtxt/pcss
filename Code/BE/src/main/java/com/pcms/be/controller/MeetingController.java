@@ -81,7 +81,6 @@ public class MeetingController {
     public ResponseEntity<List<MeetingDTO>> viewMeetings(@PathVariable int groupId) {
         try {
             List<MeetingDTO> meetings = meetingService.viewMeetings(groupId);
-
             return ResponseEntity.ok(meetings);
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());
