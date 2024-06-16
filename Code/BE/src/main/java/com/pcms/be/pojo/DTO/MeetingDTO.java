@@ -19,5 +19,5 @@ public class MeetingDTO {
     private String type;
     private String location;
     private GroupDTO group;
-    private List<NoteResponse> notes;
+    private List<NoteDTO> notes;
 }

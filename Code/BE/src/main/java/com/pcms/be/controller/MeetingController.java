@@ -27,6 +27,7 @@ public class MeetingController {
     public final NoteService noteService;
     public final MeetingService meetingService;
     public final ModelMapper modelMapper;
+
     @PostMapping("/note/create")
     public ResponseEntity<NoteResponse> createNote(@RequestBody CreateNoteRequest createNoteRequest) {
         try {
@@ -37,6 +38,7 @@ public class MeetingController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+
     @PutMapping("note/edit")
     public ResponseEntity<NoteResponse> editNote(@RequestBody EditNoteRequest editNoteRequest) {
         try {
@@ -47,6 +49,7 @@ public class MeetingController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+
     @DeleteMapping("/note")
     public ResponseEntity<NoteResponse> removeNote(@RequestParam int noteId) {
         try {
@@ -57,13 +60,14 @@ public class MeetingController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+
     @GetMapping("/notes/{meetingId}")
     public ResponseEntity<List<NoteResponse>> viewNotes(@PathVariable int meetingId) {
         try {
             List<Note> notes = noteService.viewNotes(meetingId);
             List<NoteResponse> noteResponseList = new ArrayList<>();
-            for (Note note: notes
-                 ) {
+            for (Note note : notes
+            ) {
                 NoteResponse noteResponse = modelMapper.map(note, NoteResponse.class);
                 noteResponseList.add(noteResponse);
             }
@@ -72,8 +76,9 @@ public class MeetingController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+
     @GetMapping("/view/{groupId}")
-    public ResponseEntity<List<MeetingDTO>> viewMeetings(@PathVariable int groupId){
+    public ResponseEntity<List<MeetingDTO>> viewMeetings(@PathVariable int groupId) {
         try {
             List<MeetingDTO> meetings = meetingService.viewMeetings(groupId);
 
