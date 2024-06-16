@@ -17,6 +17,8 @@ import {
   ProfileOutlined,
   SnippetsOutlined,
   SolutionOutlined,
+  ScheduleOutlined,
+  ReconciliationOutlined,
 } from "@ant-design/icons";
 import { SiderbarWrapper } from "./MainSidebarStyled";
 import { toJS } from "mobx";
@@ -150,9 +152,26 @@ const MainSidebar = (props) => {
       icon={<ProfileOutlined />}
       title="Guidance Phase"
     >
-      <Menu.Item key={"/kpi"} icon={<BarChartOutlined />} title>
-        <Link to={"/kpi"}>Submit results</Link>
-      </Menu.Item>
+      {isMentor && (
+        <Menu.Item key={"/kpi"} icon={<BarChartOutlined />} title>
+          <Link to={"/kpi"}>Submit results</Link>
+        </Menu.Item>
+      )}
+      {isMentor && (
+        <Menu.Item key={"/guidance/schedule"} icon={<ScheduleOutlined />} title>
+          <Link to={"/guidance/schedule"}>Schedule </Link>
+        </Menu.Item>
+      )}
+      {isStudent && (
+        <Menu.Item key={"/guidance/schedule"} icon={<ScheduleOutlined />} title>
+          <Link to={"/guidance/schedule"}>Schedule </Link>
+        </Menu.Item>
+      )}
+      {isStudent && (
+        <Menu.Item key={"/guidance/task" } icon={<ReconciliationOutlined />} title>
+          <Link to={"/guidance/task"}>Manage Task</Link>
+        </Menu.Item>
+      )}
     </Menu.SubMenu>
   );
   // Menu chuẩn bị bảo vệ đồ án

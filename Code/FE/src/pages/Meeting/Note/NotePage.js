@@ -23,12 +23,15 @@ const NotePage = (props) => {
     groupStore,
     authenticationStore,
     history,
+    match,
   } = props;
+  const { meetingId } = match.params
   const { currentUser } = authenticationStore;
   const EDITOR_REF = useRef();
   const [noteList, setNoteList] = useState();
   const [note, setNote] = useState();
   const [isVisiblePopup, setIsVisiblePopup] = useState(false);
+  
 
   useEffect(() => {
     if (authenticationStore.currentUser) {
@@ -38,7 +41,7 @@ const NotePage = (props) => {
 
   const getNoteListByMeeting = async () => {
     loadingAnimationStore.setTableLoading(true);
-    const res = await groupStore.getNoteListByMeeting(1).finally(() => {
+    const res = await groupStore.getNoteListByMeeting(meetingId).finally(() => {
       loadingAnimationStore.setTableLoading(false);
     });
     setNoteList(res.data);
@@ -51,7 +54,7 @@ const NotePage = (props) => {
     },
     {
       title: "Title",
-      width: 800,
+      width: "80%",
       render: (record) => record?.title,
     },
     {
@@ -79,23 +82,21 @@ const NotePage = (props) => {
         hiddenGoBack
       ></PageTitle>
       <ContentBlockWrapper>
-        <Container>
-          <TableComponent
-            // onRow={(record, rowIndex) => {
-            //   return {
-            //     onClick: (event) => {
-            //       setNote(record);
-            //       openEditPopUp();
-            //     },
-            //   };
-            // }}
-            rowKey={(record) => record.id || uuid()}
-            dataSource={noteList}
-            columns={columns}
-            pagination={false}
-            loading={loadingAnimationStore.tableLoading}
-          />
-        </Container>
+        <TableComponent
+          // onRow={(record, rowIndex) => {
+          //   return {
+          //     onClick: (event) => {
+          //       setNote(record);
+          //       openEditPopUp();
+          //     },
+          //   };
+          // }}
+          rowKey={(record) => record.id || uuid()}
+          dataSource={noteList}
+          columns={columns}
+          pagination={false}
+          loading={loadingAnimationStore.tableLoading}
+        />
       </ContentBlockWrapper>
       <PopupViewDetail
         note={note}

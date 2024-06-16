@@ -11,6 +11,8 @@ import DetailProfileSupervisorPage from "./pages/DetailProfileSupervisorPage";
 import ListStudentPage from "./pages/ListStudentPage";
 import ListGroupPage from "./pages/ListGroupPage";
 import NotePage from "./pages/Meeting/Note/NotePage";
+import SchedulePage from "./pages/Guidance/SchedulePage";
+import ManageTaskPage from "./pages/Guidance/ManageTaskPage/ManageTaskPage";
 
 export const normalRoutes = [
   {
@@ -75,10 +77,21 @@ export const routes = [
     name: "CreateNotePage",
   },
   {
-    path: "/guidance/meeting/notes",
+    path: "/guidance/meeting/notes/:meetingId",
     component: NotePage,
     name: "NotePage",
   },
+  {
+    path: "/guidance/schedule",
+    component: SchedulePage,
+    name: "SchedulePage",
+  },
+  {
+    path: "/guidance/task",
+    component: ManageTaskPage,
+    name: "ManageTaskPage",
+  },
+
 
   //mentor
   {
@@ -98,4 +111,5 @@ export const routes = [
     component: ListGroupPage,
     name: "ListGroupPage",
   },
+  
 ];
