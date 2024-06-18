@@ -87,19 +87,33 @@ public class MeetingController {
         }
     }
 
-//    @PostMapping("/create")
-//    public ResponseEntity<List<MeetingDTO>> createMeeting(@RequestBody List<MeetingRequest> meetingRequests){
-//        try {
-//            List<MeetingDTO> newMeetings = meetingService.createMeeting(meetingRequests);
-//            return ResponseEntity.ok(newMeetings);
-//        } catch (ServiceException e) {
-//            throw new ApiException(e.getErrorCode(), e.getParams());
-//        }
-//    }
+    @PostMapping("/create")
+    public ResponseEntity<List<MeetingDTO>> createMeeting(@RequestBody List<CreateMeetingRequest> meetingRequests){
+        try {
+            List<MeetingDTO> newMeetings = meetingService.createMeeting(meetingRequests);
+            return ResponseEntity.ok(newMeetings);
+        } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
+    }
 
-//    @PutMapping("/update")
-//    public ResponseEntity<List<MeetingDTO>> updateMeeting(@RequestBody EditMeetingRequest editMeetingRequest){
-//        return null;
-//    }
+    @PutMapping("/update")
+    public ResponseEntity<List<MeetingDTO>> updateMeeting(@RequestBody List<EditMeetingRequest> editMeetingRequests){
+        try {
+            List<MeetingDTO> updateMeetings = meetingService.updateMeeting(editMeetingRequests);
+            return ResponseEntity.ok(updateMeetings);
+        } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
+    }
+    @DeleteMapping("/delete/{meetingId}")
+    public ResponseEntity<MeetingDTO> deleteMeeting(@PathVariable int meetingId){
+        try {
+            MeetingDTO deleteMeeting = meetingService.removeMeeting(meetingId);
+            return ResponseEntity.ok(deleteMeeting);
+        } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
+    }
 
 }
