@@ -11,8 +11,14 @@ import PageTitle from "../../../components/PageTitle";
 import { Helmet } from "react-helmet/es/Helmet";
 import TableComponent from "../../../components/Common/TableComponent";
 import { MEMBER_STATUS } from "../../../constants";
+import { GoogleSpreadsheet } from "google-spreadsheet";
 
-const ListRequestPage = (props) => {
+const SPREADSHEET_ID = "1K15hZdYfjKIlSA2riaBiMs26mOw6egDaBn89hMndf5o";
+const CLIENT_EMAIL =
+  "fu-cpms@secure-approach-424011-j8.iam.gserviceaccount.com";
+const PRIVATE_KEY =
+  "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7/RgkfBHtIhN3\n46fLJcQ3WtYtVAJR78RRwClhexu0EsS4ZOXrMq4SvyZrFpM7i4ZSP+xKnCDEpxDf\nfloTOJE7GC5cqmHpxfloqLp38RGDn46FR95jujde+uElIT/Mw0yiNta6hSdbj01I\nj6HLNVQDQsLjMGSjl2kWslwOHYNEnQTjjtJgWApLGwcG5kkDG11dIU51UHYY8nva\nPeNTZs0UgO59t8HAX3OjKsFOfgwJcxErQGw9WqlcXHEAaojC8k8YVdFVVc12utt6\nIMXLhVicJ4CQHEazgU+MPIp6CAH6nO2aUJDIi1wizKlXua3qlsIxGrK8ai775mPx\nKJqdxcufAgMBAAECggEAHWCIYM84t+9+zln3s0HkH2hlFvFNaYOIEORwMwkbg7D5\nJ/2whmhFlq1jchG1kXUU2Q6fPOuYHVMkSmDC78UDwRHe0OFZasBi4O2ZMjwsaf7J\ntV9NTBViKMgY3gYLo9KTS7g5Jy2+wEqtH50+gfSD+/x3WyyJVZ1IMWFPDG+lP1fr\nOztmYeJ1AIN35s60nKW0hofZJMl1EGSzI+SwTqQzUhHLJfrmBUZISfMVKSKsSNY0\ndcmO7PzWhWPTzEV0oG8fHsLQBMzRjWhCmBeaDZU0OliVStPEU2qX98TJgKhwaou3\nll0CdM6SUoOJgKwzP/N++1WW1tA+tSSHV1+QPg9nwQKBgQD40jv3RKr9163/IjiW\nBNMsSMzXglMGhVtODVTtZtE+lp4L+2158DXsubVEcmbg2h6FnIp/gtwcZ8vQxIcz\nA3NJCy8TMWDSrwS+9nsFzf0ipC2bi8/VNVBmRiQ3C8dPqnwVNQsprmVySTjzOQl0\nNmeOQgSyEx/zUDFUeAUnvoc2wQKBgQDBaY607nySMcx7QcmFqoYac6tMLVQzrTFU\nmtvuur3G06VWn2J9TQyBMcn/YpmWzm6lepaPva/xcomsF5ysQCicJRMTfNXjSljQ\nAQ/LFYjdjivfDrITGihgvBirSBwZnFnvALVadWWDcBIq314aFGbSRwimc7Ia10Hq\nSyj7hiD6XwKBgQCx6Ef+DbghFfSP5t0EzuBa2pa0RLeugu18ymV99TUJhlHtCVIG\njO1RnJryHMZYYTzPldUlROCy4rhFRi/RFtd4U6nOFFFBcuh2ze+6f8VN3ovJmtb4\ngE1DQ0WjoiVZXfGojCu2Gr7oT1iL9609zaSPf76xwKDorN8IoWQ2PbGaQQKBgHt7\nGfoXvH5Vvtf+c1ucOAvRR07WLcjkTPdX+wwaOykiXI/GKEoZE9+z2uPqnmYym1+Y\nuWFB2H+NAapWVNeACq1N2jT54VBAWh1KYDvnHr9cklPRfQ1HCPphfFp2KkKLmLtH\nN4FuLAZTWbX3b4u09MRRR4uFl/Mc9N9RZvPWeV1/AoGABv2UIUInfjIGXlXJ3E4h\ncFCNf8mctmE1PwXu5deKS93qkLZNURC1AHxFlUExo4GlJ/RrHWIXj30d1VAhRMz6\nVYZL9qF9sOEbZ/SuYvZDpsem4bTu4PUCzP4IvOlyBOCvpYvVGJkwYV8z6JgAr0SR\nvDAXa1ABJeKviRyseOt98qA=\n-----END PRIVATE KEY-----\n";
+const ManageTaskPage = (props) => {
   const {
     history,
     loadingAnimationStore,
@@ -20,128 +26,195 @@ const ListRequestPage = (props) => {
     authenticationStore,
     groupStore,
   } = props;
-
-  const [listInvitationToJoinGroup, setListInvitationToJoinGroup] = useState();
+  const [sheet, setSheet] = useState(null);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   useEffect(() => {
-    if (authenticationStore.currentUser) {
-      getListInvitationToJoinGroup();
-    }
-  }, [authenticationStore.currentUser]);
+    const initializeSheet = async () => {
+      try {
+        //Kết nối đến Google Sheets API
+        const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
+        await doc.useServiceAccountAuth({
+          client_email: CLIENT_EMAIL,
+          private_key: PRIVATE_KEY,
+        });
+        await doc.loadInfo();
+        //Lấy thông tin về Sheet đầu tiên
+        const sheet = doc.sheetsByIndex[0];
+        await sheet.loadHeaderRow(7);
+        setSheet(sheet);
 
-  const getListInvitationToJoinGroup = async () => {
-    loadingAnimationStore.setTableLoading(true);
-    const res = await groupStore.getListInvitationToJoinGroup().finally(() => {
-      loadingAnimationStore.setTableLoading(false);
-    });
-    setListInvitationToJoinGroup(res.data);
-  };
-  const handleConfirm = async (values) => {
-    updateInvitationStatus(values, MEMBER_STATUS.INGROUP);
-  };
-  const handleReject = async (values) => {
-    updateInvitationStatus(values, MEMBER_STATUS.OUT_GROUP);
-  };
-  const updateInvitationStatus = async (values, status) => {
-    try {
-      loadingAnimationStore.showSpinner(true);
-      const response = await groupStore.updateInvitationStatus(
-        values?.group.id,
-        status,
-        values?.student.id
-      );
-      if (response.status === 200) {
-        if (status == MEMBER_STATUS.INGROUP) {
-          message.success(`You have successfully joined the group!`);
-        } else {
-          message.success(`You refused to join the group!`);
-        }
-        loadingAnimationStore.showSpinner(false);
-        getListInvitationToJoinGroup();
+        //Lấy dữ liệu hàng từ Sheet
+        const rows = await sheet.getRows();
+        console.log("rows", rows);
+        const numericRows = rows.filter((row) => {
+          const numericValue = parseInt(row["#"]);
+          return !isNaN(numericValue);
+        });
+        setRows(numericRows);
+        setLoading(false);
+      } catch (err) {
+        console.error("Lỗi khi tải sheet:", err);
+        setLoading(false);
       }
+    };
+    initializeSheet();
+  }, []);
+
+  const createSheet = async () => {
+    try {
+      // Tạo mới một Google Sheet
+      const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
+      await doc.useServiceAccountAuth({
+        client_email: CLIENT_EMAIL,
+        private_key: PRIVATE_KEY,
+      });
+      await doc.loadInfo();
+      const newSheet = await doc.addSheet({ title: "Backlog" });
+      setSheet(newSheet);
     } catch (err) {
-      message.error(err.en || "Login failed response status!");
-      loadingAnimationStore.showSpinner(false);
+      setError("Lỗi khi tải sheet. Vui lòng thử lại sau.");
+      console.error("Lỗi khi tạo sheet:", err);
     }
   };
-  console.log("currentUser", authenticationStore.currentUser);
-  const showConfirmModal = (action, record) => {
-    Modal.confirm({
-      title: `Are you sure you want to ${action} this group?`,
-      onOk: () => {
-        if (action === "confirm") {
-          handleConfirm(record);
-        } else {
-          handleReject(record);
-        }
-      },
-      onCancel: () => {},
-      okText: "Yes",
-      cancelText: "No",
-    });
+
+  const importExcel = async (file) => {
+    try {
+      // Import dữ liệu từ tệp Excel lên Google Sheet
+      const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
+      await doc.useServiceAccountAuth({
+        client_email: CLIENT_EMAIL,
+        private_key: PRIVATE_KEY,
+      });
+      await doc.loadInfo();
+      const sheet = doc.sheetsByIndex[0];
+      await sheet.setHeaderRow(["Tên", "Mô tả", "Trạng thái"]);
+      await sheet.addRows(excelData);
+      setRows(await sheet.getRows());
+    } catch (err) {
+      console.error("Lỗi khi import Excel:", err);
+    }
   };
-  const columns = [
-    {
-      title: "No.",
-      width: 100,
-      render: (record, index, dataSource) => dataSource + 1,
-    },
-    {
-      title: "Project Name",
-      width: 100,
-      render: (record) => record?.group.name,
-    },
-    {
-      title: "Invited By",
-      width: 100,
-      render: (record) => record?.student?.user?.name,
-    },
-    {
-      title: "Action",
-      width: 100,
-      render: (record) => (
-        <div>
-          <Tooltip title="Confirm">
-            <Button
-              type="primary"
-              icon={<CheckCircleOutlined />}
-              onClick={() => showConfirmModal("confirm", record)}
-            >
-              Accept
-            </Button>
-          </Tooltip>
-          <Tooltip title="Reject">
-            <Button
-              type="danger"
-              icon={<CloseCircleOutlined />}
-              onClick={() => showConfirmModal("reject", record)}
-              style={{ marginLeft: 8 }}
-            >
-              {" "}
-              Reject
-            </Button>
-          </Tooltip>
-        </div>
-      ),
-    },
-  ];
+  const updateRow = async (rowIndex, column, value) => {
+    try {
+      const row = rows[rowIndex];
+      row[column] = value;
+      await row.save();
+      setRows([...rows]);
+    } catch (err) {
+      console.error("Lỗi khi cập nhật hàng:", err);
+    }
+  };
   return (
     <DashboardLayout>
       <Helmet>
-        <title>Registration | List Supervisors</title>
+        <title>Quản lý Backlog</title>
       </Helmet>
       <PageTitle
         location={props.location}
-        title={"List Supervisors"}
+        title={"Quản lý Backlog"}
         hiddenGoBack
       ></PageTitle>
       <ContentBlockWrapper>
-        <TableComponent
-          rowKey={(record) => record.id || uuid()}
-          dataSource={listInvitationToJoinGroup}
-          columns={columns}
-          pagination={false}
-          loading={loadingAnimationStore.tableLoading}
-        />
+        <div>
+          <h1>Quản lý Backlog</h1>
+          {loading && <p>Đang tải...</p>}
+          {error && <p>{error}</p>}
+          {sheet && (
+            <div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Function/Screen</th>
+                    <th>Feature</th>
+                    <th>Level</th>
+                    <th>Function/Screen Details</th>
+                    <th>Planned</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row, index) => (
+                    <tr key={index}>
+                      <td>
+                        <input
+                          type="text"
+                          value={row["#"]}
+                          onChange={(e) =>
+                            updateRow(index, "#", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          value={row["Function/Screen"]}
+                          onChange={(e) =>
+                            updateRow(index, "Function/Screen", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          value={row["Feature"]}
+                          onChange={(e) =>
+                            updateRow(index, "Feature", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          value={row["Level*"]}
+                          onChange={(e) =>
+                            updateRow(index, "Level*", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          value={row["Function/Screen Details"]}
+                          onChange={(e) =>
+                            updateRow(
+                              index,
+                              "Function/Screen Details",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          value={row["Planned"]}
+                          onChange={(e) =>
+                            updateRow(index, "Planned", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          value={row["Status"]}
+                          onChange={(e) =>
+                            updateRow(index, "Status", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td>
+                        <button onClick={() => row.delete()}>Xóa</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </ContentBlockWrapper>
     </DashboardLayout>
   );
@@ -153,6 +226,6 @@ export default memo(
       "loadingAnimationStore",
       "mentorStore",
       "groupStore"
-    )(observer(ListRequestPage))
+    )(observer(ManageTaskPage))
   )
 );
