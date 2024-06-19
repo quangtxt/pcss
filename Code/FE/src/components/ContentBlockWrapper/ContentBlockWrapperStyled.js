@@ -35,7 +35,7 @@ export const Wrapper = styled.div`
       }
     `};
 
-  padding: 1rem;
+  padding: 2rem;
   width: 100%;
   border-radius: 6px;
 `

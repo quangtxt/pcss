@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import { UserOutlined, EditOutlined } from "@ant-design/icons";
-
+import ContentBlockWrapper from "../../components/ContentBlockWrapper";
 import {
   Button,
   Form,
@@ -12,10 +12,19 @@ import {
   Space,
   Radio,
   Modal,
+  Typography,
+  Checkbox,
 } from "antd";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { Helmet } from "react-helmet/es/Helmet";
-import { Profile } from "./ProfilePageStyled";
+import {
+  Profile,
+  ContentInformation,
+  MarginLeftLabel,
+  NoMarginBottom,
+  GroupBtn,
+} from "./ProfilePageStyled";
+import { FlexBox } from "../ListGroupPage/ListGroupPageStyled";
 
 const ProfilePage = (props) => {
   const {
@@ -32,6 +41,7 @@ const ProfilePage = (props) => {
   const [isChangingEmail, setIsChangingEmail] = useState(false);
   const [isChangingPass, setIsChangingPass] = useState(false);
   const [showGender] = useState(false);
+  const { Title } = Typography;
 
   useEffect(() => {
     if (authenticationStore.currentUser) {
@@ -61,7 +71,8 @@ const ProfilePage = (props) => {
   }, []);
 
   const [form] = Form.useForm();
-
+  const [isDisable, setIsDisable] = useState(false);
+  console.log("disable", isDisable);
   const getStudentProfile = async (userId) => {
     try {
       loadingAnimationStore.showSpinner(true);
@@ -112,249 +123,127 @@ const ProfilePage = (props) => {
       loadingAnimationStore.showSpinner(false);
     }
   };
+  const handleDisable = useCallback(() => {
+    setIsDisable((prevState) => !prevState);
+  }, []);
 
   return (
     <DashboardLayout>
       <Helmet>
         <title>Profile</title>
       </Helmet>
-      <Profile>
-        <Form
-          {...formItemLayout}
-          onFinish={handleSubmit}
-          className="formProfile"
-          form={form}
-          scrollToFirstError
-        >
-          <div className="left">
-            <p className="bigTitle">Avatar</p>
-            <Space direction="vertical" size={16}>
-              <Space wrap size={16}>
-                <Avatar size={168} icon={<UserOutlined />} />
+      <ContentBlockWrapper>
+        <Profile>
+          <Form
+            form={form}
+            onFinish={handleSubmit}
+            scrollToFirstError
+            labelAlign="left"
+            layout="horizontal"
+            labelCol={{
+              span: 6,
+            }}
+            wrapperCol={{
+              span: 20,
+            }}
+          >
+            <ContentInformation>
+              <Title level={4}>Avatar</Title>
+              <Space
+                direction="vertical"
+                size={16}
+                style={{ marginBottom: "24px" }}
+              >
+                <Space wrap size={16}>
+                  <Avatar size={150} icon={<UserOutlined />} />
+                </Space>
               </Space>
-            </Space>
-            <div className="contactInfor">
-              <p className="bigTitle">Contact Information</p>
-              <div
-                className={`inputForm important ${isEditing ? "active" : ""}`}
+              <Title level={4} style={{ marginBottom: "24px" }}>
+                Contact Information
+              </Title>
+              <Form.Item
+                label="Phone Number"
+                name="phone"
+                rules={[{ required: true, message: "Please input!" }]}
+                disabled
               >
-                <Form.Item
-                  label="Phone Number"
-                  name="phone"
-                  rules={[{ required: true, message: "Please input!" }]}
-                >
-                  <Input style={{ maxWidth: "100%" }} />
+                <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+              </Form.Item>
+              <MarginLeftLabel>
+                <Form.Item label="Email" name="email">
+                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
                 </Form.Item>
-              </div>
-              <div className={`inputForm ${isEditing ? "active" : ""}`}>
-                <Form.Item
-                  label="Facebook"
-                  name="facebook"
-                  rules={[{ required: true, message: "Please input!" }]}
-                >
-                  <Input style={{ maxWidth: "100%" }} />
+                <Form.Item label="Facebook" name="facebook">
+                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
                 </Form.Item>
-              </div>
-              {/* <div
-                className={`inputForm change important ${isEditing ? "" : ""}`}
-              >
-                <Form.Item
-                  label="Alternative Email"
-                  name="alternativeEmail"
-                  rules={[{ required: true, message: "Please input!" }]}
-                >
-                  <Input style={{ maxWidth: "100%" }} />
-                  <Button className="btnChange" onClick={handleChangeEmail}>
-                    Change
-                  </Button>
-                </Form.Item>
-              </div> */}
-              {/* <div className={`inputForm ${isEditing ? "active" : ""}`}>
-                <Form.Item
-                  label="Password"
-                  name="pass"
-                  rules={[{ required: true, message: "Please input!" }]}
-                >
-                  <Button className="btnChange" onClick={handleChangePass}>
-                    Change
-                  </Button>
-                </Form.Item>
-              </div> */}
-            </div>
-          </div>
-          <div className="right">
-            <div className="basicInfor">
-              <div className="title">
-                <p className="bigTitle">Basic Information</p>
+              </MarginLeftLabel>
+            </ContentInformation>
+            <ContentInformation>
+              <FlexBox>
+                <NoMarginBottom>
+                  <Title level={4}>Basic Information</Title>
+                </NoMarginBottom>
                 <Button
-                  className={`btnEdit ${isEditing ? "active" : ""}`}
-                  onClick={handleEditProfile}
+                  type="primary"
+                  icon={<EditOutlined />}
+                  onClick={handleDisable}
+                  style={{ display: !isDisable ? "inline-block" : "none" }}
                 >
-                  <EditOutlined /> Edit My Profile
+                  Edit My Profile
                 </Button>
-              </div>
-              <div className={`inputForm ${isEditing ? "active" : ""}`}>
-                <Form.Item
-                  label="Name"
-                  name="fullName"
-                  rules={[{ required: true, message: "Please input!" }]}
-                >
-                  <Input style={{ maxWidth: "100%" }} />
+              </FlexBox>
+              <MarginLeftLabel>
+                <Form.Item label="Name" name="fullName">
+                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
                 </Form.Item>
-              </div>
-              <div className="inputForm">
-                <Form.Item
-                  label="Roll Number"
-                  name="rollNumber"
-                  rules={[{ required: true, message: "Please input!" }]}
-                >
-                  <Input style={{ maxWidth: "100%" }} />
-                </Form.Item>
-              </div>
-              <div className="inputForm">
-                <Form.Item
-                  label="Semester"
-                  name="semester"
-                  rules={[{ required: true, message: "Please input!" }]}
-                >
-                  <Input style={{ maxWidth: "100%" }} />
-                </Form.Item>
-              </div>
-              <div className="inputForm">
-                <Form.Item
-                  label="Profession"
-                  name="profession"
-                  rules={[{ required: true, message: "Please input!" }]}
-                >
-                  <Input style={{ maxWidth: "100%" }} />
-                </Form.Item>
-              </div>
-              <div className="inputForm">
-                <Form.Item
-                  label="Specialty"
-                  name="specialty"
-                  rules={[{ required: true, message: "Please input!" }]}
-                >
-                  <Input style={{ maxWidth: "100%" }} />
-                </Form.Item>
-              </div>
-              <div
-                className={`inputForm inputGender ${isEditing ? "active" : ""}`}
-              >
                 <Form.Item label="Gender" name="gender">
-                  <Radio.Group>
+                  <Radio.Group disabled={!isDisable}>
                     <Radio value="male"> Male </Radio>
                     <Radio value="female"> Female </Radio>
                   </Radio.Group>
-                  <div className={`showGender ${isEditing ? "active" : ""}`}>
-                    <p className={`${showGender ? "active" : ""}`}>Male</p>
-                    <p className={`${showGender ? "" : "active"}`}>Female</p>
-                  </div>
                 </Form.Item>
-              </div>
-              <div className="inputForm">
-                <Form.Item
-                  label="Email"
-                  name="email"
-                  rules={[{ required: true, message: "Please input!" }]}
-                >
-                  <Input style={{ maxWidth: "100%" }} />
+                <Form.Item label="Roll Number" name="rollNumber">
+                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
                 </Form.Item>
-              </div>
-              <div className={`radioForm ${isEditing ? "active" : ""}`}>
-                <Form.Item label="Do you want to be grouped in a random group?">
-                  <Radio.Group>
-                    <Radio value="yes"> Yes </Radio>
-                    <Radio value="no"> No </Radio>
-                  </Radio.Group>
+                <Form.Item label="Semester" name="semester">
+                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
                 </Form.Item>
-              </div>
-              <div className={`grBtn ${isEditing ? "active" : ""}`}>
-                <Button className="btnCancel" onClick={handleEditProfile}>
-                  Cancel
-                </Button>
-                <Button className="btnEdit" htmlType={"submit"}>
-                  Submit
-                </Button>
-              </div>
-            </div>
-          </div>
-        </Form>
-        <Form
-          {...formItemLayout}
-          variant="filled"
-          onFinish={handleSubmit}
-          className={`changeEmail ${isChangingEmail ? "active" : ""}`}
-        >
-          <p className="bigTitle">Verify Your Alternative Email</p>
-          <div className="content">
-            <p>Enter the verify code sent to</p>
-            <p>
-              <span>hieupbhe163832@fpt.edu.vn</span>. Did not get the code?
-            </p>
-            <a href="">Resend</a>
-          </div>
-          <p className="verify">Verification Code</p>
-          <div className="inputForm">
-            <Form.Item
-              label="Code"
-              name="code"
-              rules={[{ required: true, message: "Please input!" }]}
-            >
-              <Input
-                style={{ maxWidth: "100%" }}
-                placeholder="Enter verification code"
-              />
-            </Form.Item>
-          </div>
-          <div className="grBtn">
-            <Button className="btnCancel" onClick={handleChangeEmail}>
-              Cancel
-            </Button>
-            <Button className="btnEdit">Submit</Button>
-          </div>
-        </Form>
-        <Form
-          {...formItemLayout}
-          variant="filled"
-          onFinish={handleSubmit}
-          className="changeEmail"
-        >
-          <p className="bigTitle">Verify Your Alternative Email</p>
-          <div className="content">
-            <p>Enter the verify code sent to</p>
-            <p>
-              <span>hieupbhe163832@fpt.edu.vn</span>. Did not get the code?
-            </p>
-            <a href="">Resend</a>
-          </div>
-          <p className="verify">Verification Code</p>
-          <div className="inputForm">
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[{ required: true, message: "Please input!" }]}
-            >
-              <Input
-                style={{ maxWidth: "100%" }}
-                placeholder="Enter your password"
-                type="password"
-              />
-            </Form.Item>
-          </div>
-          <div className="grBtn">
-            <Button className="btnCancel" onClick={handleChangePass}>
-              Cancel
-            </Button>
-            <Button className="btnEdit">Submit</Button>
-          </div>
-        </Form>
-        <div
-          className={`overlay ${isChangingEmail ? "active" : ""} ${
-            isChangingPass ? "active" : ""
-          }`}
-        ></div>
-      </Profile>
+                <Form.Item label="Profession" name="profession">
+                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                </Form.Item>
+                <Form.Item label="Specialty" name="specialty">
+                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                </Form.Item>
+
+                <NoMarginBottom>
+                  <Form.Item
+                    label="Do you want to be grouped in a random group?"
+                    labelCol={{ span: 17 }}
+                    wrapperCol={{ span: 15 }}
+                  >
+                    <Radio.Group disabled={!isDisable}>
+                      <Radio value="yes"> Yes </Radio>
+                      <Radio value="no"> No </Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                  {/* <div className={`grBtn ${isEditing ? "active" : ""}`}> */}
+                  <GroupBtn style={{ display: !isDisable ? "none" : "flex" }}>
+                    <Button onClick={handleDisable}>Cancel</Button>
+                    <Button
+                      onClick={handleDisable}
+                      type="primary"
+                      htmlType={"submit"}
+                    >
+                      Submit
+                    </Button>
+                  </GroupBtn>
+                  {/* </div>  */}
+                </NoMarginBottom>
+              </MarginLeftLabel>
+            </ContentInformation>
+          </Form>
+        </Profile>
+      </ContentBlockWrapper>
     </DashboardLayout>
   );
 };

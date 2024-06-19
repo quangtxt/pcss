@@ -3,6 +3,7 @@ import {
   AudioOutlined,
   UserAddOutlined,
   FolderAddOutlined,
+  ExclamationCircleFilled,
 } from "@ant-design/icons";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
@@ -49,12 +50,16 @@ const ListGroupPage = (props) => {
     studentListPageIndex,
     setFilter,
   } = studentStore;
-
+  const [studentsToInvite, setStudentsToInvite] = useState([]);
+  const { confirm } = Modal;
+  
   useEffect(() => {
     async function getStudentList() {
       const res = await studentStore.getStudentsToInvite();
-      let studentsToInviteFiltered;
-      setStudentsToInvite(studentsToInviteFiltered);
+      let listStudentInvite;
+      listStudentInvite = res.data;
+      setStudentsToInvite(listStudentInvite);
+      console.log("list", listStudentInvite);
     }
     if (authenticationStore.currentUser) {
       loadingAnimationStore.setTableLoading(true);
@@ -69,11 +74,24 @@ const ListGroupPage = (props) => {
       groupStore.clearStore();
     };
   }, [authenticationStore.currentUser]);
-  console.log("list", studentList);
   const [activeTab, setActiveTab] = useState("tab1");
 
   const onChange = (key) => {
     setActiveTab(key);
+  };
+
+  const showConfirm = () => {
+    confirm({
+      title: 'Do you want to delete these items?',
+      icon: <ExclamationCircleFilled />,
+      content: 'Some descriptions',
+      onOk() {
+        console.log('OK');
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
   };
 
   const columnsGroup = [
@@ -95,24 +113,24 @@ const ListGroupPage = (props) => {
     },
   ];
 
-  // const columnsStudent = [
-  //   {
-  //     title: "Roll number",
-  //     render: (record, index, dataSource) => dataSource + 1,
-  //   },
-  //   {
-  //     title: "Email",
-  //     render: (record) => record?.user.email,
-  //   },
-  //   {
-  //     title: "Full Name",
-  //     render: (record) => record?.user.name,
-  //   },
-  //   {
-  //     title: "Status",
-  //     render: (record) => record?.user.name,
-  //   },
-  // ];
+  const columnsStudent = [
+    {
+      title: "Full Name",
+      render: (record) => record?.user.name,
+    },
+    {
+      title: "Phone",
+      render: (record) => record?.user.phone,
+    },
+    {
+      title: "Email",
+      render: (record) => record?.user.email,
+    },
+    {
+      title: "Major",
+      render: (record) => record?.specificMajor.name,
+    },
+  ];
   return (
     <DashboardLayout>
       <Helmet>
@@ -138,11 +156,14 @@ const ListGroupPage = (props) => {
             <TabPane tab="Student" key="tab2">
               <TableComponent
                 rowKey={(record) => record.id || uuid()}
-                dataSource={studentList}
-                // columns={columnsStudent}
+                dataSource={studentsToInvite}
+                columns={columnsStudent}
                 pagination={false}
                 loading={loadingAnimationStore.tableLoading}
               />
+              <Profile style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "20px" }}>
+                <Button className="btnAdd" onClick={showConfirm}>Random Group</Button>
+              </Profile>
             </TabPane>
           </Tabs>
         </ListGroup>
