@@ -75,6 +75,7 @@ export const FlexBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 24px;
 `;
 
 export const PopupImport = styled.div`
