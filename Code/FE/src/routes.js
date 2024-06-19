@@ -92,7 +92,6 @@ export const routes = [
     name: "ManageTaskPage",
   },
 
-
   //mentor
   {
     path: "/registration/std-request",
@@ -111,5 +110,4 @@ export const routes = [
     component: ListGroupPage,
     name: "ListGroupPage",
   },
-  
 ];
