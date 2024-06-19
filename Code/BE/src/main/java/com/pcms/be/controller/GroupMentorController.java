@@ -6,6 +6,7 @@ import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.functions.Constants;
 import com.pcms.be.pojo.response.GroupMentorResponse;
+import com.pcms.be.pojo.response.GroupResponse;
 import com.pcms.be.service.GroupMentorService;
 import com.pcms.be.service.GroupService;
 import com.pcms.be.service.UserService;
@@ -30,7 +31,7 @@ public class GroupMentorController {
     @GetMapping("/list")
     public ResponseEntity<List<GroupMentorResponse>> getGroupInvitation(){
         try {
-           List<GroupMentorResponse> groupMentorResponse = groupMentorService.getListInvitationByStatus(Constants.MentorStatus.PENDING_MENTOR);
+           List<GroupMentorResponse> groupMentorResponse = groupMentorService.getByStatus(Constants.MentorStatus.PENDING_MENTOR);
            return ResponseEntity.ok(groupMentorResponse);
         }catch (ServiceException e){
             throw new ApiException(e.getErrorCode(), e.getParams());
@@ -40,7 +41,7 @@ public class GroupMentorController {
     @GetMapping("/getListMentorRegisted")
     public ResponseEntity<List<GroupMentorResponse>> getGroupMentorRegisted(){
         try {
-            List<GroupMentorResponse> groupMentorResponse = groupMentorService.getListInvitationByStatus(Constants.MentorStatus.PENDING_LEADER_TEACHER);
+            List<GroupMentorResponse> groupMentorResponse = groupMentorService.getByStatus(Constants.MentorStatus.PENDING_LEADER_TEACHER);
             return ResponseEntity.ok(groupMentorResponse);
         }catch (ServiceException e){
             throw new ApiException(e.getErrorCode(), e.getParams());
@@ -53,6 +54,16 @@ public class GroupMentorController {
             GroupMentor editGroupMentor = groupMentorService.putStatus(id,status);
             return ResponseEntity.ok(editGroupMentor);
         } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
+    }
+
+    @GetMapping("/getGroupsOfMentor")
+    public ResponseEntity<List<GroupMentorResponse>> getGroupsOfMentor(){
+        try {
+            List<GroupMentorResponse> groupMentorResponse = groupMentorService.getByStatus(Constants.MentorStatus.ACCEPT_MENTOR);
+            return ResponseEntity.ok(groupMentorResponse);
+        }catch (ServiceException e){
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }

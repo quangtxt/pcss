@@ -9,6 +9,6 @@ import java.util.List;
 public interface GroupMentorService {
 
     GroupMentor putStatus(Long id, String newStatus) throws ServiceException;
-    List<GroupMentorResponse> getListInvitationByStatus(String status) throws ServiceException;
+    List<GroupMentorResponse> getByStatus(String status) throws ServiceException;
 
 }

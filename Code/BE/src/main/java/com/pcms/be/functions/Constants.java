@@ -67,7 +67,7 @@ public interface Constants {
     interface MentorStatus {
         String PENDING_MENTOR = "PENDING_MENTOR";
         String PENDING_LEADER_TEACHER = "PENDING_LEADER_TEACHER";
-
+        String ACCEPT_MENTOR = "ACCEPT_MENTOR";
 
     }
     interface CampusCode {
