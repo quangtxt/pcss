@@ -26,7 +26,7 @@ public class GroupMentorImpl implements GroupMentorService {
     private final UserService userService;
     private final ModelMapper modelMapper;
     @Override
-    public List<GroupMentorResponse> getListInvitationByStatus(String status) throws ServiceException {
+    public List<GroupMentorResponse> getByStatus(String status) throws ServiceException {
         if(status.equals(Constants.MentorStatus.PENDING_MENTOR)){
             User currentUser = userService.getCurrentUser();
             List<GroupMentor> listInvitation = groupMentorRepository.findByMentorAndStatus(currentUser.getMentor(), status);
@@ -37,6 +37,14 @@ public class GroupMentorImpl implements GroupMentorService {
             }
             return groupMentorResponse;
         }else if(status.equals(Constants.MentorStatus.PENDING_LEADER_TEACHER)){
+            List<GroupMentor> listInvitation = groupMentorRepository.findAllByStatus(status);
+            List<GroupMentorResponse> groupMentorResponse = new ArrayList<>();
+            for (GroupMentor groupMentor : listInvitation
+            ) {
+                groupMentorResponse.add(modelMapper.map(groupMentor, GroupMentorResponse.class));
+            }
+            return groupMentorResponse;
+        }else if(status.equals(Constants.MentorStatus.ACCEPT_MENTOR)){
             List<GroupMentor> listInvitation = groupMentorRepository.findAllByStatus(status);
             List<GroupMentorResponse> groupMentorResponse = new ArrayList<>();
             for (GroupMentor groupMentor : listInvitation
