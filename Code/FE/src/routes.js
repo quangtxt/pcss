@@ -13,6 +13,7 @@ import ListGroupPage from "./pages/ListGroupPage";
 import NotePage from "./pages/Meeting/Note/NotePage";
 import SchedulePage from "./pages/Guidance/SchedulePage";
 import ManageTaskPage from "./pages/Guidance/ManageTaskPage/ManageTaskPage";
+import SemesterPage from "./pages/SemesterPage/SemesterPage";
 
 export const normalRoutes = [
   {
@@ -109,5 +110,11 @@ export const routes = [
     path: "/group/list",
     component: ListGroupPage,
     name: "ListGroupPage",
+  },
+  //admin
+  {
+    path: "/semester/manage",
+    component: SemesterPage,
+    name: "SemesterPage",
   },
 ];

@@ -5,6 +5,10 @@ import { GroupRequest } from "../requests/GroupRequest";
 
 class GroupStore {
   @observable groupInvitation = [];
+  @observable groupListTotalCount = 0;
+  @observable groupListPageIndex = 0;
+  @observable groupListPageSize = 5;
+  @observable groupListKeyword = undefined;
   @action createGroup = (
     abbreviations,
     description,
