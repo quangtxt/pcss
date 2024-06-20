@@ -29,4 +29,6 @@ public class Submission implements Serializable {
     @ManyToOne
     @JoinColumn(name = "milestone_id")
     private Milestone milestone;
+    @Column(name = "status")
+    private String status;
 }

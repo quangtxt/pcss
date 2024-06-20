@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -55,7 +56,7 @@ public class ValidateData {
     }
     public boolean isOffsetDateTimeValid(OffsetDateTime offsetDateTime) {
         try {
-            OffsetDateTime.parse(offsetDateTime.toString());
+            OffsetDateTime.parse(offsetDateTime.toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX"));
             return true;
         } catch (DateTimeParseException e) {
             return false;

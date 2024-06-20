@@ -1,7 +1,6 @@
-package com.pcms.be.pojo.request;
+package com.pcms.be.pojo.DTO;
 
 import com.pcms.be.domain.CapstonePhase;
-import com.pcms.be.domain.Milestone;
 import com.pcms.be.domain.SpecificMajor;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,13 +15,14 @@ import java.util.Set;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class CreatedSemesterRequest {
-    private String code;
-    private String name;
-    private OffsetDateTime beginAt;
-    private OffsetDateTime endAt;
-//    private Set<SpecificMajor> specificMajors = new HashSet<>();
-    private List<CapstonePhase> phases;
+@NoArgsConstructor
+public class SemesterDTO {
+    public Long id;
+    public String code;
+    public String name;
+    public OffsetDateTime beginAt;
+    public OffsetDateTime endAt;
+    private Set<SpecificMajorDTO> specificMajors = new HashSet<>();
+    private List<CapstonePhaseDTO> phases;
 }
