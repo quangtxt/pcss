@@ -84,5 +84,13 @@ public interface Constants {
     interface MeetingStatus {
         String PENDING = "PENDING";
 
+    interface MilestoneStatus{
+        String OverTime = "OVER TIME";
+        String Start = "START";
+        String NonStart = "NON START";
+    }
+    interface SubmissionStatus{
+        String Finish = "FINISH";
+        String Unfinished = "UNFINISHED";
     }
 }

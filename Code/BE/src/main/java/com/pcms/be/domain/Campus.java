@@ -18,7 +18,7 @@ public class Campus implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "campus_code", unique=true)
+    @Column(name = "campus_code", unique = true)
     private String campusCode;
 
     @Column(name = "name")

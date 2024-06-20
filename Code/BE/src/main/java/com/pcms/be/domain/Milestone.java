@@ -26,8 +26,8 @@ public class Milestone implements Serializable {
     @Column(name = "start_at")
     public OffsetDateTime beginAt;
 
-    @Column(name = "end_at")
-    public OffsetDateTime endAt;
+    @Column(name = "duration")
+    public int duration;
 
     @ManyToOne
     @JoinColumn(name = "phase_id")
@@ -35,4 +35,7 @@ public class Milestone implements Serializable {
 
     @OneToMany(mappedBy = "milestone", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Submission> submissions;
+
+    @Column(name = "status")
+    private String status;
 }
