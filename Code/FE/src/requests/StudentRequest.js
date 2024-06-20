@@ -70,4 +70,13 @@ export const StudentRequest = {
         fullName: name,
       },
     }),
+    automaticallyCreateGroups: () =>
+    axios({
+      method: "post",
+      url: `${apiUrl}/api/v1/staff/student/automatically/create/groups`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      }
+    }),
 };

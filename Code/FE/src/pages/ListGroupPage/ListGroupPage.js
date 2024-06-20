@@ -20,7 +20,7 @@ import {
   TableStudents,
   ListGroup,
 } from "./ListGroupPageStyled";
-import { Profile, GroupButton } from "../ProfilePage/ProfilePageStyled";
+import { GroupBtn } from "../ProfilePage/ProfilePageStyled";
 import TableComponent from "../../components/Common/TableComponent";
 
 const { Search } = Input;
@@ -52,7 +52,9 @@ const ListGroupPage = (props) => {
   } = studentStore;
   const [studentsToInvite, setStudentsToInvite] = useState([]);
   const { confirm } = Modal;
-  
+
+  const [activeTab, setActiveTab] = useState("tab1");
+
   useEffect(() => {
     async function getStudentList() {
       const res = await studentStore.getStudentsToInvite();
@@ -63,9 +65,11 @@ const ListGroupPage = (props) => {
     }
     if (authenticationStore.currentUser) {
       loadingAnimationStore.setTableLoading(true);
-      groupStore.getGroupList().finally(() => {
-        loadingAnimationStore.setTableLoading(false);
-      });
+      if (activeTab === "tab1") {
+        groupStore.getGroupList().finally(() => {
+          loadingAnimationStore.setTableLoading(false);
+        });
+      }
       getStudentList().finally(() => {
         loadingAnimationStore.setTableLoading(false);
       });
@@ -73,8 +77,7 @@ const ListGroupPage = (props) => {
     return () => {
       groupStore.clearStore();
     };
-  }, [authenticationStore.currentUser]);
-  const [activeTab, setActiveTab] = useState("tab1");
+  }, [activeTab, authenticationStore.currentUser, groupStore, loadingAnimationStore]);
 
   const onChange = (key) => {
     setActiveTab(key);
@@ -82,16 +85,31 @@ const ListGroupPage = (props) => {
 
   const showConfirm = () => {
     confirm({
-      title: 'Do you want to delete these items?',
+      title: "Do you want to automatically group students?",
       icon: <ExclamationCircleFilled />,
-      content: 'Some descriptions',
-      onOk() {
-        console.log('OK');
+      async onOk() {
+        try {
+          await studentStore.automaticallyCreateGroups();
+          console.log("Groups created successfully");
+          history.go(0);
+        } catch (error) {
+          console.error("Error creating groups:", error);
+        }
       },
       onCancel() {
-        console.log('Cancel');
+        console.log("Cancel");
       },
+      okText: "Yes",
+      cancelText: "No",
     });
+  };
+
+  const onChangePagination = (e) => {
+    setFilter("studentListPageIndex", e - 1);
+    loadingAnimationStore.setTableLoading(true);
+    studentsToInvite.finally(() =>
+      loadingAnimationStore.setTableLoading(false)
+    );
   };
 
   const columnsGroup = [
@@ -131,6 +149,16 @@ const ListGroupPage = (props) => {
       render: (record) => record?.specificMajor.name,
     },
   ];
+
+  const operations =
+    activeTab === "tab2" ? (
+      <Button type="primary" danger onClick={showConfirm}>
+        Auto Group
+      </Button>
+    ) : null;
+
+  console.log("list group", groupStore.getGroupList());
+
   return (
     <DashboardLayout>
       <Helmet>
@@ -143,7 +171,11 @@ const ListGroupPage = (props) => {
       ></PageTitle>
       <ContentBlockWrapper>
         <ListGroup>
-          <Tabs activeKey={activeTab} onChange={onChange}>
+          <Tabs
+            tabBarExtraContent={operations}
+            activeKey={activeTab}
+            onChange={onChange}
+          >
             <TabPane tab="List Group" key="tab1">
               <TableComponent
                 rowKey={(record) => record.id || uuid()}
@@ -153,7 +185,7 @@ const ListGroupPage = (props) => {
                 loading={loadingAnimationStore.tableLoading}
               />
             </TabPane>
-            <TabPane tab="Student" key="tab2">
+            <TabPane tab="List Student" key="tab2">
               <TableComponent
                 rowKey={(record) => record.id || uuid()}
                 dataSource={studentsToInvite}
@@ -161,15 +193,31 @@ const ListGroupPage = (props) => {
                 pagination={false}
                 loading={loadingAnimationStore.tableLoading}
               />
-              <Profile style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "20px" }}>
-                <Button className="btnAdd" onClick={showConfirm}>Random Group</Button>
-              </Profile>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  padding: "15px 0",
+                }}
+              >
+                <Pagination
+                  onChange={(e) => onChangePagination(e)}
+                  hideOnSinglePage={true}
+                  total={studentListTotalCount}
+                  pageSize={studentListPageSize}
+                  current={studentListPageIndex + 1}
+                  showSizeChanger={false}
+                  showLessItems
+                />
+              </div>
             </TabPane>
           </Tabs>
         </ListGroup>
       </ContentBlockWrapper>
     </DashboardLayout>
   );
+  ß;
 };
 export default memo(
   withRouter(

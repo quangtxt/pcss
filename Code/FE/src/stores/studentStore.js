@@ -107,6 +107,17 @@ class StudentStore {
         });
     });
   };
+  @action automaticallyCreateGroups = () => {
+    return new Promise((resolve, reject) => {
+      StudentRequest.automaticallyCreateGroups()
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   /** Clear store */
   @action clearStore = () => {
     this.studentList = [];
