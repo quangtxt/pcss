@@ -12,4 +12,6 @@ public interface UserNotificationService {
     Page<UserNotificationResponse> getNotifications(String userName, Boolean filterUnread, Pageable pageable) throws ServiceException;
 
     UserNotificationResponse updateNotificationStatus(String notificationId) throws ServiceException;
+
+    void updateAllNotificationStatusToRead(String userName);
 }
