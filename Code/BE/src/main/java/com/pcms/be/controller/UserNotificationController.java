@@ -30,5 +30,14 @@ public class UserNotificationController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+    @PostMapping("/updateNotificationStatus/{id}")
+    public ResponseEntity<UserNotificationResponse> updateNotificationStatusToREAD(@PathVariable("id") String notificationId) {
+        try {
+            UserNotificationResponse userNotificationResponse= userNotificationService.updateNotificationStatus( notificationId);
+            return ResponseEntity.ok(userNotificationResponse);
+        } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
+    }
 }
 
