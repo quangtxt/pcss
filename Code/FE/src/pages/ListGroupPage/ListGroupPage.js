@@ -157,8 +157,6 @@ const ListGroupPage = (props) => {
       </Button>
     ) : null;
 
-  console.log("list group", groupStore.getGroupList());
-
   return (
     <DashboardLayout>
       <Helmet>
