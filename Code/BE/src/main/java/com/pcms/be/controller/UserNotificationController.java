@@ -39,5 +39,15 @@ public class UserNotificationController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+    @PostMapping("/updateNotificationStatus")
+    public ResponseEntity<Void> markAllAsRead() {
+        try {
+            String userName = userService.getCurrentUser().getUsername();
+            userNotificationService.updateAllNotificationStatusToRead(userName);
+            return ResponseEntity.ok().build();
+        } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
+    }
 }
 

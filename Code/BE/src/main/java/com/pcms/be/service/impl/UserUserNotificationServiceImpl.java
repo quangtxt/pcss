@@ -65,4 +65,13 @@ public class UserUserNotificationServiceImpl implements UserNotificationService 
             throw new ServiceException(ErrorCode.FAILED_EDIT_NOTE);
         }
     }
+
+    @Override
+    public void updateAllNotificationStatusToRead(String userName) {
+        List<UserNotification> notifications = userNotificationRepository.findAllByUserNameAndStatus(userName, false);
+        for (UserNotification userNotification : notifications) {
+            userNotification.setStatus(true);
+                userNotificationRepository.save(userNotification);
+        }
+    }
 }
