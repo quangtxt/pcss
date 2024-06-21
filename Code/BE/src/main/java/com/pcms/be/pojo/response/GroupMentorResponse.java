@@ -1,5 +1,6 @@
 package com.pcms.be.pojo.response;
 
+import com.pcms.be.pojo.DTO.Group1DTO;
 import com.pcms.be.pojo.DTO.GroupDTO;
 import com.pcms.be.pojo.DTO.MentorDTO;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class GroupMentorResponse {
     private Long id;
-    private GroupDTO group;
+    private Group1DTO group;
     private MentorDTO mentor;
     private String status;
 }

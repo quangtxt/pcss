@@ -187,9 +187,10 @@ class GroupStore {
         });
     });
   };
-  @action createNote = (meetingId, title, content) => {
+
+  @action getGroupsOfMentor = () => {
     return new Promise((resolve, reject) => {
-      GroupRequest.createNote(meetingId, title, content)
+      GroupRequest.getGroupsOfMentor()
         .then((response) => {
           resolve(response);
         })
@@ -198,16 +199,6 @@ class GroupStore {
         });
     });
   };
-  @action getNoteListByMeeting = (meetingId) => {
-    return new Promise((resolve, reject) => {
-      GroupRequest.getNoteListByMeeting(meetingId)
-        .then((response) => {
-          resolve(response);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  };
+  
 }
 export default new GroupStore();

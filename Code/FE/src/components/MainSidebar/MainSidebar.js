@@ -158,13 +158,13 @@ const MainSidebar = (props) => {
         </Menu.Item>
       )}
       {isMentor && (
-        <Menu.Item key={"/guidance/schedule"} icon={<ScheduleOutlined />} title>
-          <Link to={"/guidance/schedule"}>Schedule </Link>
+        <Menu.Item key={"/guidance/schedule-mentor"} icon={<ScheduleOutlined />} title>
+          <Link to={"/guidance/schedule-mentor"}>Schedule</Link>
         </Menu.Item>
       )}
       {isStudent && (
         <Menu.Item key={"/guidance/schedule"} icon={<ScheduleOutlined />} title>
-          <Link to={"/guidance/schedule"}>Schedule </Link>
+          <Link to={"/guidance/schedule"}>Schedule</Link>
         </Menu.Item>
       )}
       {isStudent && (

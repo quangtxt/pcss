@@ -12,8 +12,8 @@ import ListStudentPage from "./pages/ListStudentPage";
 import ListGroupPage from "./pages/ListGroupPage";
 import NotePage from "./pages/Meeting/Note/NotePage";
 import SchedulePage from "./pages/Guidance/SchedulePage";
-import ManageTaskPage from "./pages/Guidance/ManageTaskPage/ManageTaskPage";
-import SemesterPage from "./pages/SemesterPage/SemesterPage";
+import ManageTaskPage from "./pages/Guidance/ManageTaskPage";
+import ScheduleMentorPage from "./pages/Guidance/ScheduleMentorPage";
 
 export const normalRoutes = [
   {
@@ -98,6 +98,11 @@ export const routes = [
     path: "/registration/std-request",
     component: GroupInvitedMentorPage,
     name: "GroupInvitedMentorPage",
+  },
+  {
+    path: "/guidance/schedule-mentor",
+    component: ScheduleMentorPage,
+    name: "ScheduleMentorPage",
   },
 
   //staff
