@@ -14,6 +14,8 @@ import NotePage from "./pages/Meeting/Note/NotePage";
 import SchedulePage from "./pages/Guidance/SchedulePage";
 import ManageTaskPage from "./pages/Guidance/ManageTaskPage";
 import ScheduleMentorPage from "./pages/Guidance/ScheduleMentorPage";
+import SemesterPage from "./pages/SemesterPage";
+
 
 export const normalRoutes = [
   {

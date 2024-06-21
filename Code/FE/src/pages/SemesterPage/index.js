@@ -1,1 +1,1 @@
-export { default } from "./ListGroupPage";
+export { default } from "./SemesterPage";
