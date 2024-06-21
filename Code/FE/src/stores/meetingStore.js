@@ -30,6 +30,42 @@ class MeetingStore {
     });
   };
 
+  @action createMeeting = (listMeetings) => {
+    return new Promise((resolve, reject) => {
+      MeetingRequest.createMeeting(listMeetings)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log(error);
+          reject(error);
+        });
+    });
+  };
+
+  @action createNote = (meetingId, title, content) => {
+    return new Promise((resolve, reject) => {
+      MeetingRequest.createNote(meetingId, title, content)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action getNoteListByMeeting = (meetingId) => {
+    return new Promise((resolve, reject) => {
+      MeetingRequest.getNoteListByMeeting(meetingId)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+
   /** Clear store */
   @action clearStore = () => {
   };
