@@ -25,6 +25,7 @@ import mentorStore from "./stores/mentorStore.js";
 import companyStore from "./stores/companyStore";
 import groupStore from "./stores/groupStore";
 import meetingStore from "./stores/meetingStore";
+import semesterStore from "./stores/semesterStore";
 
 // Pages
 import NotFoundPage from "./pages/NotFoundPage";
@@ -81,6 +82,7 @@ const rootStore = {
   mentorStore,
   studentStore,
   meetingStore,
+  semesterStore,
 };
 
 axios.defaults.timeout = 60000;
