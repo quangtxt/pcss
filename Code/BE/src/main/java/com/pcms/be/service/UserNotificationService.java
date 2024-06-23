@@ -14,4 +14,5 @@ public interface UserNotificationService {
     UserNotificationResponse updateNotificationStatus(String notificationId) throws ServiceException;
 
     void updateAllNotificationStatusToRead(String userName);
+    void createUserNotification(Long notificationId, String userName);
 }
