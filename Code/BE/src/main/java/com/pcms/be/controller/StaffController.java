@@ -48,9 +48,8 @@ public class StaffController {
 
     @GetMapping("/students")
     public ResponseEntity<Map<String, Object>> getStudents(Pageable pageable,
-                                                           @RequestParam(defaultValue = "") String keyword,
-                                                           @RequestParam String findBy) {
-        return studentService.getListStudent(pageable, new FilterStudentsRequest(keyword, findBy));
+                                                           @RequestParam(defaultValue = "") String keyword) {
+        return studentService.getListStudent(pageable, keyword);
     }
     @GetMapping("/groups")
     public ResponseEntity<Map<String, Object>> getGroups(Pageable pageable,
