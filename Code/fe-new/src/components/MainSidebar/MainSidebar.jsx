@@ -150,7 +150,7 @@ const MainSidebar = (props) => {
       <Menu
         onClick={onClickMenuItem}
         defaultSelectedKeys={pageName}
-        openKeys={openedSubMenu}
+        // openKeys={openedSubMenu}
         mode="inline"
         items={items}
         inlineCollapsed={!collapsedMenu}
