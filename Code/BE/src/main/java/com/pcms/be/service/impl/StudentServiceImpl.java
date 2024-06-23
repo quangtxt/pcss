@@ -247,16 +247,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public ResponseEntity<Map<String, Object>> getListStudent(Pageable pageable, FilterStudentsRequest filterStudentsRequest) {
+    public ResponseEntity<Map<String, Object>> getListStudent(Pageable pageable, String keyword) {
         String sql = "SELECT s.* FROM v_student s " +
-                "INNER JOIN v_user u ON s.user_id = u.id ";
-        if (filterStudentsRequest.getFindBy().equals(Constants.FilterStudents.ByName)) {
-            sql += "WHERE u.username LIKE CONCAT('%', :keyword, '%') ";
-        } else {
-            sql += "WHERE u.email LIKE CONCAT('%', :keyword, '%') ";
-        }
+                "INNER JOIN v_user u ON s.user_id = u.id " +
+                "WHERE u.username LIKE CONCAT('%', :keyword, '%') " +
+                "OR u.email LIKE CONCAT('%', :keyword, '%') ";
         TypedQuery<Student> query = (TypedQuery<Student>) entityManager.createNativeQuery(sql, Student.class);
-        query.setParameter("keyword", filterStudentsRequest.getKeyword());
+        query.setParameter("keyword", keyword.trim());
         int pageNumber = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
         query.setFirstResult(pageNumber * pageSize);
@@ -264,7 +261,7 @@ public class StudentServiceImpl implements StudentService {
         List<Student> students = query.getResultList();
 
 //        Page<Student> studentPage = studentRepository.findAll(pageable, String keyword);
-        long totalCount = getTotalRows(sql, filterStudentsRequest);
+        long totalCount = getTotalRows(sql, keyword);
         int totalPages = (int) Math.ceil((double) totalCount / pageable.getPageSize());
         Map<String, Object> result = new HashMap<>();
 //            List<Student> students = studentPage.getContent();
@@ -291,11 +288,11 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
-    private long getTotalRows(String sql, FilterStudentsRequest filterStudentsRequest) {
+    private long getTotalRows(String sql, String keyword) {
         // Tính tổng số hàng trong truy vấn (không giới hạn phân trang)
         String countSql = "SELECT COUNT(*) FROM (" + sql + ") AS countQuery";
         Query query = entityManager.createNativeQuery(countSql);
-        query.setParameter("keyword", filterStudentsRequest.getKeyword());
+        query.setParameter("keyword", keyword.trim());
         return ((Number) query.getSingleResult()).longValue();
     }
 }

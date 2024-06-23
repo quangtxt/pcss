@@ -23,7 +23,7 @@ public interface StudentService {
     public ResponseEntity<String> checkFormatExcel_Student(MultipartFile file) throws ServiceException;
     public ResponseEntity<StudentDTO> addStudent(AddStudentRequest addStudentRequest) throws ServiceException;
     public ResponseEntity<String> addStudentsByExcel(MultipartFile file);
-    ResponseEntity<Map<String, Object>> getListStudent(Pageable pageable, FilterStudentsRequest filterStudentsRequest);
+    ResponseEntity<Map<String, Object>> getListStudent(Pageable pageable, String keyword);
     ResponseEntity<StudentDTO> setActiveStudent(SetActiveStudentRequest setActiveStudentRequest);
 
 }

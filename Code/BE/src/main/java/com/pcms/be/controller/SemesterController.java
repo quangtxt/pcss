@@ -11,10 +11,12 @@ import com.pcms.be.pojo.DTO.SubmissionDTO;
 import com.pcms.be.pojo.request.*;
 import com.pcms.be.service.CapstonePhaseService;
 import com.pcms.be.service.MilestoneService;
+import com.pcms.be.service.ScheduleTaskService.ScheduleTaskService;
 import com.pcms.be.service.SemesterService;
 import com.pcms.be.service.SubmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +36,9 @@ public class SemesterController {
 
     @Autowired
     private SubmissionService submissionService;
+
+    @Autowired
+    private ScheduleTaskService scheduleTaskService;
 
     @GetMapping("/gets")//Lấy list danh sách tất cả các Semester
     public ResponseEntity<List<SemesterDTO>> getSemesters(){
@@ -133,4 +138,5 @@ public class SemesterController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+
 }
