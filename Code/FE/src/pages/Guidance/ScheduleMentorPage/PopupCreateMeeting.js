@@ -44,20 +44,21 @@ const PopupCreateMeeting = (props) => {
   const [error, setError] = useState("");
 
   const [selectedGroup, setSelectedGroup] = useState(null);
+  const [selectedRange, setSelectedRange] = useState(false);
 
   useEffect(() => {
-    if (authenticationStore.currentUser) {
-    }
-  }, [authenticationStore.currentUser]);
+  }, );
   const handleCreate = async (values) => {
     try {
-      const { meetingTime, week } = values;
+      const { meetingTime, week, type,location } = values;
       let startAt = undefined;
       let endAt = undefined;
       if (meetingTime && meetingTime.length === 2) {
         startAt = moment(meetingTime[0]);
         endAt = moment(meetingTime[1]);
       }
+      console.log('type',type);
+      console.log('location',location);
       // const meeting = {
       //   startAt: startAt,
       //   endAt: endAt,
@@ -73,8 +74,8 @@ const PopupCreateMeeting = (props) => {
           const meeting = {
             startAt: startAt.clone().add(i + 1, "weeks"),
             endAt: endAt.clone().add(i + 1, "weeks"),
-            type: "Online",
-            location: "meeting location",
+            type: type,
+            location: location,
             groupId: selectedGroup,
           };
           meetings.push(meeting);
@@ -84,8 +85,8 @@ const PopupCreateMeeting = (props) => {
       const meeting = {
         startAt: startAt,
         endAt: endAt,
-        type: "Online",
-        location: "meeting location",
+        type: type,
+        location: location,
         groupId: selectedGroup,
       };
       meetings.push(meeting);
@@ -106,9 +107,6 @@ const PopupCreateMeeting = (props) => {
     }
   };
 
-  const onChange = (date, dateString) => {
-    console.log(date, dateString);
-  };
 
   const getOptions = () => {
     if (groupsOfMentor.length > 0) {
@@ -124,11 +122,8 @@ const PopupCreateMeeting = (props) => {
   const handleGroupChange = (option) => {
     setSelectedGroup(option);
   };
-
-  const [selectedRange, setSelectedRange] = useState([]);
-
-  const handleRangeChange = (dates) => {
-    setSelectedRange(dates);
+  const handleRangeChange = () => {
+    setSelectedRange(true);
   };
 
   return (
@@ -149,7 +144,11 @@ const PopupCreateMeeting = (props) => {
             justifyContent: "flex-end",
           }}
         >
-          <Form.Item label="Meeting Time (1 DAY)" name="meetingTime">
+          <Form.Item
+            label="Meeting Time (1 DAY)"
+            name="meetingTime"
+            rules={[{ required: true, message: "Please select meeting time!" }]}
+          >
             <RangePicker
               style={{
                 marginBottom: 20,
@@ -164,12 +163,13 @@ const PopupCreateMeeting = (props) => {
               }}
               format="YYYY-MM-DD HH:mm"
               onChange={handleRangeChange}
+              onCancel={() => setSelectedRange(false)}
             />
           </Form.Item>
-          {selectedRange.length > 0 && (
+          {selectedRange && (
             <div>
               <Form.Item
-                label="Do you want to schedule multiple weeks"
+                label="Do you want to schedule multiple weeks(not required)"
                 name="week"
               >
                 <Select>
@@ -181,18 +181,30 @@ const PopupCreateMeeting = (props) => {
               </Form.Item>
             </div>
           )}
-          {/* <Form.Item label="Select Day (Multiple Day)" name="day-mul">
-            <DatePicker
-              disabledDate={disabledDate}
-              onChange={onChange}
-              maxTagCount="responsive"
-              multiple
-            />
+          <Form.Item
+            label="Type of meeting"
+            name="type"
+            rules={[
+              { required: true, message: "Please select type of meeting!" },
+            ]}
+          >
+            <Select>
+              <Option value={"Online"}>Online</Option>
+              <Option value={"Offline"}>Offline</Option>
+            </Select>
           </Form.Item>
-          <Form.Item label="Select Time (Multiple Day)" name="time-mul">
-            <TimePicker />
-          </Form.Item> */}
-          <Form.Item label="Choose the group" name="group">
+          <Form.Item
+            label="Location or Link of meeting"
+            name="location"
+            rules={[{ required: true, message: "Please text the location!" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Choose the group"
+            name="group"
+            rules={[{ required: true, message: "Please select group!" }]}
+          >
             <Select
               value={selectedGroup}
               components={{
