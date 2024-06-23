@@ -20,6 +20,7 @@ const CreateIdeaPage = (props) => {
   const { loadingAnimationStore, groupStore, currentUser } =
     useContext(StoreContext);
   const location = useLocation();
+  const navigate = useNavigate();
   const [selectedStudent, setSelectedStudent] = useState([]);
   const [refresh, setRefresh] = useState(false);
 
@@ -47,8 +48,7 @@ const CreateIdeaPage = (props) => {
       if (response.status === 200) {
         //neu tao gr thanh cong
         message.success("Created group successfully");
-        await authenticationStore.checkCurrentUser();
-        history.push("/registration/team");
+        navigate("/registration/team");
       }
     } catch (err) {
       console.log(err);

@@ -93,14 +93,15 @@ const InviteForm = (props) => {
     }
   };
   return (
-    <InviteSection>
-      <Title>Invite</Title>
-      <Instruction>
+    <div className="mt-5">
+      <h2 className="text-lg mb-2.5">Invite</h2>
+      <p className="text-sm text-gray-600">
+        {" "}
         You can only invite those students whose specialties is allowed to work
         on the same thesis topic as yours in this term.
-      </Instruction>
-      <InviteContainer>
-        <InviteInput>
+      </p>
+      <div className="flex items-center w-full justify-between">
+        <div className="flex-grow mr-2.5">
           <Select
             value={selectedOption}
             components={{
@@ -116,10 +117,11 @@ const InviteForm = (props) => {
             onMenuClose={handleMenuClose}
             onKeyDown={handleKeyDown}
           />
-        </InviteInput>
-        {group && <InviteButton onClick={handleInvite}>Invite</InviteButton>}
-      </InviteContainer>
-    </InviteSection>
+
+          {group && <InviteButton onClick={handleInvite}>Invite</InviteButton>}
+        </div>
+      </div>
+    </div>
   );
 };
 

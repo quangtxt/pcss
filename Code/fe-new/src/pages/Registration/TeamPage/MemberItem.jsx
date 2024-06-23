@@ -44,6 +44,7 @@ const MemberItem = (props) => {
     }
   };
   const handleRemoveMember = async () => {
+    console.log("useNavigate");
     try {
       await groupStore.updateStatus(
         group.id,
@@ -64,7 +65,7 @@ const MemberItem = (props) => {
       member?.status === MEMBER_STATUS.INGROUP && {
         key: "change-to-leader",
         label: (
-          <div onClick={handleChangeLeader()} style={{ color: "red" }}>
+          <div onClick={() => handleChangeLeader()} style={{ color: "green" }}>
             Change to Leader
           </div>
         ),
@@ -72,12 +73,12 @@ const MemberItem = (props) => {
     isLeader && {
       key: "remove-member",
       label: (
-        <div onClick={handleRemoveMember()} style={{ color: "red" }}>
+        <div onClick={() => handleRemoveMember()} style={{ color: "red" }}>
           Remove Member
         </div>
       ),
     },
-  ];
+  ].filter(Boolean);
   return (
     <div className="w-full flex justify-between mb-5 items-baseline">
       <div className="flex items-center w-3/5">

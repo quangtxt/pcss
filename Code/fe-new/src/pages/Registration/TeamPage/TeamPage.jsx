@@ -161,12 +161,11 @@ const TeamPage = (props) => {
                       </p>
                     </div>
                     {availableSlotMember > 0 ? (
-                      // <InviteForm
-                      //   setSelectedStudent={setSelectedStudent}
-                      //   setRefresh={setRefresh}
-                      //   group={group}
-                      // ></InviteForm>
-                      <></>
+                      <InviteForm
+                        setSelectedStudent={setSelectedStudent}
+                        setRefresh={setRefresh}
+                        group={group}
+                      ></InviteForm>
                     ) : (
                       <></>
                     )}

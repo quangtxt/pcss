@@ -111,7 +111,6 @@ const MainSidebar = (props) => {
   }, []);
 
   const onClickMenuItem = ({ keyPath }) => {
-    console.log("keyPath", keyPath);
     setOpenedSubMenu([keyPath[1]]);
   };
 
