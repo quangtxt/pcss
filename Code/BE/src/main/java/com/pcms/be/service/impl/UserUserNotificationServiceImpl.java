@@ -74,4 +74,12 @@ public class UserUserNotificationServiceImpl implements UserNotificationService 
                 userNotificationRepository.save(userNotification);
         }
     }
+
+    @Override
+    public void createUserNotification(Long notificationId, String userName) {
+        UserNotification userNotification = new UserNotification();
+        userNotification.setNotificationId(notificationId);
+        userNotification.setUserName(userName);
+        userNotification.setStatus(false);
+    }
 }
