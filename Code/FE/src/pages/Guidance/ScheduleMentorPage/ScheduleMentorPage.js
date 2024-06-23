@@ -40,7 +40,7 @@ const ScheduleMentorPage = (props) => {
 
   useEffect(() => {
     getGroupsOfMentor();
-  }, []);
+  }, [refresh]);
   console.log("meetingList", meetingList);
 
   const getGroupsOfMentor = async () => {
@@ -49,13 +49,12 @@ const ScheduleMentorPage = (props) => {
       loadingAnimationStore.setTableLoading(false);
     });
     setGroupsOfMentor(res.data);
-    const listMeeting = res.data.flatMap(groupOfMentor =>
-      groupOfMentor.group.meetings
+    const listMeeting = res.data.flatMap(
+      (groupOfMentor) => groupOfMentor.group.meetings
     );
     setMeetingList(listMeeting);
     console.log("res.data", res.data);
   };
-  
 
   const getListData = (value) => {
     let listData = [];
@@ -95,7 +94,7 @@ const ScheduleMentorPage = (props) => {
         note: noteLength > 0 ? `Note (${noteLength})` : "No notes",
         meetingId: meeting.id,
         endMeeting: meeting.endAt,
-        group: meeting?.group.name
+        group: meeting?.group.name,
       });
     });
 
@@ -200,6 +199,7 @@ const ScheduleMentorPage = (props) => {
 
         <CalenderStudent>
           <Calendar
+            setRefresh={setRefresh}
             dateCellRender={dateCellRender}
             monthCellRender={monthCellRender}
           />

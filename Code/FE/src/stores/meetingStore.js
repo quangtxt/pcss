@@ -66,6 +66,30 @@ class MeetingStore {
     });
   };
 
+  @action updateMeeting = (listMeetings) => {
+    return new Promise((resolve, reject) => {
+      MeetingRequest.updateMeeting(listMeetings)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+
+  @action deleteMeeting = (meetingId) => {
+    return new Promise((resolve, reject) => {
+      MeetingRequest.deleteMeeting(meetingId)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+
   /** Clear store */
   @action clearStore = () => {
   };
