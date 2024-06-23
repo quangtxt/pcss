@@ -26,12 +26,7 @@ import TableComponent from "../../components/Common/TableComponent";
 const { Title } = Typography;
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
-const options = [
-  {
-    label: "Summer 2024 (SU24)",
-    value: "SU24",
-  },
-];
+
 const text = `
   A dog is a type of domesticated animal.
   Known for its loyalty and faithfulness,
@@ -60,50 +55,27 @@ const SemesterPage = (props) => {
     loadingAnimationStore,
     groupStore,
     studentStore,
+    semesterStore,
     authenticationStore,
   } = props;
 
-  const {
-    groupList,
-    groupListTotalCount,
-    groupListPageSize,
-    groupListPageIndex,
-  } = groupStore;
-
+  const [semesters, setSemesters] = useState([]);
   useEffect(() => {
     if (authenticationStore.currentUser) {
-      loadingAnimationStore.setTableLoading(true);
-      groupStore.getGroupList().finally(() => {
-        loadingAnimationStore.setTableLoading(false);
+      semesterStore.getSemesters().then((response) => {
+        setSemesters(
+          semesterStore.semesterList.map((semester) => ({
+            label: `${semester.name} (${semester.id})`,
+            value: semester.id,
+          }))
+        );
       });
     }
     return () => {
-      groupStore.clearStore();
+      semesterStore.clearStore();
     };
-  }, [authenticationStore.currentUser]);
+  }, [authenticationStore.currentUser, semesterStore]);
 
-  const columnsGroup = [
-    {
-      title: "ID",
-      render: (record) => record?.name,
-    },
-    {
-      title: "Name",
-      render: (record) => record?.vietnameseTitle,
-    },
-    {
-      title: "Start at",
-      render: (record) => record?.createdAt,
-    },
-    {
-      title: "End at",
-      render: (record) => record?.description,
-    },
-    {
-      title: "Action",
-      render: (record) => record?.description,
-    },
-  ];
   const [activeTab, setActiveTab] = useState("tab1");
   const onChange = (key) => {
     setActiveTab(key);
@@ -135,7 +107,7 @@ const SemesterPage = (props) => {
               // labelRender={labelRender}
               defaultValue="Choose a semester"
               style={{ width: "200px" }}
-              options={options}
+              options={semesters}
             />
           </FlexBox>
         </NoMarginBottom>
@@ -147,7 +119,11 @@ const SemesterPage = (props) => {
         >
           <TabPane tab="Phase 1" key="tab1">
             <Title level={3}>Name of Phase 1</Title>
-            <Collapse bordered={false} defaultActiveKey={["1"]} onChange={onChangeCollapse}>
+            <Collapse
+              bordered={false}
+              defaultActiveKey={["1"]}
+              onChange={onChangeCollapse}
+            >
               <Panel header="Name of Milestone 1" key="1">
                 <p>{text}</p>
               </Panel>
@@ -174,7 +150,8 @@ export default memo(
       "authenticationStore",
       "loadingAnimationStore",
       "studentStore",
-      "groupStore"
+      "groupStore",
+      "semesterStore"
     )(observer(SemesterPage))
   )
 );
