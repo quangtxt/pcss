@@ -17,9 +17,6 @@ import {
   LogoutOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-// firebase
-import firebase from "firebase/app";
-import "firebase/messaging";
 // Other
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
@@ -34,10 +31,6 @@ import { subStringAvatar } from "../Common/CellText";
 const { TabPane } = Tabs;
 
 const MainHeaderBar = (props) => {
-  const messaging = firebase.messaging.isSupported()
-    ? firebase.messaging()
-    : null;
-
   const {
     authenticationStore,
     accountStore,
@@ -76,59 +69,7 @@ const MainHeaderBar = (props) => {
     if (!useSSO) {
       history.replace("/");
     }
-
-    messaging
-      ?.deleteToken()
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
   }, []);
-
-  useEffect(() => {
-    if (!localStorage.getItem("FCMToken")) {
-      messaging
-        ?.getToken({ vapidKey: "s" })
-        .then((currentToken) => {
-          if (currentToken) {
-            localStorage.setItem("FCMToken", JSON.stringify(currentToken));
-            notificationStore
-              .sendTokenToSever(currentToken)
-              .then((res) => console.log(res))
-              .catch((err) => console.log(err.vi));
-          } else {
-            console.log(
-              "No registration token available. Request permission to generate one."
-            );
-          }
-        })
-        .catch(() => console.log("You have blocked notifications!"));
-    }
-    messaging?.onMessage(async (payload) => {
-      console.log("Message received. ", payload);
-      if (payload.data.type === "NEWS") {
-        if (changedTabsNotification.isOpen) {
-          setChangedTabsNotification({
-            status: true,
-            onlyNewsNotification: true,
-            isOpen: true,
-          });
-        } else {
-          await notificationStore.getUnreadNewsCount();
-        }
-      } else {
-        if (changedTabsNotification.isOpen) {
-          setChangedTabsNotification({
-            status: true,
-            onlyNewsNotification: false,
-            isOpen: true,
-          });
-        } else {
-          await notificationStore.getUnreadNotificationCount();
-        }
-      }
-      notificationStore.setNotificationType(payload.data.type);
-      message.info(`Thông báo mới: ${payload.notification.body}`);
-    });
-  }, [changedTabsNotification]);
 
   useEffect(() => {
     if (!utils.isIOSDevice()) {
