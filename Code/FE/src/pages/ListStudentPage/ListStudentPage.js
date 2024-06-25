@@ -85,7 +85,7 @@ const ListStudentPage = (props) => {
     });
   };
   const onChange = (checked) => {
-    showConfirmModal
+    showConfirmModal;
   };
   const columns = [
     {
@@ -102,8 +102,12 @@ const ListStudentPage = (props) => {
     },
     {
       title: "Status",
-      render: (record) => <Switch checked={record?.user.status}
-      onClick={() => showConfirmModal("confirm", record)} />,
+      render: (record) => (
+        <Switch
+          checked={record?.user.status}
+          onClick={() => showConfirmModal("confirm", record)}
+        />
+      ),
     },
   ];
   const formItemLayout = {
@@ -177,7 +181,7 @@ const ListStudentPage = (props) => {
               </GroupButton>
             </FlexBox>
             <TableComponent
-              rowKey={(record) => record.id || uuid()}
+              rowKey={(record) => record.id}
               dataSource={studentList}
               columns={columns}
               pagination={false}

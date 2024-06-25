@@ -61,49 +61,45 @@ const PopupEditTeam = (props) => {
       title="Edit Team Profiles"
       footer={null}
       closable={true}
-      visible={isVisiblePopup}
+      open={isVisiblePopup}
       onCancel={handleClosePopup}
     >
-      <Form onFinish={handleEdit} form={form} scrollToFirstError>
-        <div className="inputForm">
-          <Form.Item label="Name" name="name">
-            <Input />
-          </Form.Item>
-        </div>
-        <div className="inputForm">
-          <Form.Item label="Abbreviations" name="abbreviations">
-            <Input />
-          </Form.Item>
-        </div>
-        <div className="inputForm">
-          <Form.Item label="Vietnamese Title" name="vietnameseTitle">
-            <Input style={{ maxWidth: "100%" }} />
-          </Form.Item>
-        </div>
-        <div className="inputForm">
-          <Form.Item label="Keywords" name="keywords">
-            <Input style={{ maxWidth: "100%" }} />
-          </Form.Item>
-        </div>
-        <div className="inputForm">
-          <Form.Item label="Description" name="description">
-            <TextArea rows={5} style={{ maxWidth: "100%" }} />
-          </Form.Item>
-        </div>
-        <Space
-          style={{
-            marginTop: 20,
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
+      <Form
+        onFinish={handleEdit}
+        form={form}
+        labelAlign="left"
+        layout="horizontal"
+        labelCol={{
+          span: 7,
+        }}
+        wrapperCol={{
+          span: 20,
+        }}
+        scrollToFirstError
+      >
+        <Form.Item label="Name" name="name">
+          <Input />
+        </Form.Item>
+        <Form.Item label="Abbreviations" name="abbreviations">
+          <Input />
+        </Form.Item>
+        <Form.Item label="Vietnamese Title" name="vietnameseTitle">
+          <Input style={{ maxWidth: "100%" }} />
+        </Form.Item>
+        <Form.Item label="Keywords" name="keywords">
+          <Input style={{ maxWidth: "100%" }} />
+        </Form.Item>
+        <Form.Item label="Description" name="description">
+          <TextArea rows={5} style={{ maxWidth: "100%", resize: "none" }} />
+        </Form.Item>
+        <div className="flex items-center justify-center gap-16">
           <Button icon={<CloseOutlined />} onClick={handleClosePopup} danger>
             Cancel
           </Button>
           <Button icon={<CheckOutlined />} htmlType={"submit"} type={"primary"}>
             Edit
           </Button>
-        </Space>
+        </div>
       </Form>
     </Modal>
   );

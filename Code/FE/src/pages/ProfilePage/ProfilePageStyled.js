@@ -66,7 +66,7 @@ export const Profile = styled.div`
 `;
 
 export const ContentInformation = styled.div`
-  width: 50%;
+  background-color: white;
 `;
 
 export const GroupButton = styled.div`
@@ -90,8 +90,9 @@ export const MarginLeftLabel = styled.div`
   }
 `;
 export const NoMarginBottom = styled.div`
-  .ant-typography, .ant-row{
-      margin-bottom: 0 !important;
+  .ant-typography,
+  .ant-row {
+    margin-bottom: 0 !important;
   }
 `;
 

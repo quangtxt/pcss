@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import { UserOutlined, EditOutlined } from "@ant-design/icons";
-import { message } from "antd";
+import { message, Button } from "antd";
 import Select from "react-select";
 
 import {
@@ -102,33 +102,42 @@ const InviteForm = (props) => {
     }
   };
   return (
-    <InviteSection>
-      <Title>Invite</Title>
-      <Instruction>
+    <div className="mt-5">
+      <h2 className="text-lg mb-2.5">Invite</h2>
+      <p className="text-sm text-gray-600">
+        {" "}
         You can only invite those students whose specialties is allowed to work
         on the same thesis topic as yours in this term.
-      </Instruction>
-      <InviteContainer>
-        <InviteInput>
-          <Select
-            value={selectedOption}
-            components={{
-              DropdownIndicator: () => null,
-              IndicatorSeparator: () => null,
-            }}
-            onChange={handleOptionChange}
-            options={getOptions()}
-            placeholder="Example@fpt.edu.vn"
-            isMulti
-            openMenuOnClick={false}
-            onMenuOpen={handleMenuOpen}
-            onMenuClose={handleMenuClose}
-            onKeyDown={handleKeyDown}
-          />
-        </InviteInput>
-        {group && <InviteButton onClick={handleInvite}>Invite</InviteButton>}
-      </InviteContainer>
-    </InviteSection>
+      </p>
+      <div className="flex items-stretch gap-16">
+        <Select
+          value={selectedOption}
+          components={{
+            DropdownIndicator: () => null,
+            IndicatorSeparator: () => null,
+          }}
+          onChange={handleOptionChange}
+          options={getOptions()}
+          placeholder="Example@fpt.edu.vn"
+          isMulti
+          openMenuOnClick={false}
+          onMenuOpen={handleMenuOpen}
+          onMenuClose={handleMenuClose}
+          onKeyDown={handleKeyDown}
+          className="w-full"
+        />
+
+        {group && (
+          <Button
+            type="primary"
+            style={{ height: "38px" }}
+            onClick={handleInvite}
+          >
+            Invite Student
+          </Button>
+        )}
+      </div>
+    </div>
   );
 };
 

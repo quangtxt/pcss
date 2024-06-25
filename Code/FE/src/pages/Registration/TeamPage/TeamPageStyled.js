@@ -1,11 +1,6 @@
 import styled from "styled-components";
-import PropTypes from "prop-types";
 
 export const Team = styled.div`
-  .container {
-    display: flex;
-    flex-direction: row;
-  }
   .main {
     height: auto;
     flex-basis: 90%;
@@ -205,5 +200,51 @@ export const Team = styled.div`
   }
   .numMemberInfor {
     font-size: 15px;
+  }
+`;
+export const InformMember = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  align-items: baseline;
+`;
+
+export const Info = styled.div`
+  display: flex;
+  align-items: center;
+  width: 60%;
+`;
+
+export const UserAvatar = styled.img`
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  margin-right: 12px;
+  margin-right: 16px;
+`;
+
+export const MemberInfo = styled.div``;
+
+export const MemberEmail = styled.a`
+  text-decoration: none;
+  color: #1c1f27;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+`;
+
+export const MemberName = styled.p`
+  color: rgba(28, 31, 39, 0.5);
+  font-weight: 400;
+  font-size: 14px;
+`;
+
+export const Role = styled.div`
+  font-weight: 600;
+  font-size: 14px;
+  color: rgba(28, 31, 39, 0.5);
+  p {
+    font-size: 16px;
   }
 `;

@@ -147,7 +147,7 @@ const ProfilePage = (props) => {
               span: 20,
             }}
           >
-            <ContentInformation>
+            <ContentInformation className="w-1/2">
               <Title level={4}>Avatar</Title>
               <Space
                 direction="vertical"
@@ -178,7 +178,7 @@ const ProfilePage = (props) => {
                 </Form.Item>
               </MarginLeftLabel>
             </ContentInformation>
-            <ContentInformation>
+            <ContentInformation className="w-1/2">
               <FlexBox>
                 <NoMarginBottom>
                   <Title level={4}>Basic Information</Title>

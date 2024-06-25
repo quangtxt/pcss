@@ -2,15 +2,26 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter, useLocation } from "react-router-dom";
 import { UserOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Form, Input, message, Avatar, Space, Radio, Card } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Avatar,
+  Space,
+  Radio,
+  Card,
+  Typography,
+} from "antd";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { Helmet } from "react-helmet/es/Helmet";
-import { Profile } from "../ProfilePage/ProfilePageStyled";
+import { ContentInformation } from "../ProfilePage/ProfilePageStyled";
 import PageTitle from "../../components/PageTitle";
 
 const DetailProfileSupervisorPage = (props) => {
   const { history, mentorStore, loadingAnimationStore } = props;
   const { state } = useLocation();
+  const { Title } = Typography;
 
   useEffect(() => {
     if (state && state.userId) {
@@ -50,56 +61,56 @@ const DetailProfileSupervisorPage = (props) => {
         <title>Detail Profile of Supervisor</title>
       </Helmet>
       <PageTitle
-        location={props.location}
+        location={location}
         title={"Detail Supervisors"}
         showTitle={true}
       ></PageTitle>
-      <Profile>
-        <div className="detailProfileSupervisor">
-          <div className="left">
-            <Space direction="vertical" size={16}>
-              <Space wrap size={16}>
-                <img
-                  src="https://tse2.mm.bing.net/th?id=OIP.gHmt_-48RFhIluX7nT5zBwHaHa&pid=Api&P=0&h=180"
-                  alt="Avatar"
-                  className="rounded-circle"
-                  width="150"
-                />
-              </Space>
+      <div className="flex items-start gap-30">
+        <ContentInformation className="flex flex-col items-center justify-center w-30p p-8 rounded-md">
+          <Space direction="vertical" size={16} className="">
+            <Space wrap size={16}>
+              <img
+                src="https://tse2.mm.bing.net/th?id=OIP.gHmt_-48RFhIluX7nT5zBwHaHa&pid=Api&P=0&h=180"
+                alt="Avatar"
+                className="rounded-circle"
+                width="171"
+              />
             </Space>
-            <p className="bigTitle">{mentor?.fullName}</p>
-          </div>
-          <div className="right">
-            <Form form={form}>
-              <div className="inputForm">
-                <Form.Item label="FPT Email" name="fptEmail">
-                  <Input style={{ maxWidth: "100%" }} disabled />
-                </Form.Item>
-              </div>
-              <div className="inputForm">
-                <Form.Item label="Personal Email" name="personalEmail">
-                  <Input style={{ maxWidth: "100%" }} disabled />
-                </Form.Item>
-              </div>
-              <div className="inputForm">
-                <Form.Item label="Phone" name="phone">
-                  <Input style={{ maxWidth: "100%" }} disabled />
-                </Form.Item>
-              </div>
-              <div className="inputForm">
-                <Form.Item label="Self Description" name="selfDescription">
-                  <TextArea
-                    rows={5}
-                    style={{ maxWidth: "100%" }}
-                    disabled
-                    value={mentor?.selfDescription}
-                  />
-                </Form.Item>
-              </div>
-            </Form>
-          </div>
-        </div>
-      </Profile>
+          </Space>
+          <Title level={4}>{mentor?.fullName}</Title>
+        </ContentInformation>
+        <ContentInformation className="w-70p p-8 rounded-md">
+          <Form
+            form={form}
+            labelAlign="left"
+            layout="horizontal"
+            labelCol={{
+              span: 6,
+            }}
+            wrapperCol={{
+              span: 20,
+            }}
+          >
+            <Form.Item label="FPT Email" name="fptEmail">
+              <Input style={{ maxWidth: "100%" }} readOnly />
+            </Form.Item>
+            <Form.Item label="Personal Email" name="personalEmail">
+              <Input style={{ maxWidth: "100%" }} readOnly />
+            </Form.Item>
+            <Form.Item label="Phone" name="phone">
+              <Input style={{ maxWidth: "100%" }} readOnly />
+            </Form.Item>
+            <Form.Item label="Self Description" name="selfDescription">
+              <TextArea
+                rows={5}
+                style={{ maxWidth: "100%", resize: "none" }}
+                readOnly
+                value={mentor?.selfDescription}
+              />
+            </Form.Item>
+          </Form>
+        </ContentInformation>
+      </div>
     </DashboardLayout>
   );
 };

@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.h3-semibold {
+    font-weight: 600;
+    font-size: 33px;
+    line-height: 40px;
+    letter-spacing: -2%
+}
+.h4-small-semibold,.h5-semibold {
+    font-weight: 600;
+    font-size: 23px;
+    line-height: 28px;
+    letter-spacing: -2%
+}
+.gap-10 {
+    gap: 10px
+}
+.gap-16 {
+    gap: 16px
+}
+
+.gap-30 {
+    gap: 30px
+}
+
+.w-30p {
+    width: 30%;
+}
+
+.w-70p {
+    width: 70%;
+}
+
+.border-1px {
+    border-width: 1px;
+}
