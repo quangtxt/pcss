@@ -14,10 +14,11 @@ import com.pcms.be.pojo.response.GroupResponse;
 import com.pcms.be.pojo.response.SubmitGroupResponse;
 import com.pcms.be.repository.*;
 import com.pcms.be.service.GroupService;
+import com.pcms.be.service.NotificationService;
+import com.pcms.be.service.UserNotificationService;
 import com.pcms.be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,10 +37,11 @@ public class GroupServiceImpl implements GroupService {
     private final UserService userService;
     private final MemberRepository memberRepository;
     private final MentorRepository mentorRepository;
-    private final UserRepository userRepository;
     private final StudentRepository studentRepository;
     private final GroupMentorRepository groupMentorRepository;
     private final ModelMapper modelMapper;
+    private final NotificationService notificationService;
+
 
 
     @Override
@@ -235,6 +237,8 @@ public class GroupServiceImpl implements GroupService {
             throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
         }
     }
+    @Transactional
+    @Override
     public ResponseEntity<String> automaticallyCreateGroups() throws ServiceException {
         try {
             //Lấy danh sách student chưa có group (danh sách sv1)
@@ -280,10 +284,12 @@ public class GroupServiceImpl implements GroupService {
                }else{// Cho các sinh viên này vào các nhóm random
                    setEachStudentToEachGroup(students);
                }
+
             }
         }catch (Exception e){
             throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
         }
+        notificationService.createJoinGroupNotification();
         return ResponseEntity.ok("Automatically grouped successfully");
     }
 
@@ -301,6 +307,7 @@ public class GroupServiceImpl implements GroupService {
         return ResponseEntity.ok(result);
     }
 
+    @Transactional
     public void createGroup(List<Student> students){
         Group group = new Group();
         group.setName("Auto");
@@ -328,6 +335,7 @@ public class GroupServiceImpl implements GroupService {
             setEachStudentToEachGroup(students.subList(students.size() - students.size()%5, students.size()));
         }
     }
+    @Transactional
     public void setEachStudentToEachGroup(List<Student> students){
         List<Group> allGroup = groupRepository.findAll();
         Collections.shuffle(allGroup);
@@ -351,6 +359,7 @@ public class GroupServiceImpl implements GroupService {
 //            memberRepository.save(member);
 //        }
 //    }
+    @Transactional
     public void setStudentsToGroup(List<Group> group, List<Student> students){
         List<Student> recordStudents = new ArrayList<>();
         if (!group.isEmpty() && !students.isEmpty()){
@@ -379,6 +388,7 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
+   @Transactional
     public void clearGroup(List<Group> groups){//test done
         for (Group group : groups) {
             List<Member> memberListToRemove = new ArrayList<>();

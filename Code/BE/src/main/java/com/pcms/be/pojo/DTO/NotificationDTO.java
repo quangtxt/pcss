@@ -1,6 +1,5 @@
 package com.pcms.be.pojo.DTO;
 
-import com.pcms.be.domain.user.UserNotification;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

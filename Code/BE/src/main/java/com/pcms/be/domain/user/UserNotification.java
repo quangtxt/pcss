@@ -1,32 +1,33 @@
 package com.pcms.be.domain.user;
 
 import com.pcms.be.domain.Notification;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "v_user_notification")
-public class UserNotification implements Serializable {
-
+public class UserNotification implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_name")
-    private String userName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name = "notification_id")
-    private Long notificationId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "notification_id")
+    private Notification notification;
 
     @Column(name = "status")
-    private Boolean status = Boolean.FALSE;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "notification_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private Notification notification;
+    private boolean status;
 }
