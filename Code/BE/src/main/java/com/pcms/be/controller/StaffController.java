@@ -1,32 +1,27 @@
 package com.pcms.be.controller;
 
 import com.pcms.be.domain.user.Group;
-import com.pcms.be.domain.user.Member;
-import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.pojo.DTO.MentorDTO;
 import com.pcms.be.pojo.DTO.StudentDTO;
 import com.pcms.be.pojo.request.AddMentorRequest;
 import com.pcms.be.pojo.request.AddStudentRequest;
-import com.pcms.be.pojo.request.FilterStudentsRequest;
 import com.pcms.be.pojo.request.SetActiveStudentRequest;
 import com.pcms.be.repository.GroupRepository;
 import com.pcms.be.repository.MemberRepository;
+import com.pcms.be.repository.StudentRepository;
 import com.pcms.be.service.GroupService;
 import com.pcms.be.service.MentorService;
+import com.pcms.be.service.NotificationService;
 import com.pcms.be.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -46,6 +41,12 @@ public class StaffController {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
     @GetMapping("/students")
     public ResponseEntity<Map<String, Object>> getStudents(Pageable pageable,
                                                            @RequestParam(defaultValue = "") String keyword) {
@@ -56,7 +57,7 @@ public class StaffController {
                                             @RequestParam(defaultValue = "") String keyword){
         return groupService.getGroups(pageable, keyword);
     }
-    @PostMapping("/student/is_active")
+    @PostMapping("/student/is_active")//Can notification
     public ResponseEntity<StudentDTO> setActiveStudent(@RequestBody SetActiveStudentRequest setActiveStudentRequest){
         return studentService.setActiveStudent(setActiveStudentRequest);
     }
@@ -69,7 +70,7 @@ public class StaffController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
-    @PostMapping("/addStudent")
+    @PostMapping("/addStudent")//done
     public ResponseEntity<StudentDTO> addStudent(@RequestBody AddStudentRequest addStudentRequest) throws ServiceException {
         try {
             return studentService.addStudent(addStudentRequest);
@@ -103,7 +104,7 @@ public class StaffController {
         return mentorService.addMentorsByExcel(file);
     }
 
-    @PostMapping("/student/automatically/create/groups")
+    @PostMapping("/student/automatically/create/groups")//Can notification
     public ResponseEntity<String> automaticallyCreateGroups() throws ServiceException {
         try {
             return groupService.automaticallyCreateGroups();
@@ -118,4 +119,6 @@ public class StaffController {
         groupRepository.delete(group);
         return ResponseEntity.ok("ok");
     }
+
+
 }

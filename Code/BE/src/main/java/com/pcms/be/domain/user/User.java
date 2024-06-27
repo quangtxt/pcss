@@ -1,10 +1,14 @@
 package com.pcms.be.domain.user;
 
 import com.pcms.be.domain.Campus;
+
+import com.pcms.be.domain.Notification;
 import com.pcms.be.domain.SpecificMajor;
 import com.pcms.be.domain.meeting.Note;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -20,6 +24,8 @@ import java.util.Set;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "v_user")
 public class User implements UserDetails, Serializable {
@@ -59,6 +65,12 @@ public class User implements UserDetails, Serializable {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "v_user_notification",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "notification_id"))
+    private Set<Notification> notifications = new HashSet<>();
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Student student;
 
@@ -71,6 +83,8 @@ public class User implements UserDetails, Serializable {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Note> notes;
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

@@ -1,6 +1,5 @@
 package com.pcms.be.pojo.response;
 
-import com.pcms.be.domain.Notification;
 import com.pcms.be.pojo.DTO.NotificationDTO;
 import jakarta.persistence.*;
 import lombok.Getter;

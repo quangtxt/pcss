@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface UserNotificationRepository extends JpaRepository<UserNotification, Long> {
-    Page<UserNotification> findAllByUserName(String username, Pageable pageable);
-    Page<UserNotification> findAllByUserNameAndStatus(String username, boolean unread, Pageable pageable);
-    List<UserNotification> findAllByUserNameAndStatus(String username, boolean unread);
+//    Page<UserNotification> findAllByUserName(String username, Pageable pageable);
+//    Page<UserNotification> findAllByUserNameAndStatus(String username, boolean unread, Pageable pageable);
+//    List<UserNotification> findAllByUserNameAndStatus(String username, boolean unread);
 }

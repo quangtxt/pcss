@@ -1,5 +1,7 @@
 package com.pcms.be.configuration;
 
+import com.pcms.be.domain.user.User;
+import com.pcms.be.service.impl.NotificationServiceImpl;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

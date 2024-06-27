@@ -1,6 +1,5 @@
 package com.pcms.be.service;
 
-import com.pcms.be.domain.user.UserNotification;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.pojo.response.UserNotificationResponse;
 import org.springframework.data.domain.Page;
