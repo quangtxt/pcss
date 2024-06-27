@@ -91,8 +91,7 @@ class MeetingStore {
   };
 
   /** Clear store */
-  @action clearStore = () => {
-  };
+  @action clearStore = () => {};
 }
 
 export default new MeetingStore();

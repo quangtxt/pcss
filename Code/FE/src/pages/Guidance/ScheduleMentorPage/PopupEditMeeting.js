@@ -7,7 +7,6 @@ import {
   Space,
   Input,
   DatePicker,
-  TimePicker,
   Select,
 } from "antd";
 import dayjs from "dayjs";
@@ -26,87 +25,71 @@ const disabledDate = (current) => {
   return current && current < dayjs().endOf("day");
 };
 
-const PopupCreateMeeting = (props) => {
+const PopupEditMeeting = (props) => {
   const {
-    isVisiblePopup,
-    setIsVisiblePopup,
+    isVisiblePopupEdit,
+    setIsVisiblePopupEdit,
     handleClosePopup,
     loadingAnimationStore,
     setRefresh,
     meetingStore,
     groupStore,
     authenticationStore,
+    meetingList,
+    meetingId,
     groupsOfMentor,
   } = props;
-  const [meetings, setMeetings] = useState([]);
-  const { TextArea } = Input;
   const [form] = Form.useForm();
   const [error, setError] = useState("");
 
-  const [selectedGroup, setSelectedGroup] = useState(null);
-  const [selectedRange, setSelectedRange] = useState(false);
-
-  useEffect(() => {});
-  const handleCreate = async (values) => {
+  useEffect(() => {
+    if (meetingList) {
+      meetingList.filter((meeting) => {
+        if (meeting.id === meetingId) {
+          form.setFieldsValue({
+            meetingTime: [moment(meeting?.startAt), moment(meeting?.endAt)],
+            type: meeting?.type,
+            location: meeting?.location,
+            group: meeting?.group?.id,
+          });
+        }
+      });
+      console.log("meetingList", meetingList);
+    }
+  });
+  const handleEdit = async (values) => {
     try {
-      const { meetingTime, week, type, location } = values;
+      const { meetingTime, type, location } = values;
       let startAt = undefined;
       let endAt = undefined;
       if (meetingTime && meetingTime.length === 2) {
         startAt = moment(meetingTime[0]);
         endAt = moment(meetingTime[1]);
       }
-      console.log("type", type);
-      console.log("location", location);
-      // const meeting = {
-      //   startAt: startAt,
-      //   endAt: endAt,
-      //   type: "Online",
-      //   location: "meeting location",
-      //   groupId: selectedGroup,
-      // };
-      // const meetings = [meeting];
-      const meetings = [];
-      //tạo cuộc họp theo tuần
-      if (week) {
-        for (let i = 0; i < week; i++) {
-          const meeting = {
-            startAt: startAt.clone().add(i + 1, "weeks"),
-            endAt: endAt.clone().add(i + 1, "weeks"),
-            type: type,
-            location: location,
-            groupId: selectedGroup,
-          };
-          meetings.push(meeting);
-        }
-      }
-      //tạo cuộc họp hiện tại
       const meeting = {
         startAt: startAt,
         endAt: endAt,
         type: type,
         location: location,
-        groupId: selectedGroup,
+        id: meetingId,
       };
-      meetings.push(meeting);
-
+      const meetings = [meeting];
+      console.log("meetings", meetings);
       loadingAnimationStore.showSpinner(true);
-      const response = await meetingStore.createMeeting(meetings);
+      const response = await meetingStore.updateMeeting(meetings);
       if (response.status === 200) {
         setRefresh(true);
-        setIsVisiblePopup(false);
-        form.resetFields();
-        message.success("Create successfully");
+        setIsVisiblePopupEdit(false);
+        message.success("Edit successfully");
       }
     } catch (err) {
       console.log(err);
       loadingAnimationStore.showSpinner(false);
-      message.error(err.en || "Error not create meeting!");
+      message.error(err.en || "Error not edit meeting!");
     } finally {
       loadingAnimationStore.showSpinner(false);
     }
   };
-
   const getOptions = () => {
     if (groupsOfMentor.length > 0) {
       return groupsOfMentor.map((item) => ({
@@ -118,22 +101,15 @@ const PopupCreateMeeting = (props) => {
     }
   };
 
-  const handleGroupChange = (option) => {
-    setSelectedGroup(option);
-  };
-  const handleRangeChange = () => {
-    setSelectedRange(true);
-  };
-
   return (
     <Modal
-      title="Create Meeting"
+      title="Edit Meeting"
       footer={null}
       closable={true}
-      visible={isVisiblePopup}
+      visible={isVisiblePopupEdit}
       onCancel={handleClosePopup}
     >
-      <Form onFinish={handleCreate} form={form} scrollToFirstError>
+      <Form onFinish={handleEdit} form={form} scrollToFirstError>
         <Space
           size={12}
           direction="vertical"
@@ -161,25 +137,8 @@ const PopupCreateMeeting = (props) => {
                 ],
               }}
               format="YYYY-MM-DD HH:mm"
-              onChange={handleRangeChange}
-              onCancel={() => setSelectedRange(false)}
             />
           </Form.Item>
-          {selectedRange && (
-            <div>
-              <Form.Item
-                label="Do you want to schedule multiple weeks(not required)"
-                name="week"
-              >
-                <Select>
-                  <Option value="">none</Option>
-                  <Option value={1}>1 weeks</Option>
-                  <Option value={2}>2 weeks</Option>
-                  <Option value={3}>3 weeks</Option>
-                </Select>
-              </Form.Item>
-            </div>
-          )}
           <Form.Item
             label="Type of meeting"
             name="type"
@@ -199,20 +158,14 @@ const PopupCreateMeeting = (props) => {
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            label="Choose the group"
-            name="group"
-            rules={[{ required: true, message: "Please select group!" }]}
-          >
+          <Form.Item label="Group" name="group">
             <Select
-              value={selectedGroup}
               components={{
                 DropdownIndicator: () => null,
                 IndicatorSeparator: () => null,
               }}
-              onChange={handleGroupChange}
               options={getOptions()}
-              placeholder="Group selected"
+              disabled
             />
           </Form.Item>
         </Space>
@@ -220,14 +173,14 @@ const PopupCreateMeeting = (props) => {
           Cancel
         </Button>
         <Button icon={<CheckOutlined />} htmlType={"submit"} type={"primary"}>
-          Create
+          Edit
         </Button>
       </Form>
     </Modal>
   );
 };
 
-PopupCreateMeeting.propTypes = {};
+PopupEditMeeting.propTypes = {};
 
 export default withRouter(
   inject(
@@ -236,5 +189,5 @@ export default withRouter(
     "meetingStore",
     "authenticationStore",
     "groupStore"
-  )(observer(PopupCreateMeeting))
+  )(observer(PopupEditMeeting))
 );

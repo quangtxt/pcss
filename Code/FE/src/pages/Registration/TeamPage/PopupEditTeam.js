@@ -50,7 +50,7 @@ const PopupEditTeam = (props) => {
     } catch (err) {
       console.log(err);
       loadingAnimationStore.showSpinner(false);
-      message.error(err.en || "Login failed response status!");
+      message.error(err.en || "Error not edit team!");
     } finally {
       loadingAnimationStore.showSpinner(false);
     }
