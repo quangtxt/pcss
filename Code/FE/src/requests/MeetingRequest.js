@@ -62,7 +62,7 @@ export const MeetingRequest = {
     }),
   updateMeeting: (listMeetings) =>
     axios({
-      method: "post",
+      method: "put",
       url: `${apiUrl}/api/v1/meeting/update`,
       headers: {
         Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,

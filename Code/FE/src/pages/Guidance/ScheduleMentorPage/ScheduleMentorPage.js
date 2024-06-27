@@ -2,14 +2,19 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { Badge, Calendar, Button } from "antd";
-import { CloseCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { Badge, Calendar, Button, Menu, Dropdown } from "antd";
+import {
+  CloseCircleOutlined,
+  CheckCircleOutlined,
+  MoreOutlined,
+} from "@ant-design/icons";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 import { Helmet } from "react-helmet/es/Helmet";
 import PageTitle from "../../../components/PageTitle";
 import ContentBlockWrapper from "../../../components/ContentBlockWrapper";
 import { CalenderStudent } from "./ScheduleMentorPageStyled";
 import PopupCreateMeeting from "./PopupCreateMeeting";
+import PopupEditMeeting from "./PopupEditMeeting";
 import moment from "moment";
 
 const ScheduleMentorPage = (props) => {
@@ -23,6 +28,8 @@ const ScheduleMentorPage = (props) => {
   const { currentUser } = authenticationStore;
 
   const [isVisiblePopup, setIsVisiblePopup] = useState(false);
+  const [isVisiblePopupEdit, setIsVisiblePopupEdit] = useState(false);
+  const [meetingId, setMeetingId] = useState("");
   const [meetingList, setMeetingList] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [groupsOfMentor, setGroupsOfMentor] = useState([]);
@@ -41,7 +48,6 @@ const ScheduleMentorPage = (props) => {
   useEffect(() => {
     getGroupsOfMentor();
   }, [refresh]);
-  console.log("meetingList", meetingList);
 
   const getGroupsOfMentor = async () => {
     loadingAnimationStore.setTableLoading(true);
@@ -49,6 +55,7 @@ const ScheduleMentorPage = (props) => {
       loadingAnimationStore.setTableLoading(false);
     });
     setGroupsOfMentor(res.data);
+    setRefresh(false);
     const listMeeting = res.data.flatMap(
       (groupOfMentor) => groupOfMentor.group.meetings
     );
@@ -94,7 +101,7 @@ const ScheduleMentorPage = (props) => {
         note: noteLength > 0 ? `Note (${noteLength})` : "No notes",
         meetingId: meeting.id,
         endMeeting: meeting.endAt,
-        group: meeting?.group.name,
+        group: meeting?.group.vietnameseTitle,
       });
     });
 
@@ -117,6 +124,24 @@ const ScheduleMentorPage = (props) => {
     ) : null;
   };
 
+  const handleRemoveMeeting = async (meetingId) => {
+    try {
+      await meetingStore.deleteMeeting(meetingId);
+      setRefresh(true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleMenuClick = (e, meetingId) => {
+    if (e.key === "edit-meeting") {
+      navigateToEdit(meetingId);
+    } else if (e.key === "remove-meeting") {
+      console.log("meetingId", meetingId);
+      handleRemoveMeeting(meetingId);
+    }
+  };
+
   const dateCellRender = (value) => {
     const listData = getListData(value);
     const handleNoteClick = (meetingId) => {
@@ -126,35 +151,78 @@ const ScheduleMentorPage = (props) => {
       <ul className="events">
         {listData.map((item) => {
           return (
-            <li key={item.content}>
-              <Badge
-                style={{ whiteSpace: "wrap" }}
-                status={
-                  moment(item.endMeeting) < new Date() ? "error" : "success"
-                }
-                text={item.content}
-              />
-              <div>{item.time}</div>
-              <div>{item.group}</div>
-              <div>
-                {item.type === "Online" ? (
-                  <a href={item.link} target="_blank">
-                    {item.place}
-                  </a>
-                ) : (
-                  <div>{item.place}</div>
-                )}
-              </div>
-              <div>
-                {item.note === "No notes" ? (
-                  item.note
-                ) : (
-                  <a onClick={() => handleNoteClick(item.meetingId)}>
-                    {item.note}
-                  </a>
-                )}
-              </div>
-            </li>
+            <div
+              style={{
+                backgroundColor: "rgb(14 165 233)",
+                margin: "0 0.75rem 0.75rem 0.75rem",
+              }}
+              className="p-3 rounded shadow-lg "
+            >
+              <li key={item.content}>
+                <div className="flex place-items-center">
+                  <div className="font-bold text-indigo-800 truncate ...">
+                    {item.group}
+                  </div>
+                  <div>
+                    {moment(item.endMeeting) > new Date() ? (
+                      <Dropdown
+                        overlay={
+                          <Menu
+                            onClick={(e) => handleMenuClick(e, item.meetingId)}
+                          >
+                            <Menu.Item key="edit-meeting">
+                              Edit meeting
+                            </Menu.Item>
+                            <Menu.Item key="remove-meeting">
+                              Remove meeting
+                            </Menu.Item>
+                          </Menu>
+                        }
+                      >
+                        <Button type="text" className="p-0">
+                          <MoreOutlined style={{ fontSize: "15px" }} />
+                        </Button>
+                      </Dropdown>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Badge
+                    className="font-semibold"
+                    style={{ whiteSpace: "wrap" }}
+                    status={
+                      moment(item.endMeeting) < new Date() ? "error" : "success"
+                    }
+                    text={item.content}
+                  ></Badge>
+                </div>
+
+                <div style={{ color: "rgb(136 19 55)" }} className="italic ">
+                  {item.time}
+                </div>
+                <div>
+                  {item.type === "Online" ? (
+                    <a href={item.link} target="_blank">
+                      {item.place}
+                    </a>
+                  ) : (
+                    <div>{item.place}</div>
+                  )}
+                </div>
+                <div>
+                  {item.note === "No notes" ? (
+                    item.note
+                  ) : (
+                    <a onClick={() => handleNoteClick(item.meetingId)}>
+                      {item.note}
+                    </a>
+                  )}
+                </div>
+              </li>
+            </div>
           );
         })}
       </ul>
@@ -164,15 +232,19 @@ const ScheduleMentorPage = (props) => {
   function navigateToCreate() {
     setIsVisiblePopup(true);
   }
+  function navigateToEdit(meetingId) {
+    setIsVisiblePopupEdit(true);
+    setMeetingId(meetingId);
+  }
 
   return (
     <DashboardLayout>
       <Helmet>
-        <title>Registration || Create Idea</title>
+        <title>Guidance Phase || Schedule</title>
       </Helmet>
       <PageTitle
         location={props.location}
-        title={"Create Idea"}
+        title={"Schedule"}
         hiddenGoBack
       ></PageTitle>
       <ContentBlockWrapper>
@@ -211,6 +283,16 @@ const ScheduleMentorPage = (props) => {
         isVisiblePopup={isVisiblePopup}
         setIsVisiblePopup={setIsVisiblePopup}
         handleClosePopup={() => setIsVisiblePopup(false)}
+        setRefresh={setRefresh}
+      />
+
+      <PopupEditMeeting
+        groupsOfMentor={groupsOfMentor}
+        meetingId={meetingId}
+        meetingList={meetingList}
+        isVisiblePopupEdit={isVisiblePopupEdit}
+        setIsVisiblePopupEdit={setIsVisiblePopupEdit}
+        handleClosePopup={() => setIsVisiblePopupEdit(false)}
         setRefresh={setRefresh}
       />
     </DashboardLayout>
