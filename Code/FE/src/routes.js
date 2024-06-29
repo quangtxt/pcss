@@ -15,7 +15,7 @@ import SchedulePage from "./pages/Guidance/SchedulePage";
 import ManageTaskPage from "./pages/Guidance/ManageTaskPage";
 import ScheduleMentorPage from "./pages/Guidance/ScheduleMentorPage";
 import SemesterPage from "./pages/SemesterPage";
-
+import NotificationPage from "./pages/NotificationPage/NotificationPage";
 
 export const normalRoutes = [
   {
@@ -93,6 +93,11 @@ export const routes = [
     path: "/guidance/task",
     component: ManageTaskPage,
     name: "ManageTaskPage",
+  },
+  {
+    path: "/notification",
+    component: NotificationPage,
+    name: "NotificationPage",
   },
 
   //mentor
