@@ -157,7 +157,7 @@ const MainHeaderBar = (props) => {
               onClick={() => {
                 setVisibleNotification(false);
                 const queryStringParams = queryString.stringify({
-                  only_news_notification: false,
+                  unread_notification: false,
                 });
                 history.push(`/notification?${queryStringParams}`);
               }}

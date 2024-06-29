@@ -24,34 +24,14 @@ public class NotificationServiceImpl implements NotificationService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private Map<String, String> NOTIFICATION_TEMPLATES;
-//    private final StudentRepository studentRepository;
     private final UserNotificationRepository userNotificationRepository;
 
-    //    public NotificationServiceImpl(NotificationRepository notificationRepository,
-//                                   StudentRepository studentRepository) {
-//        this.notificationRepository = notificationRepository;
-//        NOTIFICATION_TEMPLATES = initNotificationTemplates();
-//        this.studentRepository = studentRepository;
-//    }
     private Map<String, String> initNotificationTemplates() {
         Map<String, String> templates = new HashMap<>();
         templates.put("template_1", "Xin chào %0s ! Đây là thông báo từ template 1.");
         templates.put("template_2", "Xin chào %0s ! Đây là thông báo từ template 1.");
         return Collections.unmodifiableMap(templates);
     }
-//    @Override
-//    public Notification createNotification(String templateName, String[] args) {
-//
-//        String content = "";
-//        if (NOTIFICATION_TEMPLATES.containsKey(templateName)) {
-//            String template = NOTIFICATION_TEMPLATES.get(templateName);
-//            content = formatNotificationTemplate(template, args);
-//        }
-//        Notification notification = new Notification();
-//        notification.setContent(content);
-//        notificationRepository.save(notification);
-//        return notification;
-//    }
 
     public String createNotification(String template, Map<String, String> mapData) {
         for (Map.Entry<String, String> entry : mapData.entrySet()) {
@@ -76,7 +56,6 @@ public class NotificationServiceImpl implements NotificationService {
                     leaderName = m.getStudent().getUser().getName();
                 }
             }
-
             map.put("_ListMember-txt", listMember.substring(0, listMember.length() - 1));
             map.put("_GroupName-txt_", gr.getName());
             map.put("_Leader-txt_", leaderName);
@@ -84,15 +63,13 @@ public class NotificationServiceImpl implements NotificationService {
             Notification notification = new Notification();
             notification.setContent(notification_txt);
             notificationRepository.save(notification);
-            for (User u : users){
+            for (User u : users) {
                 UserNotification userNotification = new UserNotification();
                 userNotification.setNotification(notification);
                 userNotification.setUser(u);
                 userNotification.setStatus(false);
                 userNotificationRepository.save(userNotification);
-
             }
-
         }
     }
 
@@ -103,15 +80,4 @@ public class NotificationServiceImpl implements NotificationService {
         }
         return template;
     }
-//    @Getter
-//    @Setter
-//    public class NotificationTemplate {
-//        private String template;
-//        private String content;
-//
-//        public NotificationTemplate(String template, String content) {
-//            this.template = template;
-//            this.content = content;
-//        }
-//    }
 }

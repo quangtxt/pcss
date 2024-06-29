@@ -8,10 +8,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface UserNotificationService {
-    Page<UserNotificationResponse> getNotifications(String userName, Boolean filterUnread, Pageable pageable) throws ServiceException;
+    Page<UserNotificationResponse> getNotifications(Boolean filterUnread, Pageable pageable) throws ServiceException;
 
     UserNotificationResponse updateNotificationStatus(String notificationId) throws ServiceException;
-
-    void updateAllNotificationStatusToRead(String userName);
-    void createUserNotification(Long notificationId, String userName);
+    void updateAllNotificationStatusToRead() throws ServiceException;
 }
