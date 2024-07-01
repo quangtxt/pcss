@@ -54,11 +54,6 @@ public class UserNotificationController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
-    @PostMapping("/test")
-    public ResponseEntity<Void> createNoti() {
 
-        notificationService.inviteMemberNotification(memberRepository.findByStudentIdAndStatus(3L, Constants.MemberStatus.INGROUP));
-        return ResponseEntity.ok().build();
-    }
 }
 
