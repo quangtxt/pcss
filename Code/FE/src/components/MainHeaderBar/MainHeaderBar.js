@@ -210,7 +210,7 @@ const MainHeaderBar = (props) => {
       <div className={"logo"}>
         <img
           onClick={() => history.push("/dashboard")}
-          src={`${process.env.PUBLIC_URL}/assets/photos/travelowky-logo.webp`}
+          src={`${process.env.PUBLIC_URL}/assets/photos/FPT_logo_2010.webp`}
           alt="logo"
           className="logoImg"
         />

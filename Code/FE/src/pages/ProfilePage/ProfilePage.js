@@ -23,6 +23,7 @@ import {
   MarginLeftLabel,
   NoMarginBottom,
   GroupBtn,
+  TextForm,
 } from "./ProfilePageStyled";
 import { FlexBox } from "../ListGroupPage/ListGroupPageStyled";
 
@@ -161,14 +162,16 @@ const ProfilePage = (props) => {
               <Title level={4} style={{ marginBottom: "24px" }}>
                 Contact Information
               </Title>
-              <Form.Item
-                label="Phone Number"
-                name="phone"
-                rules={[{ required: true, message: "Please input!" }]}
-                disabled
-              >
-                <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
-              </Form.Item>
+              <TextForm>
+                <Form.Item
+                  label="Phone Number"
+                  name="phone"
+                  rules={[{ required: true, message: "Please input!" }]}
+                  disabled
+                >
+                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                </Form.Item>
+              </TextForm>
               <MarginLeftLabel>
                 <Form.Item label="Email" name="email">
                   <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
@@ -187,58 +190,61 @@ const ProfilePage = (props) => {
                   type="primary"
                   icon={<EditOutlined />}
                   onClick={handleDisable}
-                  style={{ display: !isDisable ? "inline-block" : "none" }}
+                  style={{ display: !isDisable ? "flex" : "none" }}
+                  className="items-center"
                 >
                   Edit My Profile
                 </Button>
               </FlexBox>
               <MarginLeftLabel>
-                <Form.Item label="Name" name="fullName">
-                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
-                </Form.Item>
-                <Form.Item label="Gender" name="gender">
-                  <Radio.Group disabled={!isDisable}>
-                    <Radio value="male"> Male </Radio>
-                    <Radio value="female"> Female </Radio>
-                  </Radio.Group>
-                </Form.Item>
-                <Form.Item label="Roll Number" name="rollNumber">
-                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
-                </Form.Item>
-                <Form.Item label="Semester" name="semester">
-                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
-                </Form.Item>
-                <Form.Item label="Profession" name="profession">
-                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
-                </Form.Item>
-                <Form.Item label="Specialty" name="specialty">
-                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
-                </Form.Item>
-
-                <NoMarginBottom>
-                  <Form.Item
-                    label="Do you want to be grouped in a random group?"
-                    labelCol={{ span: 17 }}
-                    wrapperCol={{ span: 15 }}
-                  >
+                <TextForm>
+                  <Form.Item label="Name" name="fullName">
+                    <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                  </Form.Item>
+                  <Form.Item label="Gender" name="gender">
                     <Radio.Group disabled={!isDisable}>
-                      <Radio value="yes"> Yes </Radio>
-                      <Radio value="no"> No </Radio>
+                      <Radio value="male"> Male </Radio>
+                      <Radio value="female"> Female </Radio>
                     </Radio.Group>
                   </Form.Item>
-                  {/* <div className={`grBtn ${isEditing ? "active" : ""}`}> */}
-                  <GroupBtn style={{ display: !isDisable ? "none" : "flex" }}>
-                    <Button onClick={handleDisable}>Cancel</Button>
-                    <Button
-                      onClick={handleDisable}
-                      type="primary"
-                      htmlType={"submit"}
+                  <Form.Item label="Roll Number" name="rollNumber">
+                    <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                  </Form.Item>
+                  <Form.Item label="Semester" name="semester">
+                    <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                  </Form.Item>
+                  <Form.Item label="Profession" name="profession">
+                    <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                  </Form.Item>
+                  <Form.Item label="Specialty" name="specialty">
+                    <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                  </Form.Item>
+
+                  <NoMarginBottom>
+                    <Form.Item
+                      label="Do you want to be grouped in a random group?"
+                      labelCol={{ span: 17 }}
+                      wrapperCol={{ span: 15 }}
                     >
-                      Submit
-                    </Button>
-                  </GroupBtn>
-                  {/* </div>  */}
-                </NoMarginBottom>
+                      <Radio.Group disabled={!isDisable}>
+                        <Radio value="yes"> Yes </Radio>
+                        <Radio value="no"> No </Radio>
+                      </Radio.Group>
+                    </Form.Item>
+                    {/* <div className={`grBtn ${isEditing ? "active" : ""}`}> */}
+                    <GroupBtn style={{ display: !isDisable ? "none" : "flex" }}>
+                      <Button onClick={handleDisable}>Cancel</Button>
+                      <Button
+                        onClick={handleDisable}
+                        type="primary"
+                        htmlType={"submit"}
+                      >
+                        Submit
+                      </Button>
+                    </GroupBtn>
+                    {/* </div>  */}
+                  </NoMarginBottom>
+                </TextForm>
               </MarginLeftLabel>
             </ContentInformation>
           </Form>

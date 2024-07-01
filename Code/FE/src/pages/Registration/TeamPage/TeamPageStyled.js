@@ -62,15 +62,15 @@ export const Team = styled.div`
     line-height: 24px;
   }
   .title {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400;
     color: rgba(100, 100, 111, 0.8);
   }
   .content {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     font-style: italic;
-    margin: 12px 0 12px 20px;
+    margin: 12px 0 2px 20px;
     word-break: break-word;
     display: flex;
   }

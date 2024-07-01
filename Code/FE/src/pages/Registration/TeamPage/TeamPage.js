@@ -11,6 +11,8 @@ import {
   Modal,
   Space,
   Typography,
+  Col,
+  Row,
 } from "antd";
 import { MoreOutlined, SendOutlined, EditOutlined } from "@ant-design/icons";
 import DashboardLayout from "../../../layouts/DashboardLayout";
@@ -112,7 +114,7 @@ const RegTeamPage = (props) => {
               style={{ borderRight: "1px solid #d9d9d9" }}
             >
               <FlexBox>
-                <div className="flex items-center gap-10">
+                <div className="flex items-center gap-10 mb-6">
                   <Space direction="vertical">
                     <img
                       src="https://lh3.googleusercontent.com/a/ACg8ocI0Exl7P4CfPQjZK2gS_yWbGqpn80JFQg3xICctXAomZ0Rc8Q=s96-c"
@@ -135,105 +137,111 @@ const RegTeamPage = (props) => {
                   shape="round"
                   icon={<EditOutlined />}
                   onClick={navigateToEdit}
+                  className="flex items-center "
                 >
                   Edit Team Profile
                 </Button>
               </FlexBox>
-              <div className="someInforms">
-                <div className="someInforms--top">
-                  <div className="abbreviations">
-                    <p className="title">Abbreviations</p>
-                    <p className="content">{group?.abbreviations}</p>
-                  </div>
-                  <div className="vietnamTitle">
-                    <p className="title">Vietnamese Title</p>
-                    <p className="content">{group?.vietnameseTitle}</p>
-                  </div>
-                </div>
-                <div className="someInforms--bottom">
-                  <div className="professional">
-                    <p className="title">Profession</p>
-                    <p className="content">
-                      Information Technology A (K15 trở đi)
-                    </p>
-                  </div>
-                  <div className="specialty">
-                    <p className="title">Specialty</p>
-                    <p className="content">Lập trình .NET</p>
-                  </div>
-                </div>
-              </div>
-              <div className="desIdea">
-                <p className="title">Description</p>
-                <p className="content">{group?.description}</p>
-              </div>
-              <div className="keyword">
-                <p className="title">Keywords</p>
-                <div className="keywordText">
+              <Row>
+                <Col span={12}>
+                  <p className="title">Abbreviations</p>
+                  <p className="content">{group?.abbreviations}</p>
+                </Col>
+                <Col span={12}>
+                  <p className="title">Vietnamese Title</p>
+                  <p className="content">{group?.vietnameseTitle}</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <p className="title">Profession</p>
+                  <p className="content">
+                    Information Technology A (K15 trở đi)
+                  </p>
+                </Col>
+                <Col span={12}>
+                  <p className="title">Specialty</p>
+                  <p className="content">Lập trình .NET</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={24}>
+                  <p className="title">Description</p>
+                  <p className="content">{group?.description}</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={24}>
+                  <p className="title">Keywords</p>
                   <p className="content">{group?.keywords}</p>
-                </div>
-              </div>
-
-              <div className="showMember">
-                <p className="title">Members</p>
-                <div className="numMember">
-                  <p className="numMemberInfor">
+                </Col>
+              </Row>
+              <Row>
+                <Col span={24}>
+                  <p className="title">Members</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <p>
                     Max: <span>5 members</span>
                   </p>
-                  <p className="numMemberInfor">
+                </Col>
+                <Col span={12}>
+                  <p>
                     Available Slot: <span>{availableSlotMember}</span>
                   </p>
-                </div>
-                {availableSlotMember > 0 ? (
-                  <InviteForm
-                    setSelectedStudent={setSelectedStudent}
-                    setRefresh={setRefresh}
-                    group={group}
-                  ></InviteForm>
-                ) : (
-                  <></>
-                )}
-                <div className="members">
-                  {members
-                    .sort((a, b) => {
-                      // Ưu tiên thành viên có role là "OWNER"
-                      if (a.role.includes("OWNER")) return -1;
-                      if (b.role.includes("OWNER")) return 1;
+                </Col>
+              </Row>
+              {availableSlotMember > 0 ? (
+                <InviteForm
+                  setSelectedStudent={setSelectedStudent}
+                  setRefresh={setRefresh}
+                  group={group}
+                ></InviteForm>
+              ) : (
+                <></>
+              )}
+              <div className="members">
+                {members
+                  .sort((a, b) => {
+                    // Ưu tiên thành viên có role là "OWNER"
+                    if (a.role.includes("OWNER")) return -1;
+                    if (b.role.includes("OWNER")) return 1;
 
-                      /// Nếu không phải "OWNER", ưu tiên "ingroup" giảm dần theo updateAt
-                      if (
-                        a.status === MEMBER_STATUS.INGROUP &&
-                        b.status === MEMBER_STATUS.INGROUP
-                      ) {
-                        return b.updateAt - a.updateAt;
-                      }
-                      if (a.status === MEMBER_STATUS.INGROUP) return -1;
-                      if (b.status === MEMBER_STATUS.INGROUP) return 1;
+                    /// Nếu không phải "OWNER", ưu tiên "ingroup" giảm dần theo updateAt
+                    if (
+                      a.status === MEMBER_STATUS.INGROUP &&
+                      b.status === MEMBER_STATUS.INGROUP
+                    ) {
+                      return b.updateAt - a.updateAt;
+                    }
+                    if (a.status === MEMBER_STATUS.INGROUP) return -1;
+                    if (b.status === MEMBER_STATUS.INGROUP) return 1;
 
-                      // Cuối cùng là những thành viên "pending"
-                      if (
-                        a.status === MEMBER_STATUS.PENDING &&
-                        b.status !== MEMBER_STATUS.PENDING
-                      )
-                        return 1;
-                      if (
-                        b.status === MEMBER_STATUS.PENDING &&
-                        a.status !== MEMBER_STATUS.PENDING
-                      )
-                        return -1;
+                    // Cuối cùng là những thành viên "pending"
+                    if (
+                      a.status === MEMBER_STATUS.PENDING &&
+                      b.status !== MEMBER_STATUS.PENDING
+                    )
+                      return 1;
+                    if (
+                      b.status === MEMBER_STATUS.PENDING &&
+                      a.status !== MEMBER_STATUS.PENDING
+                    )
+                      return -1;
 
-                      // Nếu cùng status, giữ nguyên thứ tự
-                      return 0;
-                    })
-                    .map((member, index) => (
-                      <MemberItem
-                        key={index}
-                        member={member}
-                        group={group}
-                        setRefresh={setRefresh}
-                      />
-                    ))}
-                </div>
+                    // Nếu cùng status, giữ nguyên thứ tự
+                    return 0;
+                  })
+                  .map((member, index) => (
+                    <MemberItem
+                      key={index}
+                      member={member}
+                      group={group}
+                      setRefresh={setRefresh}
+                    />
+                  ))}
               </div>
             </ContentInformation>
             <ContentInformation className="w-30p pl-8 flex flex-col items-center justify-start gap-16">
@@ -257,7 +265,7 @@ const RegTeamPage = (props) => {
                     shape="round"
                     icon={<SendOutlined />}
                     onClick={navigateToSend}
-                    className=""
+                    className="flex items-center"
                   >
                     Send
                   </Button>
