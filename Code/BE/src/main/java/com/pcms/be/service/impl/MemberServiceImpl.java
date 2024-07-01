@@ -18,6 +18,7 @@ import com.pcms.be.repository.StudentRepository;
 import com.pcms.be.repository.UserRepository;
 import com.pcms.be.service.GroupService;
 import com.pcms.be.service.MemberService;
+import com.pcms.be.service.NotificationService;
 import com.pcms.be.service.UserService;
 import com.sun.jdi.LongValue;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final NotificationService notificationService;
 
     @Override
     public List<MemberResponse> getInvitations() throws ServiceException {
@@ -78,15 +80,18 @@ public class MemberServiceImpl implements MemberService {
                         member1.setStatus(Constants.MemberStatus.INGROUP);
                         memberRepository.save(member1);
                         // set thong bao accept to join group
+                        notificationService.createMemberJoinGroupNotification(member1);
                     } else {
                         member1.setStatus(Constants.MemberStatus.OUTGROUP);
                         memberRepository.save(member1);
                         // set thong bao reject to join group
+                        notificationService.createRejectJoinGroupNotification(member1);
                     }
                 } else if (member1.getStatus().equals(Constants.MemberStatus.INGROUP)) {
                     member1.setStatus(Constants.MemberStatus.OUTGROUP);
                     memberRepository.save(member1);
                     // set thong bao Out group
+                    notificationService.createMemberOutGroupNotification(member1);
                 }
                 return modelMapper.map(member1, MemberResponse.class);
             }
@@ -99,6 +104,7 @@ public class MemberServiceImpl implements MemberService {
                         member1.setStatus(Constants.MemberStatus.OUTGROUP);
                         memberRepository.save(member1);
                         //set thong bao remove member
+                        notificationService.removeMemberNotification(member1);
                         return modelMapper.map(member1, MemberResponse.class);
                     } else if (updateInvitationStatusRequest.getStatus().equals(Constants.MemberStatus.PENDING)) {
                         member1.setStatus(Constants.MemberStatus.OUTGROUP);
@@ -176,9 +182,11 @@ public class MemberServiceImpl implements MemberService {
                 if(member != null){
                     member.setStatus(Constants.MemberStatus.PENDING);
                     memberRepository.save(member);
+                    notificationService.inviteMemberNotification(member);
                     newMembers.add(modelMapper.map(member, MemberResponse.class));
                 }else {
                     Member newMember = inviteMember(group1, student1);
+                    notificationService.inviteMemberNotification(newMember);
                     newMembers.add(modelMapper.map(newMember, MemberResponse.class));
                 }
             }
