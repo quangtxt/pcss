@@ -1,10 +1,8 @@
 package com.pcms.be.controller;
 
-import com.pcms.be.domain.user.Member;
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.functions.Constants;
-import com.pcms.be.pojo.response.UserNotificationResponse;
 import com.pcms.be.repository.MemberRepository;
 import com.pcms.be.service.NotificationService;
 import com.pcms.be.service.UserNotificationService;
@@ -22,8 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserNotificationController {
     private final UserService userService;
     private final UserNotificationService userNotificationService;
-    private final NotificationService notificationService;
-    private final MemberRepository memberRepository;
 
     @GetMapping("")
     public ResponseEntity<Page<UserNotificationResponse>> getNotifications(Pageable pageable, @RequestParam(value = "filter_unread", required = true) Boolean filterUnread) {
@@ -54,6 +50,5 @@ public class UserNotificationController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
-
 }
 
