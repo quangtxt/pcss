@@ -23,15 +23,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepository notificationRepository;
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
-    private Map<String, String> NOTIFICATION_TEMPLATES;
     private final UserNotificationRepository userNotificationRepository;
 
-    private Map<String, String> initNotificationTemplates() {
-        Map<String, String> templates = new HashMap<>();
-        templates.put("template_1", "Xin chào %0s ! Đây là thông báo từ template 1.");
-        templates.put("template_2", "Xin chào %0s ! Đây là thông báo từ template 1.");
-        return Collections.unmodifiableMap(templates);
-    }
 
     public String createNotification(String template, Map<String, String> mapData) {
         for (Map.Entry<String, String> entry : mapData.entrySet()) {
@@ -73,11 +66,138 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    private String formatNotificationTemplate(String template, Object... args) {
-        for (int i = 0; i < args.length; i++) {
-            String placeholder = "%" + i + "s";
-            template = template.replace(placeholder, String.valueOf(args[i]));
+    @Override
+    @Transactional
+    public void createMemberJoinGroupNotification(Member member) {
+        Group group = member.getGroup();
+        Map<String, String> map = new HashMap<>();
+        map.put("_User-txt_", member.getStudent().getUser().getName());
+        String notification_txt = createNotification(NotificationTemplate.UserNotificationTemplate.memberAcceptJoinGroup, map);
+        Notification notification = new Notification();
+        notification.setContent(notification_txt);
+        notification.setType(NotificationTemplate.NotificationType.GROUP);
+        notificationRepository.save(notification);
+        for (Member m : group.getMembers()) {
+            if (m.equals(member)) {
+                continue;
+            }
+            if (m.getStatus().equals(Constants.MemberStatus.INGROUP)) {
+                UserNotification userNotification = new UserNotification();
+                userNotification.setNotification(notification);
+                userNotification.setUser(m.getStudent().getUser());
+                userNotification.setStatus(false);
+                userNotificationRepository.save(userNotification);
+            }
         }
-        return template;
+    }
+
+    @Override
+    public void createMemberOutGroupNotification(Member member) {
+        Group group = member.getGroup();
+        Map<String, String> map = new HashMap<>();
+        map.put("_User-txt_", member.getStudent().getUser().getName());
+        String notification_txt = createNotification(NotificationTemplate.UserNotificationTemplate.memberOutGroup, map);
+        Notification notification = new Notification();
+        notification.setContent(notification_txt);
+        notification.setType(NotificationTemplate.NotificationType.GROUP);
+        notificationRepository.save(notification);
+        for (Member m : group.getMembers()) {
+            if (m.equals(member)) {
+                continue;
+            }
+            if (m.getStatus().equals(Constants.MemberStatus.INGROUP)) {
+                UserNotification userNotification = new UserNotification();
+                userNotification.setNotification(notification);
+                userNotification.setUser(m.getStudent().getUser());
+                userNotification.setStatus(false);
+                userNotificationRepository.save(userNotification);
+            }
+        }
+    }
+
+    @Override
+    public void createRejectJoinGroupNotification(Member member) {
+        Group group = member.getGroup();
+        Map<String, String> map = new HashMap<>();
+        map.put("_User-txt_", member.getStudent().getUser().getName());
+        String notification_txt = createNotification(NotificationTemplate.UserNotificationTemplate.memberRejectJoinGroup, map);
+        Notification notification = new Notification();
+        notification.setContent(notification_txt);
+        notification.setType(NotificationTemplate.NotificationType.GROUP);
+        notificationRepository.save(notification);
+        for (Member m : group.getMembers()) {
+            if (m.getRole().equals(Constants.MemberRole.OWNER)) {
+                UserNotification userNotification = new UserNotification();
+                userNotification.setNotification(notification);
+                userNotification.setUser(m.getStudent().getUser());
+                userNotification.setStatus(false);
+                userNotificationRepository.save(userNotification);
+            }
+        }
+    }
+
+    @Override
+    public void removeMemberNotification(Member member) {
+        Group group = member.getGroup();
+        Map<String, String> map = new HashMap<>();
+        Map<String, String> map1 = new HashMap<>();
+        String leaderName = "";
+        for (Member m : group.getMembers()) {
+            if (m.getRole().equals(Constants.MemberRole.OWNER)) {
+                leaderName = m.getStudent().getUser().getName();
+            }
+        }
+        map.put("_User-txt_", member.getStudent().getUser().getName());
+        map.put("_Leader-txt_", leaderName);
+        // create noti for member in group
+        String notification_txt = createNotification(NotificationTemplate.UserNotificationTemplate.removeMember, map);
+        Notification notification = new Notification();
+        notification.setContent(notification_txt);
+        notification.setType(NotificationTemplate.NotificationType.GROUP);
+        notificationRepository.save(notification);
+        for (Member m : group.getMembers()) {
+            if (m.getStatus().equals(Constants.MemberStatus.INGROUP)) {
+                UserNotification userNotification = new UserNotification();
+                userNotification.setNotification(notification);
+                userNotification.setUser(m.getStudent().getUser());
+                userNotification.setStatus(false);
+                userNotificationRepository.save(userNotification);
+            }
+        }
+        map1.put("_Leader-txt_", leaderName);
+        String notification_txt1 = createNotification(NotificationTemplate.UserNotificationTemplate.removeMember1, map);
+        Notification notification1 = new Notification();
+        notification1.setContent(notification_txt1);
+        notification1.setType(NotificationTemplate.NotificationType.GROUP);
+        notificationRepository.save(notification1);
+        UserNotification userNotification = new UserNotification();
+        userNotification.setNotification(notification1);
+        userNotification.setUser(member.getStudent().getUser());
+        userNotification.setStatus(false);
+        userNotificationRepository.save(userNotification);
+    }
+
+    @Override
+    public void inviteMemberNotification(Member member) {
+        Group group = member.getGroup();
+        Map<String, String> map = new HashMap<>();
+        String leaderName = "";
+        for (Member m : group.getMembers()) {
+            if (m.getRole().equals(Constants.MemberRole.OWNER)) {
+                leaderName = m.getStudent().getUser().getName();
+            }
+        }
+        map.put("_Group-txt_", group.getName());
+        map.put("_Leader-txt_", leaderName);
+        String notification_txt = createNotification(NotificationTemplate.UserNotificationTemplate.inviteMemberJoinGroup, map);
+        Notification notification = new Notification();
+        notification.setContent(notification_txt);
+        notification.setType(NotificationTemplate.NotificationType.REQUESTGROUP);
+        notificationRepository.save(notification);
+        UserNotification userNotification = new UserNotification();
+        userNotification.setNotification(notification);
+        userNotification.setUser(member.getStudent().getUser());
+        userNotification.setStatus(false);
+        userNotificationRepository.save(userNotification);
     }
 }
