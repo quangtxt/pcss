@@ -2,9 +2,7 @@ package com.pcms.be.controller;
 
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
-import com.pcms.be.functions.Constants;
-import com.pcms.be.repository.MemberRepository;
-import com.pcms.be.service.NotificationService;
+import com.pcms.be.pojo.response.UserNotificationResponse;
 import com.pcms.be.service.UserNotificationService;
 import com.pcms.be.service.UserService;
 import lombok.RequiredArgsConstructor;
