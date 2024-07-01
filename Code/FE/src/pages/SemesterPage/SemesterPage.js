@@ -58,6 +58,7 @@ const SemesterPage = (props) => {
     semesterStore,
     authenticationStore,
   } = props;
+  const { semesterList } = semesterStore;
 
   const [semesters, setSemesters] = useState([]);
   useEffect(() => {

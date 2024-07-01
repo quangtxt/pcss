@@ -102,3 +102,11 @@ export const GroupBtn = styled.div`
   justify-content: center;
   gap: 20px;
 `;
+
+export const TextForm = styled.div`
+  label,
+  input,
+  textarea {
+    font-size: 14px;
+  }
+`;

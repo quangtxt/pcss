@@ -2,8 +2,9 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import { UserOutlined, EditOutlined } from "@ant-design/icons";
-import { message, Button } from "antd";
+import { message, Button, Typography } from "antd";
 import Select from "react-select";
+import { TextForm } from "../../ProfilePage/ProfilePageStyled";
 
 import {
   Title,
@@ -29,6 +30,7 @@ const InviteForm = (props) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [studentsToInvite, setStudentsToInvite] = useState([]);
+  const { Title } = Typography;
 
   useEffect(() => {
     async function getStudentList() {
@@ -102,14 +104,14 @@ const InviteForm = (props) => {
     }
   };
   return (
-    <div className="mt-5">
-      <h2 className="text-lg mb-2.5">Invite</h2>
-      <p className="text-sm text-gray-600">
+    <div className="">
+      <Title level={4}>Invite</Title>
+      <p className="text-sm text-gray-600 mb-2">
         {" "}
         You can only invite those students whose specialties is allowed to work
         on the same thesis topic as yours in this term.
       </p>
-      <div className="flex items-stretch gap-16">
+      <div className="flex items-stretch gap-5">
         <Select
           value={selectedOption}
           components={{

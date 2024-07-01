@@ -33,7 +33,7 @@ const MemberInfo = styled.div``;
 const MemberEmail = styled.a`
   text-decoration: none;
   color: #1c1f27;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 8px;
 `;
@@ -49,7 +49,7 @@ const Role = styled.div`
   font-size: 14px;
   color: rgba(28, 31, 39, 0.5);
   p {
-    font-size: 16px;
+    font-size: 14px;
   }
 `;
 const MemberItem = (props) => {
