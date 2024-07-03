@@ -1,5 +1,40 @@
 import { Card, Col, List } from "antd";
 import styled, { css } from "styled-components";
+export const Container = styled.div`
+  .current-milestone {
+    background-color: #f1f5f9;
+  }
+  .custom-table {
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+    border-collapse: collapse;
+  }
+
+  .custom-table th,
+  .custom-table td {
+    border-bottom: 1px solid #e8e8e8;
+    padding: 16px 24px;
+  }
+
+  .custom-table th {
+    background-color: #fafafa;
+    font-weight: 500;
+  }
+  .ant-spin-nested-loading {
+    background-color: white;
+  }
+
+  .ant-table-tbody {
+    .ant-table-row {
+      cursor: pointer;
+    }
+  }
+
+  .ant-table-thead > tr > th {
+    background-color: #2c65ac;
+    color: white;
+  }
+`;
 export const LoginWrapper = styled.div`
   width: 100%;
   height: 100vh;

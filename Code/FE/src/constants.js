@@ -57,3 +57,9 @@ export const MENTOR_STATUS = {
 export const ACL_TYPE = {};
 export const ACL_ACTION_TYPE = {};
 export const MODULE_CODE = {};
+export const NOTIFICATION_STATUS = {
+  DEFAULT_TYPE: "DEFAULT_TYPE",
+
+  GENERAL: "GENERAL",
+  NEWS: "NEWS",
+};

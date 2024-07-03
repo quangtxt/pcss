@@ -4,7 +4,7 @@ import authenticationStore from "../stores/authenticationStore";
 import utils from "../utils";
 
 export const UserRequest = {
-  getUserNotificationList: (filterUnread, pageIndex, pageSize) =>
+  getCurrentUserNotification: (pageIndex, pageSize, filterUnread) =>
     axios({
       method: "get",
       url: `${apiUrl}/api/v1/user-notification`,

@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { Button, Pagination, Tooltip, message, Modal } from "antd";
+import { Button, Table, Input, Select } from "antd";
 import { CloseCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import uuid from "uuid";
 import DashboardLayout from "../../../layouts/DashboardLayout";
@@ -12,7 +12,7 @@ import { Helmet } from "react-helmet/es/Helmet";
 import TableComponent from "../../../components/Common/TableComponent";
 import { MEMBER_STATUS } from "../../../constants";
 import { GoogleSpreadsheet } from "google-spreadsheet";
-
+const { Option } = Select;
 const SPREADSHEET_ID = "1K15hZdYfjKIlSA2riaBiMs26mOw6egDaBn89hMndf5o";
 const CLIENT_EMAIL =
   "fu-cpms@secure-approach-424011-j8.iam.gserviceaccount.com";
@@ -30,38 +30,6 @@ const ManageTaskPage = (props) => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  useEffect(() => {
-    const initializeSheet = async () => {
-      try {
-        //Kết nối đến Google Sheets API
-        const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
-        await doc.useServiceAccountAuth({
-          client_email: CLIENT_EMAIL,
-          private_key: PRIVATE_KEY,
-        });
-        await doc.loadInfo();
-        //Lấy thông tin về Sheet đầu tiên
-        const sheet = doc.sheetsByIndex[0];
-        await sheet.loadHeaderRow(7);
-        setSheet(sheet);
-
-        //Lấy dữ liệu hàng từ Sheet
-        const rows = await sheet.getRows();
-        console.log("rows", rows);
-        const numericRows = rows.filter((row) => {
-          const numericValue = parseInt(row["#"]);
-          return !isNaN(numericValue);
-        });
-        setRows(numericRows);
-        setLoading(false);
-      } catch (err) {
-        console.error("Lỗi khi tải sheet:", err);
-        setLoading(false);
-      }
-    };
-    initializeSheet();
-  }, []);
-
   const createSheet = async () => {
     try {
       // Tạo mới một Google Sheet
@@ -96,16 +64,148 @@ const ManageTaskPage = (props) => {
       console.error("Lỗi khi import Excel:", err);
     }
   };
-  const updateRow = async (rowIndex, column, value) => {
-    try {
-      const row = rows[rowIndex];
-      row[column] = value;
-      await row.save();
-      setRows([...rows]);
-    } catch (err) {
-      console.error("Lỗi khi cập nhật hàng:", err);
-    }
+  useEffect(() => {
+    const initializeSheet = async () => {
+      try {
+        //Kết nối đến Google Sheets API
+        const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
+        await doc.useServiceAccountAuth({
+          client_email: CLIENT_EMAIL,
+          private_key: PRIVATE_KEY,
+        });
+        await doc.loadInfo();
+        //Lấy thông tin về Sheet đầu tiên
+        const sheet = doc.sheetsByIndex[0];
+        await sheet.loadHeaderRow(7);
+        setSheet(sheet);
+
+        //Lấy dữ liệu hàng từ Sheet
+        const rows = await sheet.getRows();
+        console.log("rows", rows);
+        const numericRows = rows.filter((row) => {
+          const numericValue = parseInt(row["#"]);
+          return !isNaN(numericValue);
+        });
+        setRows(numericRows);
+        setLoading(false);
+      } catch (err) {
+        console.error("Lỗi khi tải sheet:", err);
+        setLoading(false);
+      }
+    };
+    initializeSheet();
+  }, []);
+
+  const updateRow = (index, key, value) => {
+    const updatedRows = [...rows];
+    updatedRows[index][key] = value;
+    setRows(updatedRows);
   };
+  const deleteRow = (index) => {
+    const updatedRows = [...rows];
+    updatedRows.splice(index, 1);
+    setRows(updatedRows);
+  };
+  const [editingIndex, setEditingIndex] = useState(null);
+
+  const columns = [
+    {
+      title: "#",
+      dataIndex: "#",
+      key: "#",
+      width: "50px",
+      render: (_, record, index) => (
+        <Input style={{ width: "50px" }} value={record["#"]} readOnly />
+      ),
+    },
+    {
+      title: "Function/Screen",
+      dataIndex: "Function/Screen",
+      key: "Function/Screen",
+      render: (_, record, index) => (
+        <Input
+          value={record["Function/Screen"]}
+          onChange={(e) => updateRow(index, "Function/Screen", e.target.value)}
+        />
+      ),
+    },
+    {
+      title: "Feature",
+      dataIndex: "Feature",
+      key: "Feature",
+      render: (_, record, index) => (
+        <Input
+          value={record["Feature"]}
+          onChange={(e) => updateRow(index, "Feature", e.target.value)}
+        />
+      ),
+    },
+    {
+      title: "Level",
+      dataIndex: "Level*",
+      key: "Level*",
+      render: (_, record, index) => (
+        <Select
+          value={record["Level*"]}
+          style={{ width: "120px" }}
+          onChange={(value) => updateRow(index, "Level*", value)}
+        >
+          <Option value="simple">Simple</Option>
+          <Option value="medium">Medium</Option>
+          <Option value="complex">Complex</Option>
+        </Select>
+      ),
+    },
+    {
+      title: "Function/Screen Details",
+      dataIndex: "Function/Screen Details",
+      key: "Function/Screen Details",
+      render: (_, record, index) => (
+        <Input
+          value={record["Function/Screen Details"]}
+          onChange={(e) =>
+            updateRow(index, "Function/Screen Details", e.target.value)
+          }
+        />
+      ),
+    },
+    {
+      title: "Planned",
+      dataIndex: "Planned",
+      key: "Planned",
+      render: (_, record, index) => (
+        <Input
+          value={record["Planned"]}
+          onChange={(e) => updateRow(index, "Planned", e.target.value)}
+        />
+      ),
+    },
+    {
+      title: "Status",
+      dataIndex: "Status",
+      key: "Status",
+      render: (_, record, index) => (
+        <Select
+          value={record["Status"]}
+          style={{ width: "120px" }}
+          onChange={(value) => updateRow(index, "Status", value)}
+        >
+          <Option value="Pending">Pending</Option>
+          <Option value="Doing">Doing</Option>
+          <Option value="Deferred">Deferred</Option>
+          <Option value="Cancelled">Cancelled</Option>
+          <Option value="Done">Done</Option>
+        </Select>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record, index) => (
+        <Button onClick={() => deleteRow(index)}>Xóa</Button>
+      ),
+    },
+  ];
   return (
     <DashboardLayout>
       <Helmet>
@@ -117,104 +217,12 @@ const ManageTaskPage = (props) => {
         hiddenGoBack
       ></PageTitle>
       <ContentBlockWrapper>
-        <div>
-          <h1>Quản lý Backlog</h1>
-          {loading && <p>Đang tải...</p>}
-          {error && <p>{error}</p>}
-          {sheet && (
-            <div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Function/Screen</th>
-                    <th>Feature</th>
-                    <th>Level</th>
-                    <th>Function/Screen Details</th>
-                    <th>Planned</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((row, index) => (
-                    <tr key={index}>
-                      <td>
-                        <input
-                          type="text"
-                          value={row["#"]}
-                          onChange={(e) =>
-                            updateRow(index, "#", e.target.value)
-                          }
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          value={row["Function/Screen"]}
-                          onChange={(e) =>
-                            updateRow(index, "Function/Screen", e.target.value)
-                          }
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          value={row["Feature"]}
-                          onChange={(e) =>
-                            updateRow(index, "Feature", e.target.value)
-                          }
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          value={row["Level*"]}
-                          onChange={(e) =>
-                            updateRow(index, "Level*", e.target.value)
-                          }
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          value={row["Function/Screen Details"]}
-                          onChange={(e) =>
-                            updateRow(
-                              index,
-                              "Function/Screen Details",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          value={row["Planned"]}
-                          onChange={(e) =>
-                            updateRow(index, "Planned", e.target.value)
-                          }
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          value={row["Status"]}
-                          onChange={(e) =>
-                            updateRow(index, "Status", e.target.value)
-                          }
-                        />
-                      </td>
-                      <td>
-                        <button onClick={() => row.delete()}>Xóa</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+        <Table
+          dataSource={rows}
+          columns={columns}
+          rowKey={(record, index) => index}
+          pagination={false}
+        />
       </ContentBlockWrapper>
     </DashboardLayout>
   );

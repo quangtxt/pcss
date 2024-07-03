@@ -13,10 +13,10 @@ class UserStore {
   getUserNotificationList = (filterUnread) => {
     return new Promise((resolve, reject) => {
       console.log("mes", filterUnread);
-      UserRequest.getUserNotificationList(
-        filterUnread,
+      UserRequest.getCurrentUserNotification(
         this.userNotificationListPageIndex,
-        this.userNotificationListPageSize
+        this.userNotificationListPageSize,
+        filterUnread
       )
         .then((response) => {
           console.log("Response data", response.data.content);
