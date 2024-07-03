@@ -73,30 +73,7 @@ const MainHeaderBar = (props) => {
 
   useEffect(() => {
     if (!utils.isIOSDevice()) {
-      const channel4Broadcast = new BroadcastChannel("channel4");
-      channel4Broadcast.onmessage = async (even) => {
-        if (even.data.type === "NEWS") {
-          if (changedTabsNotification.isOpen) {
-            setChangedTabsNotification({
-              status: true,
-              onlyNewsNotification: true,
-              isOpen: true,
-            });
-          } else {
-            await notificationStore.getUnreadNewsCount();
-          }
-        } else {
-          if (changedTabsNotification.isOpen) {
-            setChangedTabsNotification({
-              status: true,
-              onlyNewsNotification: false,
-              isOpen: true,
-            });
-          } else {
-            await notificationStore.getUnreadNotificationCount();
-          }
-        }
-      };
+      notificationStore.getUnreadNewsCount();
     }
   }, [changedTabsNotification]);
 

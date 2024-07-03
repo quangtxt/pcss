@@ -1,7 +1,7 @@
 import { action, observable } from "mobx";
 // Request
 // import { NotificationRequest } from "../requests/NotificationRequest";
-
+import { UserRequest } from "../requests/UserRequest";
 class NotificationStore {
   @action setFilter = (filterName, filterValue) => {
     if (typeof filterName !== "string") return;
@@ -11,8 +11,8 @@ class NotificationStore {
   /** Notification list */
   @observable notificationList = [];
   @observable notificationListTotal = [];
-  @observable unreadNotificationCount = 0;
-  @observable unreadNewsCount = 0;
+  @observable unreadNotificationCount = 5;
+  @observable unreadNewsCount = 10;
   @observable notificationListPageSize = 30;
   @observable notificationListPageIndex = 0;
   @observable notificationListTotalPage = undefined;
@@ -33,21 +33,20 @@ class NotificationStore {
     filter_unread
   ) => {
     return new Promise((resolve, reject) => {
-      NotificationRequest.getCurrentUserNotification(
+      UserRequest.getCurrentUserNotification(
         this.notificationListPageIndex,
         this.notificationListPageSize,
-        only_news_notification,
-        filter_unread || null
+        filter_unread || false
       )
         .then((response) => {
-          this.notificationList = response.data.data;
+          this.notificationList = response.data.content;
           this.notificationListTotalPage = response.data.total_page;
           this.notificationListTotalCount = response.data.total_count;
           if (only_news_notification === "true") {
-            this.unreadNewsCount = response.data.total_unread;
+            this.unreadNewsCount = 5;
           }
           if (only_news_notification === "false") {
-            this.unreadNotificationCount = response.data.total_unread;
+            this.unreadNotificationCount = 5;
           }
 
           resolve(response);
@@ -67,12 +66,12 @@ class NotificationStore {
 
   @action getUnreadNotificationCount = () => {
     return new Promise((resolve, reject) => {
-      NotificationRequest.getCurrentUserNotification(0, 1, false)
+      UserRequest.getCurrentUserNotification(0, 1, false)
         .then((response) => {
-          this.notificationList = response.data.data;
+          this.notificationList = response.data.content;
           this.notificationListTotalPage = response.data.total_page;
           this.notificationListTotalCount = response.data.total_count;
-          this.unreadNotificationCount = response.data.total_unread;
+          this.unreadNotificationCount = 5;
           resolve(response);
         })
         .catch((error) => {
@@ -94,9 +93,9 @@ class NotificationStore {
 
   @action getUnreadNewsCount = () => {
     return new Promise((resolve, reject) => {
-      NotificationRequest.getCurrentUserNotification(0, 1, true)
+      UserRequest.getCurrentUserNotification(0, 1, true)
         .then((response) => {
-          this.unreadNewsCount = response.data.total_unread;
+          this.unreadNewsCount = 5;
           resolve(response);
         })
         .catch((error) => {
