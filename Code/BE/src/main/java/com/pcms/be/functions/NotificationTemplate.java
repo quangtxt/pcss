@@ -17,5 +17,6 @@ public interface NotificationTemplate {
     interface NotificationType {
         String GROUP = "GROUP";
         String REQUESTGROUP = "REQUESTGROUP";
+        String NEWS = "NEWS";
     }
 }
