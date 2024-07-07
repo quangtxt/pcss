@@ -21,8 +21,7 @@ class SemesterStore {
 
   @action getSemesters = () => {
     return new Promise((resolve, reject) => {
-      SemesterRequest.getSemesters(
-      )
+      SemesterRequest.getSemesters()
         .then((response) => {
           this.semesterList = response.data.data;
           resolve(response);
@@ -33,7 +32,17 @@ class SemesterStore {
         });
     });
   };
-
+  @action createSemester = (code, name, begin_at, end_at, list_phase) => {
+    return new Promise((resolve, reject) => {
+      SemesterRequest.createSemester(code, name, begin_at, end_at, list_phase)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   /** Clear store */
   @action clearStore = () => {
     this.semesterList = [];

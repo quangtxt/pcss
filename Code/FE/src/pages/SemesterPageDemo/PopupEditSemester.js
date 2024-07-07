@@ -7,7 +7,6 @@ import {
   Input,
   Typography,
   DatePicker,
-  Tabs,
   Select,
 } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
@@ -20,10 +19,16 @@ import {
   ContentInformation,
 } from "../ProfilePage/ProfilePageStyled";
 import { BeforeCenter } from "./SemesterPageDemoStyled";
+
 const { Title } = Typography;
-const { TabPane } = Tabs;
-const PopupCreateSemester = (props) => {
-  const { isVisiblePopup, setIsVisiblePopup, handleClosePopup } = props;
+
+const PopupEditSemester = (props) => {
+  const {
+    isVisiblePopup,
+    setIsVisiblePopup,
+    handleClosePopup,
+    semester,
+  } = props; // Add `semester` prop
   const [form] = Form.useForm();
   const {
     history,
@@ -32,21 +37,69 @@ const PopupCreateSemester = (props) => {
     semesterStore,
     authenticationStore,
   } = props;
-  // const [isVisiblePopup, setIsVisiblePopup] = useState(false);
-  const [semesters, setSemesters] = useState([]);
-  const [phases, setPhases] = useState([
-    {
-      name: "",
-      beginAt: null,
-      endAt: null,
-    },
-  ]);
 
-  console.log("id", semesters);
+  const [semesters, setSemesters] = useState([]);
+  const [selectedSemesterId, setSelectedSemesterId] = useState(null);
+  const [phases, setPhases] = useState([]);
+
+  useEffect(() => {
+    if (authenticationStore.currentUser) {
+      semesterStore.getSemesters().then((response) => {
+        console.log("Response: ", response.data);
+        const currentSemesters = response.data.map((semester) => ({
+          label: semester.name,
+          value: semester.id,
+          code: semester.code,
+          begin_at: semester.beginAt,
+          end_at: semester.endAt,
+          phases: semester.phases,
+        }));
+        setSemesters(currentSemesters);
+
+        // Set default semester based on current date
+        const currentDate = new Date();
+        const defaultSem = currentSemesters.find(
+          (sem) =>
+            new Date(sem.begin_at) <= currentDate &&
+            new Date(sem.end_at) >= currentDate
+        );
+        setSelectedSemesterId(defaultSem?.value);
+        setPhases(defaultSem?.phases || []);
+      });
+    }
+    return () => {
+      semesterStore.clearStore();
+    };
+  }, [authenticationStore.currentUser, semesterStore]);
+
+  useEffect(() => {
+    if (semester) {
+      form.setFieldsValue({
+        name: semester.label,
+        code: semester.code, // assuming `semester` object has a `code` field
+        begin_at: moment(semester.begin_at),
+        end_at: moment(semester.end_at),
+      });
+
+      const phaseFields = semester.phases.map((phase, index) => ({
+        [`phases[${index}].name`]: phase.name,
+        [`phases[${index}].beginAt`]: moment(phase.beginAt),
+        [`phases[${index}].endAt`]: moment(phase.endAt),
+      }));
+
+      phaseFields.forEach((field) => {
+        form.setFieldsValue(field);
+      });
+
+      setPhases(semester.phases);
+    }
+  }, [semester, form]);
+
   const disabledDate = (current) => {
     // Can not select days before today and today
     return current && current < dayjs().endOf("day");
   };
+
   const handleAddPhase = useCallback(() => {
     setPhases((prevPhases) => [
       ...prevPhases,
@@ -57,9 +110,11 @@ const PopupCreateSemester = (props) => {
       },
     ]);
   }, []);
+
   const handleDeletePhase = (index) => {
     setPhases((prevPhases) => prevPhases.filter((_, i) => i !== index));
   };
+
   const handleSubmit = async (values) => {
     try {
       loadingAnimationStore.showSpinner(true);
@@ -85,7 +140,7 @@ const PopupCreateSemester = (props) => {
     <Modal
       title={
         <NoMarginBottom>
-          <Title level={4}>Create Semester</Title>
+          <Title level={4}>Edit Semester</Title>
         </NoMarginBottom>
       }
       footer={null}
@@ -113,7 +168,11 @@ const PopupCreateSemester = (props) => {
           <ContentInformation className="w-full">
             <Title level={4}>Semester</Title>
             <Form.Item label="Semester" name="name">
-              <Input style={{ maxWidth: "100%" }} />
+              <Select
+                value={selectedSemesterId}
+                style={{ maxWidth: "100%" }}
+                options={semesters}
+              />
             </Form.Item>
             <Form.Item label="Code" name="code">
               <Input style={{ maxWidth: "100%" }} />
@@ -192,7 +251,7 @@ const PopupCreateSemester = (props) => {
   );
 };
 
-PopupCreateSemester.propTypes = {};
+PopupEditSemester.propTypes = {};
 
 export default withRouter(
   inject(
@@ -200,5 +259,5 @@ export default withRouter(
     "authenticationStore",
     "mentorStore",
     "semesterStore"
-  )(observer(PopupCreateSemester))
+  )(observer(PopupEditSemester))
 );

@@ -34,7 +34,7 @@ import {
   LimitLine,
 } from "./SemesterPageDemoStyled";
 import PopupCreateSemester from "./PopupCreateSemester";
-import PopupCreatePhase from "./PopupCreatePhase";
+import PopupEditSemester from "./PopupEditSemester";
 const { Title } = Typography;
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
@@ -44,6 +44,7 @@ const text = `
   Known for its loyalty and faithfulness,
   it can be found as a welcome guest in many households across the world.
 `;
+
 const items = [
   {
     key: "1",
@@ -61,6 +62,7 @@ const items = [
     children: <p>{text}</p>,
   },
 ];
+
 const SemesterPageDemo = (props) => {
   const {
     history,
@@ -80,9 +82,10 @@ const SemesterPageDemo = (props) => {
     isVisiblePopupCreateSemester,
     setIsVisiblePopupCreateSemester,
   ] = useState(false);
-  const [isVisiblePopupCreatePhase, setIsVisiblePopupCreatePhase] = useState(
+  const [isVisiblePopupEditSemester, setIsVisiblePopupEditSemester] = useState(
     false
   );
+  const [selectedSemester, setSelectedSemester] = useState(null); // New state to hold the selected semester data
 
   useEffect(() => {
     if (authenticationStore.currentUser) {
@@ -91,6 +94,7 @@ const SemesterPageDemo = (props) => {
         const currentSemesters = response.data.map((semester) => ({
           label: semester.name,
           value: semester.id,
+          code: semester.code,
           begin_at: semester.beginAt,
           end_at: semester.endAt,
           phases: semester.phases,
@@ -116,6 +120,7 @@ const SemesterPageDemo = (props) => {
       semesterStore.clearStore();
     };
   }, [authenticationStore.currentUser, semesterStore]);
+
   console.log("sem", defaultSemester);
 
   const [activeTab, setActiveTab] = useState("tab1");
@@ -129,10 +134,21 @@ const SemesterPageDemo = (props) => {
     setSelectedSemesterId(value);
     const selectedSemester = semesters.find((sem) => sem.value === value);
     setPhases(selectedSemester.phases);
+    setSelectedSemester(selectedSemester); // Set the selected semester data
   };
+
   const handlePhaseClick = (phase) => {
     setSelectedPhase(phase);
   };
+
+  const handleEditSemesterClick = () => {
+    const selectedSemester = semesters.find(
+      (sem) => sem.value === selectedSemesterId
+    );
+    setSelectedSemester(selectedSemester); // Ensure the selected semester data is set
+    setIsVisiblePopupEditSemester(true);
+  };
+
   return (
     <DashboardLayout>
       <Helmet>
@@ -142,8 +158,8 @@ const SemesterPageDemo = (props) => {
         location={props.location}
         title={"List Supervisors"}
         hiddenGoBack
-      ></PageTitle>
-      <div className="flex gap-5 items-stretch">
+      />
+      <div className="flex gap-5 items-start">
         <ContentInformation
           className="w-2/6 "
           style={{ backgroundColor: "unset" }}
@@ -161,19 +177,21 @@ const SemesterPageDemo = (props) => {
             <Button
               className="flex items-center justify-center"
               type="primary"
-              onClick={setIsVisiblePopupCreateSemester}
+              onClick={handleEditSemesterClick} // Use the handler to open the popup
             >
-              Add Semester
+              Edit Semester
             </Button>
-            <PopupCreateSemester
-              isVisiblePopup={isVisiblePopupCreateSemester}
-              setIsVisiblePopup={setIsVisiblePopupCreateSemester}
-              handleClosePopup={() => setIsVisiblePopupCreateSemester(false)}
+            <PopupEditSemester
+              isVisiblePopup={isVisiblePopupEditSemester}
+              setIsVisiblePopup={setIsVisiblePopupEditSemester}
+              handleClosePopup={() => setIsVisiblePopupEditSemester(false)}
+              semester={selectedSemester} // Pass the selected semester data to the popup
             />
           </div>
-          <div className="bg-white p-8 rounded-md">
+          <div className="bg-white p-8 rounded-md mb-5">
             {phases.map((phase, index) => (
               <NoMarginBottom
+                key={index} // Add a key for each phase
                 className="py-3"
                 style={{
                   borderBottom: "1px solid #d9d9d9",
@@ -188,20 +206,23 @@ const SemesterPageDemo = (props) => {
                 </LimitLine>
               </NoMarginBottom>
             ))}
-            <div className="w-full flex items-center justify-center mt-3">
-              <Button
-                className="flex items-center justify-center"
-                type="primary"
-                onClick={setIsVisiblePopupCreatePhase}
-              >
-                Add Phase
-              </Button>
-              <PopupCreatePhase
-                isVisiblePopup={isVisiblePopupCreatePhase}
-                setIsVisiblePopup={setIsVisiblePopupCreatePhase}
-                handleClosePopup={() => setIsVisiblePopupCreatePhase(false)}
-              />
-            </div>
+          </div>
+          <div className="bg-white w-full flex flex-col items-center justify-center rounded-md p-8">
+            <Title level={5}>
+              If you want to add a new semester, click here
+            </Title>
+            <Button
+              className="flex items-center justify-center"
+              type="primary"
+              onClick={() => setIsVisiblePopupCreateSemester(true)} // Open the create semester popup
+            >
+              Create a New Semester
+            </Button>
+            <PopupCreateSemester
+              isVisiblePopup={isVisiblePopupCreateSemester}
+              setIsVisiblePopup={setIsVisiblePopupCreateSemester}
+              handleClosePopup={() => setIsVisiblePopupCreateSemester(false)}
+            />
           </div>
         </ContentInformation>
         <ContentInformation className="w-4/6 bg-white p-8">
@@ -254,20 +275,12 @@ const SemesterPageDemo = (props) => {
               </Panel>
             ))}
           </Collapse>
-          <div className="w-full flex items-center justify-center">
-            <Button
-              className="flex items-center justify-center"
-              type="primary"
-              // onClick={setIsVisiblePopup}
-            >
-              Add Milestone
-            </Button>
-          </div>
         </ContentInformation>
       </div>
     </DashboardLayout>
   );
 };
+
 export default memo(
   withRouter(
     inject(

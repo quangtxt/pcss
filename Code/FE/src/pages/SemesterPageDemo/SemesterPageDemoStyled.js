@@ -123,3 +123,18 @@ export const LimitLine = styled.div`
     overflow: hidden;
   }
 `;
+export const BeforeCenter = styled.div`
+  .ant-form {
+    position: relative;
+  }
+  .ant-form::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 100%;
+    width: 1px;
+    background-color: #d9d9d9;
+  }
+`;
