@@ -111,7 +111,7 @@ const InviteForm = (props) => {
         You can only invite those students whose specialties is allowed to work
         on the same thesis topic as yours in this term.
       </p>
-      <div className="flex items-stretch gap-5">
+      <div className="flex items-stretch gap-5px">
         <Select
           value={selectedOption}
           components={{
