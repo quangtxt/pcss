@@ -2,6 +2,7 @@ package com.pcms.be.service.impl;
 
 import com.pcms.be.domain.Milestone;
 import com.pcms.be.domain.Submission;
+import com.pcms.be.domain.user.User;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.functions.Constants;
 import com.pcms.be.pojo.DTO.SubmissionDTO;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -50,13 +53,12 @@ public class SubmissionServiceImpl implements SubmissionService {
             Submission submission = new Submission();
             submission.setName(addSubmissionRequest.getName());
             submission.setDescription(addSubmissionRequest.getDescription());
-            OffsetDateTime test = addSubmissionRequest.getDueDate();
             if (addSubmissionRequest.getDueDate().isBefore(now)){
                 return ResponseEntity.badRequest().body("Due date must be bigger than now!");
             }else{
                 submission.setDueDate(addSubmissionRequest.getDueDate());
             }
-            submission.setStatus(Constants.SubmissionStatus.Unfinished);
+//            submission.setStatus(Constants.SubmissionStatus.Unfinished);
             submission.setMilestone(milestone);
             submissionRepository.save(submission);
             return ResponseEntity.ok("Add submission successfully!");
@@ -80,7 +82,7 @@ public class SubmissionServiceImpl implements SubmissionService {
                }else {
                    return ResponseEntity.badRequest().body("Due Date must be bigger than now");
                }
-               submission.setStatus(Constants.SubmissionStatus.Unfinished);
+//               submission.setStatus(Constants.SubmissionStatus.Unfinished);
                submissionRepository.save(submission);
                return ResponseEntity.ok("Edit submission successfully");
            }
@@ -88,4 +90,15 @@ public class SubmissionServiceImpl implements SubmissionService {
            throw new RuntimeException(e);
        }
     }
+
+
+//    public void checkingProcess() {
+//        OffsetDateTime offsetDateTime_check_head = OffsetDateTime.now();
+//        OffsetDateTime offsetDateTime_check_tail = offsetDateTime_check_head.plus(3, ChronoUnit.DAYS);
+//        List<Submission> submissions = submissionRepository.findAllSubmissionByDueDate(offsetDateTime_check_head, offsetDateTime_check_tail);
+//        for (Submission s : submissions){
+////            List<User> users = s.get
+//        }
+//
+//    }
 }

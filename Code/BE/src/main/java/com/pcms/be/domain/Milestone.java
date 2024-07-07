@@ -1,5 +1,6 @@
 package com.pcms.be.domain;
 
+import com.pcms.be.domain.user.Group;
 import com.pcms.be.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,6 +37,12 @@ public class Milestone implements Serializable {
     @OneToMany(mappedBy = "milestone", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Submission> submissions;
 
-    @Column(name = "status")
-    private String status;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "v_milestone_group",
+            joinColumns = @JoinColumn(name = "milestone_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id"))
+    private Set<Group> groups = new HashSet<>();
+
+//    @Column(name = "status")
+//    private String status;
 }

@@ -2,8 +2,12 @@ package com.pcms.be.service;
 
 //import com.pcms.be.domain.Notification;
 import com.pcms.be.domain.user.Member;
+import com.pcms.be.domain.Notification;
+import com.pcms.be.domain.user.User;
+import com.pcms.be.pojo.request.CreateMeetingRequest;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.Map;
 
 public interface NotificationService {
@@ -15,4 +19,8 @@ public interface NotificationService {
     void createRejectJoinGroupNotification(Member member);
     void removeMemberNotification(Member member);
     void inviteMemberNotification(Member member);
+   // void createJoinGroupNotification();
+      String createContentNotification(String template, Map<String, String> mapData);
+      void saveNotification(User user, String Content);
+//      void checkingProcess();
 }

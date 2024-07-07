@@ -1,9 +1,13 @@
-package com.pcms.be.service.impl;
+ package com.pcms.be.service.impl;
 
+import com.pcms.be.domain.*;
 import com.pcms.be.domain.user.*;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.functions.Constants;
+import com.pcms.be.functions.Git;
+import com.pcms.be.functions.NotificationTemplate;
+import com.pcms.be.pojo.DTO.GitFolder;
 import com.pcms.be.pojo.DTO.GroupDTO;
 import com.pcms.be.pojo.DTO.GroupMentorDTO;
 import com.pcms.be.pojo.DTO.MemberDTO;
@@ -20,12 +24,20 @@ import com.pcms.be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
 
+import java.time.OffsetDateTime;
 import java.util.*;
 
 
@@ -33,6 +45,8 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class GroupServiceImpl implements GroupService {
+
+
     private final GroupRepository groupRepository;
     private final UserService userService;
     private final MemberRepository memberRepository;
@@ -41,6 +55,9 @@ public class GroupServiceImpl implements GroupService {
     private final GroupMentorRepository groupMentorRepository;
     private final ModelMapper modelMapper;
     private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
+    private final UserRepository userRepository;
+    private final SemesterRepository semesterRepository;
 
 
 
@@ -289,7 +306,29 @@ public class GroupServiceImpl implements GroupService {
         }catch (Exception e){
             throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
         }
-        notificationService.createJoinGroupNotification();
+        List<Group> groups = groupRepository.findAll();
+        for (Group gr : groups) {
+            Map<String, String> map = new HashMap<>();
+            String listMember = "";
+            String leaderName = "";
+            List<User> users = new ArrayList<>();
+            for (Member m : gr.getMembers()) {
+                listMember += m.getStudent().getUser().getName() + ";";
+                users.add(m.getStudent().getUser());
+                if (m.getRole().equals(Constants.MemberRole.OWNER)) {
+                    leaderName = m.getStudent().getUser().getName();
+                }
+            }
+
+            map.put("_ListMember-txt", listMember.substring(0, listMember.length() - 1));
+            map.put("_GroupName-txt_", gr.getName());
+            map.put("_Leader-txt_", leaderName);
+            String content = notificationService.   createContentNotification(NotificationTemplate.UserNotification.joinGroupTemplate, map);
+            for (User u : users){
+                notificationService.saveNotification(u, content);
+            }
+
+        }
         return ResponseEntity.ok("Automatically grouped successfully");
     }
 
@@ -306,6 +345,193 @@ public class GroupServiceImpl implements GroupService {
         result.put("data", groupDTOs);
         return ResponseEntity.ok(result);
     }
+
+//    @Override
+//    public ResponseEntity<String> checkFormatGitLab() throws ServiceException {
+//        try{
+//            User user = userService.getCurrentUser();
+//            List<String> path = new ArrayList<>();
+//            Optional<Group> group = groupRepository.findByStudentId(Integer.parseInt(user.getStudent().getId().toString()));
+//            if (group.isEmpty()){
+//                throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
+//            }
+//            String hrefGit = Git.GitSrc.repositoryTree.replace("_projectId-txt_", group.get().getGitId());
+//            // Xử lý kết quả
+//            List<GitFolder> projects = getObjectByCallApiToGit(hrefGit);
+//            path = getPaths(projects);
+//            assert projects != null;
+//            if (projects.isEmpty()){
+//                throw new ServiceException(ErrorCode.GITLAB_IS_INCORRECT_FORMAT);
+//            }
+//            checkValidFileName(projects, Git.GitNameFile.listNameRootFolder);
+//            Optional<Semester> semester = semesterRepository.findByCurrent(OffsetDateTime.now());
+//            if (semester.isEmpty()){
+//                throw new ServiceException(ErrorCode.SEMESTER_NOT_FOUND_BY_CURRENT);
+//            }
+//            List<CapstonePhase> capstonePhases = new ArrayList<>();
+//            List<Milestone> milestones = new ArrayList<>();
+//            List<Submission> submissions = new ArrayList<>();
+//
+//
+//            //
+//                List<String> listCapstonePhaseNameFolder = new ArrayList<>();
+//                capstonePhases = semester.get().getPhases();
+//                List<GitFolder> capstoneGitFolders = new ArrayList<>();
+//                for (CapstonePhase c : capstonePhases){
+//                    if (!c.getMilestones().isEmpty()){
+//                        milestones.addAll(c.getMilestones());
+//                    }
+//                    listCapstonePhaseNameFolder.add(c.getName());
+//                }
+//                String hrefPhase = Git.GitSrc.repositorySubTree.replace("_projectId-txt_", group.get().getGitId()).replace("_SubtreeName-txt_",Git.GitNameFile.rootFileRoport);
+//                checkValidFileName(getObjectByCallApiToGit(hrefPhase), listCapstonePhaseNameFolder);
+//                capstoneGitFolders.addAll(getObjectByCallApiToGit(hrefPhase));
+//                path = getPaths(capstoneGitFolders);
+//
+//
+//            if (!milestones.isEmpty()){
+//                List<String> listMilestoneNameFolder = new ArrayList<>();
+//                //lay danh sach milestone de check
+//                for (Milestone m : milestones){
+//                    if (!m.getSubmissions().isEmpty()){
+//                        submissions.addAll(m.getSubmissions());
+//                    }
+//                    listMilestoneNameFolder.add(m.getName());
+//                }
+//                List<GitFolder> gitFolders = new ArrayList<>();
+//                for (String str : path){
+//                    String href = Git.GitSrc.repositorySubTree.replace("_projectId-txt_", group.get().getGitId()).replace("_SubtreeName-txt_",str);
+//                    gitFolders.addAll(getObjectByCallApiToGit(href));//lay tat ca folder trong git de lay path cua submission
+//                }
+//                checkValidFileName(gitFolders, listMilestoneNameFolder);
+//                path = getPaths(gitFolders);
+//            }
+//            if (!submissions.isEmpty()){
+//                List<GitFolder> gitFolders = new ArrayList<>();
+//                List<String> listSubmissionNameFolder = new ArrayList<>();
+//                for (Submission s : submissions){
+//                    listSubmissionNameFolder.add(s.getName());
+//                }
+//                for (String str : path){
+//                    String href = Git.GitSrc.repositorySubTree.replace("_projectId-txt_", group.get().getGitId()).replace("_SubtreeName-txt_",str);
+//                    if(getObjectByCallApiToGit(href) == null){
+//                        return ResponseEntity.badRequest().body(ErrorCode.GITLAB_IS_INCORRECT_FORMAT);
+//                    }
+//                    gitFolders.addAll(getObjectByCallApiToGit(href));
+//                }
+//                checkValidFileName(gitFolders, listSubmissionNameFolder);
+//            }
+//            return ResponseEntity.ok("true");
+//        }catch (HttpClientErrorException | HttpServerErrorException e ) {
+//            // Xử lý trường hợp API không tồn tại hoặc trả về lỗi
+//            throw new ServiceException(ErrorCode.GITLAB_IS_INCORRECT_FORMAT);
+//        } catch (Exception e) {
+//            // Xử lý các ngoại lệ khác
+//            throw new ServiceException(ErrorCode.GITLAB_IS_INCORRECT_FORMAT);
+//        }
+//    }
+//    public List<GitFolder> getObjectByCallApiToGit(String hrefGit) throws ServiceException{
+//        try {
+//            RestTemplate restTemplate = new RestTemplate();
+//
+//            // Thiết lập header
+//            HttpHeaders headers = new HttpHeaders();
+//            // Tạo httpEntity
+//            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(headers);
+//            ParameterizedTypeReference<List<GitFolder>> typeRef = new ParameterizedTypeReference<List<GitFolder>>() {};
+//            ResponseEntity<List<GitFolder>> response = restTemplate.exchange(
+//                    hrefGit,
+//                    HttpMethod.GET,
+//                    entity,
+//                    typeRef
+//            );
+//            return response.getBody();
+//        } catch (HttpClientErrorException | HttpServerErrorException e ) {
+//            // Xử lý trường hợp API không tồn tại hoặc trả về lỗi
+//            throw new ServiceException(ErrorCode.GITLAB_IS_INCORRECT_FORMAT);
+//        } catch (Exception e) {
+//            // Xử lý các ngoại lệ khác
+//            throw new ServiceException(ErrorCode.GITLAB_IS_INCORRECT_FORMAT);
+//        }
+//    }
+//    public void checkValidFileName(List<GitFolder> gitFolders, List<String> listName) throws ServiceException {
+//        for (String str : listName){
+//            boolean checkNameFolder = false;
+//            for (GitFolder g : gitFolders){
+//                if (g.getName().equals(str)){
+//                    checkNameFolder = true;
+//                }
+//            }
+//            if (!checkNameFolder){
+//                throw new ServiceException(ErrorCode.GITLAB_IS_INCORRECT_FORMAT);
+//            }
+//        }
+//    }
+//    public List<String> getPaths(List<GitFolder> gitFolders){
+//        List<String> paths = new ArrayList<>();
+//        for (GitFolder g : gitFolders){
+//            if (g.getType().equals("tree")){
+//                paths.add(g.getPath());
+//            }
+//        }
+//        return paths;
+//    }
+//
+//    @Override
+//    public ResponseEntity<String> checkFormatGitLabV2() throws ServiceException {
+//        try {
+//            User user = userService.getCurrentUser();
+//            Optional<Group> group = groupRepository.findByStudentId(Integer.parseInt(user.getStudent().getId().toString()));
+//            if (group.isEmpty()){
+//                throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
+//            }
+//            List<String> listPath = getPaths();
+//            String idProject = group.get().getGitId();
+//            for (String str : listPath){
+//                String path = Git.GitSrc.repositorySubTree.replace("_projectId-txt_",idProject).replace("_SubtreeName-txt_",str);
+//            }
+//            return null;
+//        }catch (HttpClientErrorException | HttpServerErrorException e ) {
+//            // Xử lý trường hợp API không tồn tại hoặc trả về lỗi
+//            throw new ServiceException(ErrorCode.GITLAB_IS_INCORRECT_FORMAT);
+//        } catch (Exception e) {
+//            // Xử lý các ngoại lệ khác
+//            throw new ServiceException(ErrorCode.GITLAB_IS_INCORRECT_FORMAT);
+//        }
+//    }
+
+//    public List<String> getPaths(){
+//        List<String> listPath = new ArrayList<>();
+//        Optional<Semester> optSemester = semesterRepository.findByCurrent(OffsetDateTime.now());
+//        if (optSemester.isPresent()){
+//            Semester semester = optSemester.orElseThrow();
+//            List<Submission> submissions = new ArrayList<>();
+//            String path = "/Report";
+//            for (CapstonePhase c : semester.getPhases()){
+//                path = "/Report" + "/" + c.getName();
+//                if (c.getMilestones().isEmpty()){
+//                    listPath.add(path);
+//                }else{
+//                    for (Milestone m : c.getMilestones()){
+//                        if (m.getSubmissions().isEmpty()){
+//                            path += "/"+m.getName();
+//                            listPath.add(path);
+//                        }else {
+//                            for (Submission s : m.getSubmissions()){
+//                                path ="/" + c.getName() + "/" + m.getName() + "/" + s.getName();
+    //                             listPath.add(path);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//        }
+//        return listPath;
+//    }
+//    public boolean checkExistPathInGit(String path){
+//
+//    }
 
     @Transactional
     public void createGroup(List<Student> students){
