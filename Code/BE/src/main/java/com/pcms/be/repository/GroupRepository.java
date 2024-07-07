@@ -2,6 +2,7 @@ package com.pcms.be.repository;
 
 import com.pcms.be.domain.user.Group;
 import com.pcms.be.domain.user.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,6 +27,11 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     List<Group> findGroupsWithMemberCountLessThan(@Param("number") int number);
 
     Page<Group> findAllByNameContaining(Pageable pageable, String name);
+
+    @Query(value="SELECT g.* FROM v_group g\n" +
+            "WHERE g.id = (SELECT m.group_id FROM v_members m\n" +
+            "WHERE m.student_id = :studentId);", nativeQuery = true)
+    Optional<Group> findByStudentId(int studentId);
 
 //    SELECT g.* FROM v_group g  \n" +
 //            "WHERE g.id IN(SELECT count_member.group_id FROM (SELECT COUNT(m.id) as total_member, m.group_id\n" +

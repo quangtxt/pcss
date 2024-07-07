@@ -89,7 +89,7 @@ public interface Constants {
         String Start = "START";
         String NonStart = "NON START";
     }
-    interface SubmissionStatus{
+    interface MilestoneGroupStatus{
         String Finish = "FINISH";
         String Unfinished = "UNFINISHED";
     }

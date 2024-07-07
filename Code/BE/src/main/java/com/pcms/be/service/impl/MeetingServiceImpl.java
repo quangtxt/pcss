@@ -1,12 +1,11 @@
 package com.pcms.be.service.impl;
 
 import com.pcms.be.domain.meeting.Meeting;
-import com.pcms.be.domain.user.Group;
-import com.pcms.be.domain.user.GroupMentor;
-import com.pcms.be.domain.user.User;
+import com.pcms.be.domain.user.*;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.functions.Constants;
+import com.pcms.be.functions.NotificationTemplate;
 import com.pcms.be.pojo.DTO.MeetingDTO;
 import com.pcms.be.pojo.request.CreateMeetingRequest;
 import com.pcms.be.pojo.request.EditMeetingRequest;
@@ -14,6 +13,7 @@ import com.pcms.be.repository.GroupMentorRepository;
 import com.pcms.be.repository.GroupRepository;
 import com.pcms.be.repository.MeetingRepository;
 import com.pcms.be.service.MeetingService;
+import com.pcms.be.service.NotificationService;
 import com.pcms.be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.TextStyle;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +35,7 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingRepository meetingRepository;
     private final UserService userService;
     private final ModelMapper modelMapper;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -89,6 +90,22 @@ public class MeetingServiceImpl implements MeetingService {
                 newMeeting.setStatus(Constants.MeetingStatus.PENDING);
                 meetingRepository.save(newMeeting);
                 meetingDTOS.add(modelMapper.map(newMeeting, MeetingDTO.class));
+                List<User> users = new ArrayList<>();
+                for (Member m: group1.getMembers()){
+                    users.add(m.getStudent().getUser());
+                }
+                //Tạo notification
+                Map<String, String> map = new HashMap<>();
+                //Bạn có một cuộc họp với mentor: _MentorName-txt_ vào lúc _Time-txt_.\n" +
+                //                "Link Meeting: _Location-txt_
+                map.put("_MentorName-txt_", group1.getMentors().stream().map(Mentor::getUser).map(User::getName).collect(Collectors.joining(". ")));
+                map.put("_Time-txt_", String.valueOf(meet.getStartAt().getHour())+":"+String.valueOf(meet.getStartAt().getMinute()+" "+ meet.getStartAt().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("vi")))
+                +" " + meet.getStartAt().getDayOfMonth() + "/" + meet.getStartAt().getMonth()+"/"+meet.getStartAt().getYear());
+                map.put("_Location-txt_", meet.getLocation());
+                String content = notificationService.createContentNotification(NotificationTemplate.MeetingNotification.createMeetingTemplate, map);
+                for (User u : users){
+                    notificationService.saveNotification(u, content);
+                }
             }
             return meetingDTOS;
         } catch (Exception e) {
@@ -161,12 +178,26 @@ public class MeetingServiceImpl implements MeetingService {
                 }
 
                 Meeting editMeeting = meeting.get();
+                OffsetDateTime oldTime = editMeeting.getStartAt();
                 editMeeting.setStartAt(meet.getStartAt());
                 editMeeting.setEndAt(meet.getEndAt());
                 editMeeting.setType(meet.getType());
                 editMeeting.setLocation(meet.getLocation());
                 meetingRepository.save(editMeeting);
                 meetingDTOS.add(modelMapper.map(editMeeting, MeetingDTO.class));
+                Map<String, String> map = new HashMap<>();
+                //Bạn có một cuộc họp với mentor: _MentorName-txt_ vào lúc _Time-txt_.\n" +
+                //                "Link Meeting: _Location-txt_
+                map.put("_OldTime-txt_",String.valueOf(oldTime.getHour())+":"+String.valueOf(oldTime.getMinute()+" "+ oldTime.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("vi")))
+                        +" " + meet.getStartAt().getDayOfMonth() + "/" + meet.getStartAt().getMonth()+"/"+meet.getStartAt().getYear());
+                map.put("_MentorName-txt_", meeting.get().getGroup().getMentors().stream().map(Mentor::getUser).map(User::getName).collect(Collectors.joining(". ")));
+                map.put("_Time-txt_", String.valueOf(meet.getStartAt().getHour())+":"+String.valueOf(meet.getStartAt().getMinute()+" "+ meet.getStartAt().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("vi")))
+                        +" " + meet.getStartAt().getDayOfMonth() + "/" + meet.getStartAt().getMonth()+"/"+meet.getStartAt().getYear());
+                map.put("_Location-txt_", meet.getLocation());
+                String content = notificationService.createContentNotification(NotificationTemplate.MeetingNotification.updateMeetingTemplate, map);
+                for (Member m : meeting.get().getGroup().getMembers()){
+                    notificationService.saveNotification(m.getStudent().getUser(), content);
+                }
             }
             return meetingDTOS;
         } catch (Exception e) {
@@ -188,6 +219,13 @@ public class MeetingServiceImpl implements MeetingService {
             GroupMentor groupMentor = groupMentorRepository.findByGroupAndMentorAndStatus(meeting.get().getGroup(), user.getMentor(), "ACCEPT_MENTOR");
             if (groupMentor == null) {
                 throw new ServiceException(ErrorCode.USER_NOT_ALLOW);
+            }
+            Map<String, String> map = new HashMap<>();
+            map.put("_Time-txt_", String.valueOf(meeting.get().getStartAt().getHour())+":"+String.valueOf(meeting.get().getStartAt().getMinute()+" "+ meeting.get().getStartAt().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("vi")))
+                    +" " + meeting.get().getStartAt().getDayOfMonth() + "/" + meeting.get().getStartAt().getMonth()+"/"+meeting.get().getStartAt().getYear());
+            String content = notificationService.createContentNotification(NotificationTemplate.MeetingNotification.deleteMeetingTemplate, map);
+            for (Member m : meeting.get().getGroup().getMembers()){
+                notificationService.saveNotification(m.getStudent().getUser(), content);
             }
             meetingRepository.delete(meeting.get());
             return modelMapper.map(meeting.get(), MeetingDTO.class);

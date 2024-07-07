@@ -1,12 +1,11 @@
 package com.pcms.be.service.impl;
 
 import com.pcms.be.domain.Notification;
-import com.pcms.be.domain.user.Group;
-import com.pcms.be.domain.user.Member;
-import com.pcms.be.domain.user.User;
-import com.pcms.be.domain.user.UserNotification;
+import com.pcms.be.domain.Semester;
+import com.pcms.be.domain.user.*;
 import com.pcms.be.functions.Constants;
 import com.pcms.be.functions.NotificationTemplate;
+import com.pcms.be.pojo.request.CreateMeetingRequest;
 import com.pcms.be.repository.*;
 import com.pcms.be.service.NotificationService;
 import lombok.Getter;
@@ -26,7 +25,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final UserNotificationRepository userNotificationRepository;
 
 
-    public String createNotification(String template, Map<String, String> mapData) {
+    @Override
+    public String createContentNotification(String template, Map<String, String> mapData) {
         for (Map.Entry<String, String> entry : mapData.entrySet()) {
             template = template.replaceAll(entry.getKey(), entry.getValue());
         }
@@ -52,7 +52,7 @@ public class NotificationServiceImpl implements NotificationService {
             map.put("_ListMember-txt", listMember.substring(0, listMember.length() - 1));
             map.put("_GroupName-txt_", gr.getName());
             map.put("_Leader-txt_", leaderName);
-            String notification_txt = createNotification(NotificationTemplate.UserNotificationTemplate.joinGroupTemplate, map);
+            String notification_txt = createContentNotification(NotificationTemplate.UserNotification.joinGroupTemplate, map);
             Notification notification = new Notification();
             notification.setContent(notification_txt);
             notificationRepository.save(notification);
@@ -72,7 +72,7 @@ public class NotificationServiceImpl implements NotificationService {
         Group group = member.getGroup();
         Map<String, String> map = new HashMap<>();
         map.put("_User-txt_", member.getStudent().getUser().getName());
-        String notification_txt = createNotification(NotificationTemplate.UserNotificationTemplate.memberAcceptJoinGroup, map);
+        String notification_txt = createContentNotification(NotificationTemplate.UserNotification.memberAcceptJoinGroup, map);
         Notification notification = new Notification();
         notification.setContent(notification_txt);
         notification.setType(NotificationTemplate.NotificationType.GROUP);
@@ -96,7 +96,7 @@ public class NotificationServiceImpl implements NotificationService {
         Group group = member.getGroup();
         Map<String, String> map = new HashMap<>();
         map.put("_User-txt_", member.getStudent().getUser().getName());
-        String notification_txt = createNotification(NotificationTemplate.UserNotificationTemplate.memberOutGroup, map);
+        String notification_txt = createContentNotification(NotificationTemplate.UserNotification.memberOutGroup, map);
         Notification notification = new Notification();
         notification.setContent(notification_txt);
         notification.setType(NotificationTemplate.NotificationType.GROUP);
@@ -120,7 +120,7 @@ public class NotificationServiceImpl implements NotificationService {
         Group group = member.getGroup();
         Map<String, String> map = new HashMap<>();
         map.put("_User-txt_", member.getStudent().getUser().getName());
-        String notification_txt = createNotification(NotificationTemplate.UserNotificationTemplate.memberRejectJoinGroup, map);
+        String notification_txt = createContentNotification(NotificationTemplate.UserNotification.memberRejectJoinGroup, map);
         Notification notification = new Notification();
         notification.setContent(notification_txt);
         notification.setType(NotificationTemplate.NotificationType.GROUP);
@@ -150,7 +150,7 @@ public class NotificationServiceImpl implements NotificationService {
         map.put("_User-txt_", member.getStudent().getUser().getName());
         map.put("_Leader-txt_", leaderName);
         // create noti for member in group
-        String notification_txt = createNotification(NotificationTemplate.UserNotificationTemplate.removeMember, map);
+        String notification_txt = createContentNotification(NotificationTemplate.UserNotification.removeMember, map);
         Notification notification = new Notification();
         notification.setContent(notification_txt);
         notification.setType(NotificationTemplate.NotificationType.GROUP);
@@ -165,7 +165,7 @@ public class NotificationServiceImpl implements NotificationService {
             }
         }
         map1.put("_Leader-txt_", leaderName);
-        String notification_txt1 = createNotification(NotificationTemplate.UserNotificationTemplate.removeMember1, map);
+        String notification_txt1 = createContentNotification(NotificationTemplate.UserNotification.removeMember1, map);
         Notification notification1 = new Notification();
         notification1.setContent(notification_txt1);
         notification1.setType(NotificationTemplate.NotificationType.GROUP);
@@ -189,7 +189,7 @@ public class NotificationServiceImpl implements NotificationService {
         }
         map.put("_Group-txt_", group.getName());
         map.put("_Leader-txt_", leaderName);
-        String notification_txt = createNotification(NotificationTemplate.UserNotificationTemplate.inviteMemberJoinGroup, map);
+        String notification_txt = createContentNotification(NotificationTemplate.UserNotification.inviteMemberJoinGroup, map);
         Notification notification = new Notification();
         notification.setContent(notification_txt);
         notification.setType(NotificationTemplate.NotificationType.REQUESTGROUP);
@@ -197,6 +197,16 @@ public class NotificationServiceImpl implements NotificationService {
         UserNotification userNotification = new UserNotification();
         userNotification.setNotification(notification);
         userNotification.setUser(member.getStudent().getUser());
+        userNotification.setStatus(false);
+        userNotificationRepository.save(userNotification);
+    }
+    public void saveNotification(User user, String content) {
+        Notification notification = new Notification();
+        notification.setContent(content);
+        notificationRepository.save(notification);
+        UserNotification userNotification = new UserNotification();
+        userNotification.setNotification(notification);
+        userNotification.setUser(user);
         userNotification.setStatus(false);
         userNotificationRepository.save(userNotification);
     }
