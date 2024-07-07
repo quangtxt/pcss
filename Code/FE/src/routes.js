@@ -16,6 +16,7 @@ import ManageTaskPage from "./pages/Guidance/ManageTaskPage";
 import ScheduleMentorPage from "./pages/Guidance/ScheduleMentorPage";
 import SemesterPage from "./pages/SemesterPage";
 import NotificationPage from "./pages/NotificationPage/NotificationPage";
+import SemesterPageDemo from "./pages/SemesterPageDemo";
 
 export const normalRoutes = [
   {
@@ -128,5 +129,10 @@ export const routes = [
     path: "/semester/manage",
     component: SemesterPage,
     name: "SemesterPage",
+  },
+  {
+    path: "/semesterDemo/manage",
+    component: SemesterPageDemo,
+    name: "SemesterPageDemo",
   },
 ];

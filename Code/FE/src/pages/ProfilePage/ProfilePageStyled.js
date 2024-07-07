@@ -67,6 +67,7 @@ export const Profile = styled.div`
 
 export const ContentInformation = styled.div`
   background-color: white;
+  border-radius: 6px;
 `;
 
 export const GroupButton = styled.div`

@@ -101,3 +101,25 @@ export const PhaseTabs = styled.div`
     margin-bottom: 0 !important;
   }
 `;
+export const SemesterLayout = styled.div`
+  .ant-col-8 {
+    // width: calc(100% - 5px);
+  }
+  .ant-col-16 {
+    background-color: #fff;
+  }
+`;
+export const SemesterItem = styled.div`
+  .ant-row,
+  .ant-col {
+    background-color: #fff;
+  }
+`;
+export const LimitLine = styled.div`
+  h5 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+`;
