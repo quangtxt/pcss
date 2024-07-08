@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const SiderbarWrapper = styled.div`
   display: flex;
@@ -24,7 +24,7 @@ export const SiderbarWrapper = styled.div`
       }
     }
   }
-`
+`;
 
 export const NotiWrapper = styled.div`
   ::-webkit-scrollbar {
@@ -60,4 +60,4 @@ export const NotiWrapper = styled.div`
   .ant-tabs-nav {
     margin: 0;
   }
-`
+`;

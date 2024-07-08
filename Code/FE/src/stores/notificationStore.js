@@ -2,6 +2,7 @@ import { action, observable } from "mobx";
 // Request
 // import { NotificationRequest } from "../requests/NotificationRequest";
 import { UserRequest } from "../requests/UserRequest";
+import { NotificationRequest } from "../requests/NotificationRequest";
 class NotificationStore {
   @action setFilter = (filterName, filterValue) => {
     if (typeof filterName !== "string") return;
@@ -11,8 +12,8 @@ class NotificationStore {
   /** Notification list */
   @observable notificationList = [];
   @observable notificationListTotal = [];
-  @observable unreadNotificationCount = 5;
-  @observable unreadNewsCount = 10;
+  @observable unreadNotificationCount = 0;
+  @observable unreadNewsCount = 0;
   @observable notificationListPageSize = 30;
   @observable notificationListPageIndex = 0;
   @observable notificationListTotalPage = undefined;
@@ -33,22 +34,22 @@ class NotificationStore {
     filter_unread
   ) => {
     return new Promise((resolve, reject) => {
-      UserRequest.getCurrentUserNotification(
+      NotificationRequest.getUserNotification(
         this.notificationListPageIndex,
         this.notificationListPageSize,
-        filter_unread || false
+        only_news_notification,
+        filter_unread
       )
         .then((response) => {
           this.notificationList = response.data.content;
           this.notificationListTotalPage = response.data.total_page;
           this.notificationListTotalCount = response.data.total_count;
           if (only_news_notification === "true") {
-            this.unreadNewsCount = 5;
+            this.unreadNewsCount = response.data.totalUnread;
           }
           if (only_news_notification === "false") {
-            this.unreadNotificationCount = 5;
+            this.unreadNotificationCount = response.data.totalUnread;
           }
-
           resolve(response);
         })
         .catch((error) => {
@@ -56,6 +57,7 @@ class NotificationStore {
         });
     });
   };
+
   @action markAllAsRead = (only_news_notification) => {
     return new Promise((resolve, reject) => {
       NotificationRequest.markAllAsRead(only_news_notification)
@@ -66,12 +68,28 @@ class NotificationStore {
 
   @action getUnreadNotificationCount = () => {
     return new Promise((resolve, reject) => {
-      UserRequest.getCurrentUserNotification(0, 1, false)
+      NotificationRequest.getUserNotification(0, 3, false, false)
         .then((response) => {
           this.notificationList = response.data.content;
           this.notificationListTotalPage = response.data.total_page;
           this.notificationListTotalCount = response.data.total_count;
-          this.unreadNotificationCount = 5;
+          this.unreadNotificationCount = response.data.totalUnread;
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+
+  @action getUnreadNewsCount = () => {
+    return new Promise((resolve, reject) => {
+      NotificationRequest.getUserNotification(0, 3, true, false)
+        .then((response) => {
+          this.notificationList = response.data.content;
+          this.notificationListTotalPage = response.data.total_page;
+          this.notificationListTotalCount = response.data.total_count;
+          this.unreadNewsCount = response.data.totalUnread;
           resolve(response);
         })
         .catch((error) => {
@@ -91,19 +109,6 @@ class NotificationStore {
     }
   };
 
-  @action getUnreadNewsCount = () => {
-    return new Promise((resolve, reject) => {
-      UserRequest.getCurrentUserNotification(0, 1, true)
-        .then((response) => {
-          this.unreadNewsCount = 5;
-          resolve(response);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  };
-
   @action setUnreadNewsCount = (type) => {
     type === "remove"
       ? (this.unreadNewsCount =
@@ -113,7 +118,7 @@ class NotificationStore {
 
   @action readNotification = (notification_id) => {
     return new Promise((resolve, reject) => {
-      NotificationRequest.readNotification(notification_id)
+      NotificationRequest.updateNotificationStatus(notification_id)
         .then((response) => {
           resolve(response);
         })

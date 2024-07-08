@@ -59,7 +59,8 @@ export const ACL_ACTION_TYPE = {};
 export const MODULE_CODE = {};
 export const NOTIFICATION_STATUS = {
   DEFAULT_TYPE: "DEFAULT_TYPE",
-
+  REQUESTGROUP: "REQUESTGROUP",
+  GROUP: "GROUP",
   GENERAL: "GENERAL",
   NEWS: "NEWS",
 };

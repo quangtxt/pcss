@@ -1,37 +1,28 @@
-import styled, { css } from 'styled-components'
-import { Avatar } from 'antd'
-import { blue } from '../../color'
+import styled, { css } from "styled-components";
+import { Avatar } from "antd";
+import { blue } from "../../color";
 
 export const ListItemWrapper = styled.div`
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
   width: 100%;
-  background-color: ${props => !props.isRead && '#e7efff'};
+  background-color: ${(props) => !props.isRead && "#e7efff"};
   margin: -12px 0;
   padding: 12px 10px 12px 12px;
 
   .notification-content * {
     font-size: 12px;
   }
-`
+`;
 export const ListItemLeft = styled.div`
   display: flex;
   margin-right: 10px;
-`
-export const ListItemRight = styled.div``
-export const AvatarItem = styled(Avatar)`
-  background-color: ${blue};
-  margin-right: 10px;
-
-  &.ant-avatar {
-    line-height: 30px;
-    font-size: 14px;
-  }
-`
+`;
+export const ListItemRight = styled.div``;
 
 export const ContentNotification = styled.span`
-  ${props =>
+  ${(props) =>
     !props.isRead
       ? css`
           font-weight: bold;
@@ -46,14 +37,14 @@ export const ContentNotification = styled.span`
     display: -webkit-box;
     word-wrap: break-word;
   }
-`
+`;
 
 export const ContentLoading = styled.div`
   margin: 20px 0;
   padding: 30px 50px;
   text-align: center;
   border-radius: 4px;
-`
+`;
 
 export const ListWrapper = styled.div`
   .ant-list-item {
@@ -65,4 +56,4 @@ export const ListWrapper = styled.div`
       background-color: #f7f7f7;
     }
   }
-`
+`;

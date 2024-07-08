@@ -23,3 +23,22 @@ export const StyledTabs = styled(Tabs)`
     }
   }
 `;
+export const NotificationCard = styled.div`
+  .ant-tabs-nav {
+    margin-bottom: 16px;
+  }
+
+  .ant-tabs-ink-bar {
+    background-color: ${blue};
+  }
+
+  .ant-tabs-tab {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+
+    &.ant-tabs-tab-active .ant-tabs-tab-btn {
+      color: ${blue};
+    }
+  }
+`;

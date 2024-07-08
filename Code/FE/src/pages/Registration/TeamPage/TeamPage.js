@@ -46,8 +46,9 @@ const RegTeamPage = (props) => {
   } = props;
   const { currentUser } = authenticationStore;
 
-  const [isVisiblePopup, setIsVisiblePopup] = useState(false);
+  const [isVisiblePopupEdit, setIsVisiblePopupEdit] = useState(false);
   const [isVisiblePopupSend, setIsVisiblePopupSend] = useState(false);
+
   const { Title } = Typography;
   const [members, setMembers] = useState([]);
   const [group, setGroup] = useState();
@@ -89,7 +90,7 @@ const RegTeamPage = (props) => {
   };
 
   function navigateToEdit() {
-    setIsVisiblePopup(true);
+    setIsVisiblePopupEdit(true);
   }
 
   function navigateToSend() {
@@ -131,16 +132,17 @@ const RegTeamPage = (props) => {
                     </p>
                   </NoMarginBottom>
                 </div>
-                <Button
-                  group={group}
-                  type="primary"
-                  shape="round"
-                  icon={<EditOutlined />}
-                  onClick={navigateToEdit}
-                  className="flex items-center "
-                >
-                  Edit Team Profile
-                </Button>
+                {group?.status === "PENDING" && (
+                  <Button
+                    type="primary"
+                    shape="round"
+                    icon={<EditOutlined />}
+                    onClick={navigateToEdit}
+                    className="flex items-center "
+                  >
+                    Edit Team Profile
+                  </Button>
+                )}
               </FlexBox>
               <Row>
                 <Col span={12}>
@@ -261,7 +263,6 @@ const RegTeamPage = (props) => {
               ) : (
                 <>
                   <Button
-                    group={group}
                     shape="round"
                     icon={<SendOutlined />}
                     onClick={navigateToSend}
@@ -282,16 +283,16 @@ const RegTeamPage = (props) => {
       )}
       <PopupEditTeam
         group={group}
-        isVisiblePopup={isVisiblePopup}
-        setIsVisiblePopup={setIsVisiblePopup}
-        handleClosePopup={() => setIsVisiblePopup(false)}
+        isVisiblePopupEdit={isVisiblePopupEdit}
+        setIsVisiblePopupEdit={setIsVisiblePopupEdit}
+        handleClosePopup={() => setIsVisiblePopupEdit(false)}
         setRefresh={setRefresh}
       />
 
       <PopupSendToMentor
         group={group}
-        isVisiblePopup={isVisiblePopupSend}
-        setIsVisiblePopup={setIsVisiblePopupSend}
+        isVisiblePopupSend={isVisiblePopupSend}
+        setIsVisiblePopupSend={setIsVisiblePopupSend}
         handleClosePopup={() => setIsVisiblePopupSend(false)}
       />
     </DashboardLayout>

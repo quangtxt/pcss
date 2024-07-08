@@ -3,11 +3,12 @@ import { Button, Form, message, Modal, Space, Input } from "antd";
 import { withRouter } from "react-router-dom";
 import { inject, observer } from "mobx-react";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import moment from "moment";
 
 const PopupEditTeam = (props) => {
   const {
-    isVisiblePopup,
-    setIsVisiblePopup,
+    isVisiblePopupEdit,
+    setIsVisiblePopupEdit,
     handleClosePopup,
     group,
     loadingAnimationStore,
@@ -16,8 +17,6 @@ const PopupEditTeam = (props) => {
   } = props;
   const { TextArea } = Input;
   const [form] = Form.useForm();
-  const [mentor, setMentor] = useState();
-  console.log("group", group);
   useEffect(() => {
     if (group) {
       form.setFieldsValue({
@@ -29,22 +28,29 @@ const PopupEditTeam = (props) => {
       });
     }
   }, [group]);
-
   const handleEdit = async (values) => {
     try {
       loadingAnimationStore.showSpinner(true);
+      console.log(
+        "Dataa",
+        group?.id,
+        values.name,
+        values.description,
+        values.abbreviations,
+        values.vietnameseTitle,
+        values.keywords
+      );
       const response = await groupStore.editGroup(
         group?.id,
-        values.abbreviations,
-        values.description,
-        values.keywords,
         values.name,
-        values.vietnameseTitle
+        values.description,
+        values.abbreviations,
+        values.vietnameseTitle,
+        values.keywords
       );
       if (response.status === 200) {
-        //sua gr thanh cong
         setRefresh(true);
-        setIsVisiblePopup(false);
+        setIsVisiblePopupEdit(false);
         message.success("Edit group successfully");
       }
     } catch (err) {
@@ -61,7 +67,7 @@ const PopupEditTeam = (props) => {
       title="Edit Team Profiles"
       footer={null}
       closable={true}
-      open={isVisiblePopup}
+      visible={isVisiblePopupEdit}
       onCancel={handleClosePopup}
     >
       <Form
