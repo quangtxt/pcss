@@ -8,6 +8,8 @@ import PageTitle from "../../components/PageTitle";
 import { Helmet } from "react-helmet/es/Helmet";
 import { blue } from "../../color";
 import { ListNotification, StyledTabs } from "./NotificationPageStyled";
+import moment from "moment";
+import utils from "../../utils";
 
 const { TabPane } = Tabs;
 const NotificationPage = (props) => {
@@ -18,31 +20,79 @@ const NotificationPage = (props) => {
     studentStore,
     semesterStore,
     authenticationStore,
-    userStore,
+    notificationStore,
   } = props;
+
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const onlyNewsNotificationParams = utils.getParameterByName(
+    "only_news_notification"
+  );
+
+  const [activeTab, setActiveTab] = useState(
+    !!onlyNewsNotificationParams ? "tab2" : "tab1"
+  );
+
   const onChange = (key) => {
     setActiveTab(key);
   };
   const {
-    userNotificationList,
-    userNotificationListTotalCount,
-    userNotificationListPageIndex,
-    userNotificationListPageSize,
+    notificationList,
+    notificationListTotalCount,
+    notificationListPageIndex,
+    notificationListPageSize,
     setFilter,
-  } = userStore;
+  } = notificationStore;
+
+  // useEffect(() => {
+  //   if (authenticationStore.currentUser) {
+  //     loadingAnimationStore.setTableLoading(true);
+  //     notificationStore.getCurrentUserNotification(true, false).finally(() => {
+  //       loadingAnimationStore.setTableLoading(false);
+  //     });
+  //   }
+  //   console.log("Notification", notificationList);
+  //   return () => {
+  //     notificationStore.clearStore();
+  //   };
+  // }, [activeTab]);
+
   useEffect(() => {
-    if (authenticationStore.currentUser) {
-      loadingAnimationStore.setTableLoading(true);
-      userStore.getUserNotificationList(true).finally(() => {
-        console.log("list", userNotificationList);
-        loadingAnimationStore.setTableLoading(false);
-      });
+    notificationStore.setFilter("notificationListPageIndex", 0);
+    notificationStore.setFilter("notificationListPageSize", 10);
+    (async () => {
+      try {
+        setLoading(true);
+        const { data } = await notificationStore.getCurrentUserNotification(
+          false,
+          false
+        );
+        setItems([...data.data]);
+      } catch (error) {
+        console.log(error);
+        message.error("Có lỗi xảy ra!");
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
+      }
+    })();
+  }, [notificationListPageIndex, notificationListPageSize]);
+  const handleNotificationClick = (type) => {
+    if (type === "REQUESTGROUP") {
+      history.push(`/registration/myRequest`);
     }
-    return () => {
-      userStore.clearStore();
-    };
-  }, [authenticationStore.currentUser]);
-  const [activeTab, setActiveTab] = useState("tab1");
+  };
+
+  const onChangePagination = (e) => {
+    setFilter("notificationListPageIndex", e - 1);
+    loadingAnimationStore.setTableLoading(true);
+    notificationStore.getCurrentUserNotification(true, false).finally(() => {
+      loadingAnimationStore.setTableLoading(false);
+    });
+  };
+  console.log("notificationList", notificationList);
   return (
     <DashboardLayout>
       <Helmet>
@@ -57,19 +107,31 @@ const NotificationPage = (props) => {
         <ListNotification>
           <Tabs activeKey={activeTab} onChange={onChange}>
             <TabPane tab="Unread Notifications" key="tab1">
-              <div>
-                {userNotificationList.map((userNotification, index) => (
-                  <div key={index} className="notification-item">
-                    <h3>{userNotification.notification.content}</h3>
+              <div className="block isolate">
+                {items.map((notification, index) => (
+                  <div
+                    className="flex items-center border-b p-4 hover:bg-gray-100 cursor-pointer"
+                    onClick={() =>
+                      handleNotificationClick(notification.notification.type)
+                    }
+                  >
+                    <div className="flex-grow">
+                      <p>{notification.notification.content}</p>
+                      <p className="text-gray-500">
+                        {moment(notification.notification.timeCreated).format(
+                          "MM-DD-YYYY HH:mm:ss A"
+                        )}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
               <Pagination
                 onChange={(e) => onChangePagination(e)}
                 hideOnSinglePage={false}
-                total={userNotificationListTotalCount}
-                pageSize={userNotificationListPageSize}
-                current={userNotificationListPageIndex + 1}
+                total={notificationListTotalCount}
+                pageSize={notificationListPageSize}
+                current={notificationListPageIndex + 1}
                 showSizeChanger={false}
                 showLessItems
               />
@@ -90,7 +152,7 @@ export default memo(
       "studentStore",
       "groupStore",
       "semesterStore",
-      "userStore"
+      "notificationStore"
     )(observer(NotificationPage))
   )
 );

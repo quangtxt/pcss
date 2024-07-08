@@ -9,6 +9,7 @@ import {
   ViewAll,
 } from "../../layouts/DashboardLayout/DashboardLayoutStyled";
 import { NotiWrapper } from "../MainSidebar/MainSidebarStyled";
+import { Notification } from "./MainHeaderBarStyled";
 // Ant design
 import { Avatar, Badge, Dropdown, Menu, message, Tabs, Tooltip } from "antd";
 import {
@@ -27,6 +28,7 @@ import queryString from "query-string";
 import notificationStore from "../../stores/notificationStore";
 import { useKeycloak } from "@react-keycloak/web";
 import { subStringAvatar } from "../Common/CellText";
+import moment from "moment";
 
 const { TabPane } = Tabs;
 
@@ -55,6 +57,8 @@ const MainHeaderBar = (props) => {
   };
   const { keycloak, initialized } = useSSO ? useKeycloak() : disabledKeyCloak;
 
+  const [hovered, setHovered] = useState("");
+
   const clickLogout = useCallback(() => {
     accountStore.clearStore();
     companyStore.clearStore();
@@ -74,8 +78,35 @@ const MainHeaderBar = (props) => {
   useEffect(() => {
     if (!utils.isIOSDevice()) {
       notificationStore.getUnreadNewsCount();
+      notificationStore.getUnreadNotificationCount();
     }
   }, [changedTabsNotification]);
+
+  // useEffect(() => {
+  //   if (!utils.isIOSDevice()) {
+  //     if (even.data.type === "NEWS") {
+  //       if (changedTabsNotification.isOpen) {
+  //         setChangedTabsNotification({
+  //           status: true,
+  //           onlyNewsNotification: true,
+  //           isOpen: true,
+  //         });
+  //       } else {
+  //         notificationStore.getUnreadNewsCount();
+  //       }
+  //     } else {
+  //       if (changedTabsNotification.isOpen) {
+  //         setChangedTabsNotification({
+  //           status: true,
+  //           onlyNewsNotification: false,
+  //           isOpen: true,
+  //         });
+  //       } else {
+  //         notificationStore.getUnreadNotificationCount();
+  //       }
+  //     }
+  //   }
+  // }, [changedTabsNotification]);
 
   const menu = (
     <Menu>
@@ -99,6 +130,11 @@ const MainHeaderBar = (props) => {
       onlyNewsNotification: tab === "news",
       isOpen: true,
     });
+  };
+  const handleNotificationClick = (type) => {
+    if (type === "REQUESTGROUP") {
+      history.push(`/registration/myRequest`);
+    }
   };
 
   const notiWrapper = (
@@ -130,6 +166,36 @@ const MainHeaderBar = (props) => {
           key="notification"
         >
           <ListWrapper>
+            {/* <Notification>
+              <ul className="listNoti">
+                {userNotificationList.map((notification, index) => (
+                  <li
+                    key={index}
+                    style={{ padding: "10px 10px 10px 10px" }}
+                    className="hover:bg-gray-300 rounded shadow-md mb-3 "
+                    onClick={() =>
+                      handleNotificationClick(notification.notification.type)
+                    }
+                  >
+                    <div className="notify-content ">
+                      <p className="content-text">
+                        {notification.notification.content}
+                      </p>
+                      <div className="showTime">
+                        <p>
+                          {moment(notification.notification.timeCreated).format(
+                            "MM-DD-YYYY HH:mm:ss A"
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    {notification.status && (
+                      <div className="unread-indicator"></div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </Notification> */}
             <ViewAll
               onClick={() => {
                 setVisibleNotification(false);

@@ -29,12 +29,12 @@ export const GroupRequest = {
     }),
 
   editGroup: (
-    groupId,
-    abbreviations,
-    description,
-    keywords,
+    id,
     name,
-    vietnameseTitle
+    description,
+    abbreviations,
+    vietnameseTitle,
+    keywords
   ) =>
     axios({
       method: "post",
@@ -44,12 +44,12 @@ export const GroupRequest = {
         "Content-Type": "application/json",
       },
       data: {
-        groupId: groupId,
-        abbreviations: abbreviations,
-        description: description,
-        keywords: keywords,
+        groupId: id,
         name: name,
+        description: description,
+        abbreviations: abbreviations,
         vietnameseTitle: vietnameseTitle,
+        keywords: keywords,
       },
     }),
   getListInvitationToJoinGroup: () =>
@@ -189,14 +189,13 @@ export const GroupRequest = {
       },
     }),
 
-    getGroupsOfMentor: () =>
-      axios({
-        method: "get",
-        url: `${apiUrl}/api/v1/group-mentor/getGroupsOfMentor`,
-        headers: {
-          Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
-          "Content-Type": "application/json",
-        },
-      }),
-  
+  getGroupsOfMentor: () =>
+    axios({
+      method: "get",
+      url: `${apiUrl}/api/v1/group-mentor/getGroupsOfMentor`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+    }),
 };

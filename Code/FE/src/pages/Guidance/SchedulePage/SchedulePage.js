@@ -15,7 +15,6 @@ const SchedulePage = (props) => {
   const {
     meetingStore,
     loadingAnimationStore,
-    groupStore,
     authenticationStore,
     history,
   } = props;
@@ -23,17 +22,6 @@ const SchedulePage = (props) => {
 
   const [meetingList, setMeetingList] = useState([]);
   const [refresh, setRefresh] = useState(false);
-
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 6 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 14 },
-    },
-  };
 
   useEffect(() => {
     if (authenticationStore.currentUser) {
@@ -43,12 +31,14 @@ const SchedulePage = (props) => {
 
   const getListMeeting = async () => {
     loadingAnimationStore.setTableLoading(true);
-    const res = await meetingStore
-      .getListMeeting(currentUser.group.id)
-      .finally(() => {
-        loadingAnimationStore.setTableLoading(false);
-      });
-    setMeetingList(res.data);
+    if (authenticationStore.currentUser.group) {
+      const res = await meetingStore
+        .getListMeeting(currentUser.group.id)
+        .finally(() => {
+          loadingAnimationStore.setTableLoading(false);
+        });
+      setMeetingList(res.data);
+    }
   };
 
   const getListData = (value) => {
@@ -90,7 +80,7 @@ const SchedulePage = (props) => {
         meetingId: meeting.id,
         endMeeting: meeting.endAt,
       });
-    });  
+    });
 
     return listData;
   };
@@ -119,18 +109,56 @@ const SchedulePage = (props) => {
     return (
       <ul className="events">
         {listData.map((item) => {
-          const endTime = new Date(item.endMeeting); 
-          console.log("123", new Date(endTime - (25200000)));
-          console.log("124", endTime);
           return (
-            (
+            <div
+              style={{
+                backgroundColor: "rgb(14 165 233)",
+                margin: "0 0.75rem 0.75rem 0.75rem",
+              }}
+              className="p-3 rounded shadow-lg "
+            >
               <li key={item.content}>
-                <Badge
-                  style={{ whiteSpace: "wrap" }}
-                  status={moment(item.endMeeting) < new Date() ? "error" : "success"}
-                  text={item.content}
-                />
-                <div>{item.time}</div>
+                <div className="flex place-items-center">
+                  <div>
+                    {moment(item.endMeeting) > new Date() ? (
+                      <Dropdown
+                        overlay={
+                          <Menu
+                            onClick={(e) => handleMenuClick(e, item.meetingId)}
+                          >
+                            <Menu.Item key="edit-meeting">
+                              Edit meeting
+                            </Menu.Item>
+                            <Menu.Item key="remove-meeting">
+                              Remove meeting
+                            </Menu.Item>
+                          </Menu>
+                        }
+                      >
+                        <Button type="text" className="p-0">
+                          <MoreOutlined style={{ fontSize: "15px" }} />
+                        </Button>
+                      </Dropdown>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Badge
+                    className="font-semibold"
+                    style={{ whiteSpace: "wrap" }}
+                    status={
+                      moment(item.endMeeting) < new Date() ? "error" : "success"
+                    }
+                    text={item.content}
+                  ></Badge>
+                </div>
+
+                <div style={{ color: "rgb(136 19 55)" }} className="italic ">
+                  {item.time}
+                </div>
                 <div>
                   {item.type === "Online" ? (
                     <a href={item.link} target="_blank">
@@ -150,7 +178,7 @@ const SchedulePage = (props) => {
                   )}
                 </div>
               </li>
-            )
+            </div>
           );
         })}
       </ul>

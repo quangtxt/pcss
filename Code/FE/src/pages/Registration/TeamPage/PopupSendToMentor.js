@@ -16,8 +16,8 @@ import {
 
 const PopupSendToMentor = (props) => {
   const {
-    isVisiblePopup,
-    setIsVisiblePopup,
+    isVisiblePopupSend,
+    setIsVisiblePopupSend,
     handleClosePopup,
     members,
     group,
@@ -65,16 +65,12 @@ const PopupSendToMentor = (props) => {
     setListMentor((prevList) => [...prevList, option]);
     setOptions(getOptions().filter((opt) => !prevMentors.includes(opt)));
   };
-  
-  
+
   const handleSend = async () => {
     try {
       console.log("ListMentor : ", listMentor);
       loadingAnimationStore.showSpinner(true);
-      const response = await groupStore.submitGroup(
-        group?.id,
-        listMentor,
-      );
+      const response = await groupStore.submitGroup(group?.id, listMentor);
       if (response.status === 200) {
         //sua gr thanh cong
         // setRefresh(true);
@@ -111,13 +107,13 @@ const PopupSendToMentor = (props) => {
       event.preventDefault();
     }
   };
-  
+
   return (
     <Modal
       title="Send Invitation for Mentor"
       footer={null}
       closable={true}
-      visible={isVisiblePopup}
+      visible={isVisiblePopupSend}
       onCancel={handleClosePopup}
       width="60%"
       style={{ top: 20 }}

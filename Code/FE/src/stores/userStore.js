@@ -12,17 +12,14 @@ class UserStore {
   @action
   getUserNotificationList = (filterUnread) => {
     return new Promise((resolve, reject) => {
-      console.log("mes", filterUnread);
       UserRequest.getCurrentUserNotification(
         this.userNotificationListPageIndex,
         this.userNotificationListPageSize,
         filterUnread
       )
         .then((response) => {
-          console.log("Response data", response.data.content);
           this.userNotificationList = response.data.content;
           this.userNotificationListTotalCount = response.data.totalElements;
-
           resolve(response);
         })
         .catch((error) => {
@@ -32,13 +29,17 @@ class UserStore {
     });
   };
 
+  @action setFilter = (filterName, filterValue) => {
+    if (typeof filterName !== "string") return;
+    this[filterName] = filterValue;
+  };
+
   /** Clears the user notification list store */
   clearStore = () => {
     this.userNotificationList = [];
     this.userNotificationListTotalCount = 0;
     this.userNotificationListPageIndex = 0;
     this.userNotificationListPageSize = 5;
-    console.log("clearStore userStore");
   };
 }
 

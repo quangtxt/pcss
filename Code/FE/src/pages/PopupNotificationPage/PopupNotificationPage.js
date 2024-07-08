@@ -74,8 +74,8 @@ const PopupNotificationPage = (props) => {
       //   return history.push(`/internal-document/outgoing-document/view/${id}`);
       // case NOTIFICATION_STATUS.INCOMING:
       //   return history.push(`/internal-document/incoming-document/view/${id}`);
-      case NOTIFICATION_STATUS.GENERAL:
-        return history.push(`/utility/general-notifications/view/${id}`);
+      case NOTIFICATION_STATUS.REQUESTGROUP:
+        return history.push(`/registration/myRequest`);
       case NOTIFICATION_STATUS.NEWS:
         return history.push(`/utility/general-notifications/view/${id}`);
 
@@ -94,9 +94,10 @@ const PopupNotificationPage = (props) => {
           changedTabsNotification.onlyNewsNotification === onlyNewsNotification
         ) {
           const { data } = await notificationStore.getCurrentUserNotification(
-            onlyNewsNotification
+            onlyNewsNotification,
+            false
           );
-          setItems([...data.content]);
+          setItems([...data.data]);
         }
       } catch (error) {
         console.log(error);
@@ -145,23 +146,16 @@ const PopupNotificationPage = (props) => {
               <List.Item
                 style={{ borderBottom: "1px solid #f0f0f0" }}
                 onClick={() => {
-                  // setVisibleNotification()
+                  setVisibleNotification(false);
                   handleReadNotify(item.id, item.status, 1);
-                  goToContentNotification(item.type, item.code);
+                  goToContentNotification(
+                    item?.notification.type,
+                    item?.notification.code
+                  );
                 }}
               >
                 <ListItemWrapper isRead={item.status}>
                   <ListItemLeft>
-                    <div>
-                      <AvatarItem
-                        src={
-                          item.userImage &&
-                          `${apiUrl}/api/v1/images/${item.userImage}`
-                        }
-                      >
-                        {subStringAvatar(item.owner)}
-                      </AvatarItem>
-                    </div>
                     <div
                       style={{
                         display: "flex",
@@ -169,21 +163,23 @@ const PopupNotificationPage = (props) => {
                         justifyContent: "center",
                       }}
                     >
-                      <ContentNotification isRead={item.status}>
+                      <ContentNotification isRead={item.notification.status}>
                         <span
                           className={"notification-content"}
                           dangerouslySetInnerHTML={{
-                            __html: item.content.trim(),
+                            __html: item.notification.content.trim(),
                           }}
                         />
                       </ContentNotification>
                       <span style={{ color: blue }}>
-                        {date_format.renderTime(item.time_created)}
+                        {date_format.renderTime(item.notification.timeCreated)}
                       </span>
                     </div>
                   </ListItemLeft>
                   <ListItemRight>
-                    <div>{StatusTag("NOTIFICATION", item.type)}</div>
+                    <div>
+                      {StatusTag("NOTIFICATION", item.notification.type)}
+                    </div>
                   </ListItemRight>
                 </ListItemWrapper>
               </List.Item>

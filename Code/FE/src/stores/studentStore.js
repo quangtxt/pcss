@@ -21,9 +21,6 @@ class StudentStore {
         .then((response) => {
           this.studentListTotalCount = response.data.totalCount;
           this.studentList = response.data.data;
-          console.log("count", response.data.totalCount);
-          console.log("data", response.data.data);
-          console.log("respon", response.data);
           resolve(response);
         })
         .catch((error) => {
@@ -34,8 +31,7 @@ class StudentStore {
   @action getStudentsToInvite = () => {
     return new Promise((resolve, reject) => {
       StudentRequest.getStudentsToInvite()
-        .then((response) => {       
-          console.log("dataStudent", response);
+        .then((response) => {
           resolve(response);
         })
         .catch((error) => {

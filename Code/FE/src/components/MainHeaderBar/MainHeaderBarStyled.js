@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components'
+import styled, { css } from "styled-components";
 
 export const LogoWrapper = styled.div`
   display: flex;
@@ -29,12 +29,12 @@ export const LogoWrapper = styled.div`
       &:hover,
       &.active-category {
         border-bottom: 2px solid transparent;
-        border-top: 2px solid ${props => props.theme.solidColor};
-        color: ${props => props.theme.solidColor};
+        border-top: 2px solid ${(props) => props.theme.solidColor};
+        color: ${(props) => props.theme.solidColor};
       }
     }
   }
-`
+`;
 export const AvatarWrapper = styled.div`
   overflow: hidden;
   border-radius: 50%;
@@ -49,20 +49,20 @@ export const AvatarWrapper = styled.div`
     object-fit: cover;
     object-position: center;
   }
-`
+`;
 export const MenuWrapper = styled.div`
   display: flex;
   align-items: center;
-`
+`;
 export const UserMenuWrapper = styled.div`
   display: flex;
   align-items: center;
   padding: 15px;
-`
+`;
 export const NotificationMenu = styled.a`
   display: flex;
   align-items: center;
-  margin-right: ${props => (props.hasNotification !== 0 ? '22px' : '10px')};
+  margin-right: ${(props) => (props.hasNotification !== 0 ? "22px" : "10px")};
   &:hover {
     cursor: pointer;
   }
@@ -70,7 +70,7 @@ export const NotificationMenu = styled.a`
     font-size: 24px;
     color: rgba(0, 0, 0);
   }
-`
+`;
 export const SettingMenu = styled.a`
   display: flex;
   align-items: center;
@@ -78,7 +78,7 @@ export const SettingMenu = styled.a`
     font-size: 22px;
     color: rgba(0, 0, 0);
   }
-`
+`;
 export const DropdownMenuHeader = styled.div`
   display: flex;
   justify-content: space-between;
@@ -88,7 +88,7 @@ export const DropdownMenuHeader = styled.div`
     font-weight: 600;
     margin-right: 100px;
   }
-`
+`;
 export const NotificationItem = styled.a`
   display: flex;
   justify-content: space-between;
@@ -102,7 +102,7 @@ export const NotificationItem = styled.a`
     overflow: hidden;
     color: rgba(0, 0, 0);
     text-overflow: ellipsis;
-    font-weight: ${props => (props.isRead ? 'normal' : 800)};
+    font-weight: ${(props) => (props.isRead ? "normal" : 800)};
   }
   small,
   time {
@@ -114,7 +114,7 @@ export const NotificationItem = styled.a`
     padding: 0 5px !important;
     min-width: unset !important;
   }
-`
+`;
 export const UserMenu = styled.a`
   display: flex;
   align-items: center;
@@ -124,30 +124,30 @@ export const UserMenu = styled.a`
   &:hover {
     color: rgba(0, 0, 0);
   }
-`
+`;
 
 export const ThemeChanger = styled.ul`
   display: flex;
   align-items: center;
-`
+`;
 export const ThemeItem = styled.li`
   display: block;
   width: 20px;
   height: 20px;
   margin-right: 5px;
   border-radius: 2px;
-  background: ${props => props.theme};
+  background: ${(props) => props.theme};
   padding: 0 !important;
   position: relative;
   &:hover {
     cursor: pointer;
   }
-  ${props =>
+  ${(props) =>
     props.isCurrent &&
     css`
       &:before {
         display: block;
-        content: '';
+        content: "";
         width: 6px;
         height: 10px;
         border-right: 2px solid white;
@@ -158,7 +158,7 @@ export const ThemeItem = styled.li`
         transform: translate(-50%, -50%) rotate(45deg);
       }
     `}
-`
+`;
 export const TaskSearchBarWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -190,4 +190,62 @@ export const TaskSearchBarWrapper = styled.div`
       z-index: 1;
     }
   }
-`
+`;
+
+export const Notification = styled.div`
+  ul {
+    padding-left: 0px;
+  }
+
+  .notify-content {
+    display: flex;
+    width: 95%;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .notify-content p {
+    margin-bottom: 0px;
+  }
+
+  .showTime {
+    color: #006699;
+    margin-top: 4px;
+  }
+
+  .listNoti li {
+    width: 98%;
+    padding: 10px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    font-size: 16px;
+    font-weight: 600;
+    position: relative; /* Đảm bảo các phần tử con có thể được định vị tương đối */
+  }
+
+  .listNoti {
+    height: 420px;
+    margin-top: 20px;
+    list-style: none;
+    overflow: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content-text {
+    color: #000000;
+  }
+
+  .unread-indicator {
+    width: 10px;
+    height: 10px;
+    background-color: #007bff;
+    border-radius: 50%;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+`;

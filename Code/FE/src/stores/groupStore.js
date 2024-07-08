@@ -36,21 +36,21 @@ class GroupStore {
   };
 
   @action editGroup = (
-    groupId,
-    abbreviations,
-    description,
-    keywords,
+    id,
     name,
-    vietnameseTitle
+    description,
+    abbreviations,
+    vietnameseTitle,
+    keywords
   ) => {
     return new Promise((resolve, reject) => {
       GroupRequest.editGroup(
-        groupId,
-        abbreviations,
-        description,
-        keywords,
+        id,
         name,
-        vietnameseTitle
+        description,
+        abbreviations,
+        vietnameseTitle,
+        keywords
       )
         .then((response) => {
           resolve(response);
@@ -199,6 +199,5 @@ class GroupStore {
         });
     });
   };
-  
 }
 export default new GroupStore();
