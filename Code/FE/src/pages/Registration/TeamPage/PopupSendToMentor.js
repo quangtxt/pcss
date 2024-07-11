@@ -29,12 +29,10 @@ const PopupSendToMentor = (props) => {
 
   const { mentorList, setFilter } = mentorStore;
 
-  const { TextArea } = Input;
   const [form] = Form.useForm();
-  const [mentor, setMentor] = useState();
   const [selectedOption1, setSelectedOption1] = useState(null);
   const [selectedOption2, setSelectedOption2] = useState(null);
-  const [listMentor, setListMentor] = useState([]);
+  const [excludedMentors, setExcludedMentors] = useState([]);
 
   useEffect(() => {
     if (authenticationStore.currentUser) {
@@ -42,6 +40,7 @@ const PopupSendToMentor = (props) => {
       mentorStore.getMentorList().finally(() => {
         loadingAnimationStore.setTableLoading(false);
       });
+      console.log("mentorList", mentorList);
       form.setFieldsValue({
         name: group?.name,
         abbreviations: group?.abbreviations,
@@ -55,15 +54,47 @@ const PopupSendToMentor = (props) => {
     };
   }, [authenticationStore.currentUser, group]);
 
-  const handleOptionChange1 = (option) => {
-    setSelectedOption1(option);
-    setListMentor((prevList) => [...prevList, option]);
+  const updateExcludedMentors = (oldValue, newValue) => {
+    setExcludedMentors((prev) => {
+      const newExcluded = [...prev];
+      if (oldValue) {
+        const index = newExcluded.indexOf(oldValue.label);
+        if (index > -1) {
+          newExcluded.splice(index, 1);
+        }
+      }
+      if (newValue) {
+        newExcluded.push(newValue);
+      }
+      return newExcluded;
+    });
   };
 
-  const handleOptionChange2 = (option) => {
-    setSelectedOption2(option);
-    setListMentor((prevList) => [...prevList, option]);
-    setOptions(getOptions().filter((opt) => !prevMentors.includes(opt)));
+  const handleOptionChange1 = (value, option) => {
+    setSelectedOption1(value);
+    // setExcludedMentors([...excludedMentors, option.label]);
+    updateExcludedMentors(selectedOption1, option.label);
+    console.log("ExcludedMentors", excludedMentors);
+  };
+
+  const handleOptionChange2 = (value, option) => {
+    setSelectedOption2(value);
+    // setExcludedMentors([...excludedMentors, option.label]);
+    updateExcludedMentors(selectedOption2, option.label);
+    console.log("ExcludedMentors", excludedMentors);
+  };
+
+  const getOptions = () => {
+    if (mentorList.length > 0) {
+      return mentorList
+        .filter((mentor) => !excludedMentors.includes(mentor.user.email))
+        .map((mentor) => ({
+          value: mentor.id,
+          label: mentor.user.email,
+        }));
+    } else {
+      return [{ value: "", label: "Loading..." }];
+    }
   };
 
   const handleSend = async () => {
@@ -74,7 +105,7 @@ const PopupSendToMentor = (props) => {
       if (response.status === 200) {
         //sua gr thanh cong
         // setRefresh(true);
-        setIsVisiblePopup(false);
+        setIsVisiblePopupSend(false);
         message.success("Submit group successfully");
       }
     } catch (err) {
@@ -83,28 +114,6 @@ const PopupSendToMentor = (props) => {
       message.error(err.en || "Login failed response status!");
     } finally {
       loadingAnimationStore.showSpinner(false);
-    }
-  };
-
-  const getOptions = () => {
-    if (mentorList.length > 0) {
-      return mentorList.map((mentor) => ({
-        value: mentor.id,
-        label: mentor.user.email,
-      }));
-    } else {
-      return [{ value: "", label: "Loading..." }];
-    }
-  };
-  const handleMenuOpen = () => {
-    setIsMenuOpen(true);
-  };
-  const handleMenuClose = () => {
-    setIsMenuOpen(false);
-  };
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter" && !isMenuOpen) {
-      event.preventDefault();
     }
   };
 
@@ -166,12 +175,13 @@ const PopupSendToMentor = (props) => {
         <InviteContainer>
           <InviteInput>
             <Select
+              labelInValue
               value={selectedOption1}
               components={{
                 DropdownIndicator: () => null,
                 IndicatorSeparator: () => null,
               }}
-              onChange={handleOptionChange1}
+              onChange={(value, option) => handleOptionChange1(value, option)}
               options={getOptions()}
               placeholder="Example@fpt.edu.vn"
             />
@@ -183,12 +193,13 @@ const PopupSendToMentor = (props) => {
         <InviteContainer>
           <InviteInput>
             <Select
+              labelInValue
               value={selectedOption2}
               components={{
                 DropdownIndicator: () => null,
                 IndicatorSeparator: () => null,
               }}
-              onChange={handleOptionChange2}
+              onChange={(value, option) => handleOptionChange2(value, option)}
               options={getOptions()}
               placeholder="Example@fpt.edu.vn"
             />

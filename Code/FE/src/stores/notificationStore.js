@@ -41,7 +41,7 @@ class NotificationStore {
         filter_unread
       )
         .then((response) => {
-          this.notificationList = response.data.content;
+          this.notificationList = response.data.data;
           this.notificationListTotalPage = response.data.total_page;
           this.notificationListTotalCount = response.data.total_count;
           if (only_news_notification === "true") {

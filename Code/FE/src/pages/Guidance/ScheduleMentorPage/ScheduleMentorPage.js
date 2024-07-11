@@ -203,7 +203,9 @@ const ScheduleMentorPage = (props) => {
                 </div>
                 <div>
                   {item.note === "No notes" ? (
-                    item.note
+                    <a onClick={() => handleNoteClick(item.meetingId)}>
+                      {item.note}
+                    </a>
                   ) : (
                     <a onClick={() => handleNoteClick(item.meetingId)}>
                       {item.note}
