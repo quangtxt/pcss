@@ -2,8 +2,12 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { Badge, Calendar, Button } from "antd";
-import { CloseCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { Badge, Calendar, Button, Dropdown, Menu } from "antd";
+import {
+  CloseCircleOutlined,
+  CheckCircleOutlined,
+  MoreOutlined,
+} from "@ant-design/icons";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 import { Helmet } from "react-helmet/es/Helmet";
 import PageTitle from "../../../components/PageTitle";
@@ -118,33 +122,6 @@ const SchedulePage = (props) => {
               className="p-3 rounded shadow-lg "
             >
               <li key={item.content}>
-                <div className="flex place-items-center">
-                  <div>
-                    {moment(item.endMeeting) > new Date() ? (
-                      <Dropdown
-                        overlay={
-                          <Menu
-                            onClick={(e) => handleMenuClick(e, item.meetingId)}
-                          >
-                            <Menu.Item key="edit-meeting">
-                              Edit meeting
-                            </Menu.Item>
-                            <Menu.Item key="remove-meeting">
-                              Remove meeting
-                            </Menu.Item>
-                          </Menu>
-                        }
-                      >
-                        <Button type="text" className="p-0">
-                          <MoreOutlined style={{ fontSize: "15px" }} />
-                        </Button>
-                      </Dropdown>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                </div>
-
                 <div>
                   <Badge
                     className="font-semibold"
@@ -170,7 +147,9 @@ const SchedulePage = (props) => {
                 </div>
                 <div>
                   {item.note === "No notes" ? (
-                    item.note
+                    <a onClick={() => handleNoteClick(item.meetingId)}>
+                      {item.note}
+                    </a>
                   ) : (
                     <a onClick={() => handleNoteClick(item.meetingId)}>
                       {item.note}

@@ -26,6 +26,44 @@ const disabledDate = (current) => {
   return current && current < dayjs().endOf("day");
 };
 
+const range = (start, end) => {
+  const result = [];
+  for (let i = start; i < end; i++) {
+    result.push(i);
+  }
+  return result;
+};
+
+const disabledRangeTime = (_, type) => {
+  if (type === "start") {
+    return {
+      disabledHours: () => range(0, 7).concat(range(19, 24)),
+      disabledMinutes: (selectedHour) => {
+        if (selectedHour === 7) {
+          return range(0, 30);
+        }
+        if (selectedHour === 18) {
+          return range(41, 60);
+        }
+        return [];
+      },
+    };
+  }
+  return {
+    disabledHours: () => range(0, 6).concat(range(19, 24)),
+    disabledMinutes: (selectedHour) => {
+      if (selectedHour === 6) {
+        return range(41, 60);
+      }
+      if (selectedHour === 18) {
+        return range(0, 40);
+      }
+      return [];
+    },
+    disabledSeconds: () => [0, 1, 2, 3, 4, 5],
+  };
+};
+
 const PopupCreateMeeting = (props) => {
   const {
     isVisiblePopup,
@@ -153,11 +191,12 @@ const PopupCreateMeeting = (props) => {
                 marginBottom: 20,
               }}
               disabledDate={disabledDate}
+              disabledTime={disabledRangeTime}
               showTime={{
                 hideDisabledOptions: true,
                 defaultValue: [
-                  dayjs("00:00:00", "HH:mm:ss"),
-                  dayjs("11:59:59", "HH:mm:ss"),
+                  moment("00:00:00", "HH:mm:ss"),
+                  moment("11:59:59", "HH:mm:ss"),
                 ],
               }}
               format="YYYY-MM-DD HH:mm"

@@ -10,6 +10,7 @@ import { blue } from "../../color";
 import { ListNotification, StyledTabs } from "./NotificationPageStyled";
 import moment from "moment";
 import utils from "../../utils";
+import { NOTIFICATION_STATUS, TYPE_STATUS } from "../../constants";
 
 const { TabPane } = Tabs;
 const NotificationPage = (props) => {
@@ -24,6 +25,7 @@ const NotificationPage = (props) => {
   } = props;
 
   const [items, setItems] = useState([]);
+  const [items1, setItems1] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const onlyNewsNotificationParams = utils.getParameterByName(
@@ -69,6 +71,10 @@ const NotificationPage = (props) => {
           false
         );
         setItems([...data.data]);
+        const {
+          data: data1,
+        } = await notificationStore.getCurrentUserNotification(true, false);
+        setItems1(data1.data);
       } catch (error) {
         console.log(error);
         message.error("Có lỗi xảy ra!");
@@ -80,11 +86,21 @@ const NotificationPage = (props) => {
     })();
   }, [notificationListPageIndex, notificationListPageSize]);
   const handleNotificationClick = (type) => {
-    if (type === "REQUESTGROUP") {
-      history.push(`/registration/myRequest`);
+    switch (type) {
+      // case NOTIFICATION_STATUS.OUTGOING:
+      //   return history.push(`/internal-document/outgoing-document/view/${id}`);
+      // case NOTIFICATION_STATUS.INCOMING:
+      //   return history.push(`/internal-document/incoming-document/view/${id}`);
+      case NOTIFICATION_STATUS.REQUESTGROUP:
+        return history.push(`/registration/myRequest`);
+      case NOTIFICATION_STATUS.NEWS:
+        return history.push(`/utility/general-notifications/view/${id}`);
+
+      default:
+        return;
     }
   };
-
+  console.log(notificationList);
   const onChangePagination = (e) => {
     setFilter("notificationListPageIndex", e - 1);
     loadingAnimationStore.setTableLoading(true);
@@ -92,7 +108,6 @@ const NotificationPage = (props) => {
       loadingAnimationStore.setTableLoading(false);
     });
   };
-  console.log("notificationList", notificationList);
   return (
     <DashboardLayout>
       <Helmet>
@@ -108,7 +123,41 @@ const NotificationPage = (props) => {
           <Tabs activeKey={activeTab} onChange={onChange}>
             <TabPane tab="Unread Notifications" key="tab1">
               <div className="block isolate">
-                {items.map((notification, index) => (
+                {items.map((notification, index) =>
+                  notification.notification.type !== "NEWS" ? (
+                    <div
+                      className="flex items-center border-b p-4 hover:bg-gray-100 cursor-pointer"
+                      onClick={() =>
+                        handleNotificationClick(notification.notification.type)
+                      }
+                    >
+                      <div className="flex-grow">
+                        <p>{notification.notification.content}</p>
+                        <p className="text-gray-500">
+                          {moment(notification.notification.timeCreated).format(
+                            "MM-DD-YYYY HH:mm:ss A"
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                )}
+              </div>
+              <Pagination
+                onChange={(e) => onChangePagination(e)}
+                hideOnSinglePage={false}
+                total={notificationListTotalCount}
+                pageSize={notificationListPageSize}
+                current={notificationListPageIndex + 1}
+                showSizeChanger={false}
+                showLessItems
+              />
+            </TabPane>
+            <TabPane tab="All Notifications" key="tab2">
+              <div className="block isolate">
+                {items1.map((notification, index) => (
                   <div
                     className="flex items-center border-b p-4 hover:bg-gray-100 cursor-pointer"
                     onClick={() =>
@@ -136,7 +185,6 @@ const NotificationPage = (props) => {
                 showLessItems
               />
             </TabPane>
-            <TabPane tab="All Notifications" key="tab2"></TabPane>
           </Tabs>
         </ListNotification>
       </ContentBlockWrapper>

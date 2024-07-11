@@ -256,7 +256,7 @@ const RegTeamPage = (props) => {
                   shape="round"
                   icon={<SendOutlined />}
                   size={size}
-                  onClick={showConfirmModal}
+                  onClick={navigateToSend}
                 >
                   Cancel Request
                 </Button>
