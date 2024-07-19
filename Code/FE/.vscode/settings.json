@@ -1,2 +1,4 @@
 {
+  "animations.Default-Duration": 200,
+  "animations.CursorAnimation": true
 }

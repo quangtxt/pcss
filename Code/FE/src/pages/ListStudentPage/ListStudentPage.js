@@ -14,9 +14,14 @@ import ContentBlockWrapper from "../../components/ContentBlockWrapper";
 import PageTitle from "../../components/PageTitle";
 import { Helmet } from "react-helmet/es/Helmet";
 import { FlexBox, ForContent, TableStudents } from "./ListStudentPageStyled";
-import { Profile, GroupButton } from "../ProfilePage/ProfilePageStyled";
+import {
+  Profile,
+  GroupButton,
+  NoMarginBottom,
+} from "../ProfilePage/ProfilePageStyled";
 import TableComponent from "../../components/Common/TableComponent";
 import PopupImportExcel from "./PopupImportExcel";
+import PopupCreateStudent from "./PopupCreateStudent";
 
 const { Search } = Input;
 const { TextArea } = Input;
@@ -50,15 +55,6 @@ const ListStudentPage = (props) => {
     };
   }, [authenticationStore.currentUser]);
 
-  // const onSearchByEmailOrName = (keyword) => {
-  //   setFilter("studentListPageIndex", 0);
-  //   setFilter("studentListKeyword", keyword);
-  //   loadingAnimationStore.setTableLoading(true);
-  //   studentStore.getStudentList().finally(() => {
-  //     loadingAnimationStore.setTableLoading(false);
-  //   });
-  // };
-
   const onChangePagination = (e) => {
     setFilter("studentListPageIndex", e - 1);
     loadingAnimationStore.setTableLoading(true);
@@ -69,7 +65,13 @@ const ListStudentPage = (props) => {
   const [isAdd, setIsAdd] = useState(false);
   const [isImport, setIsImport] = useState(false);
 
-  const [isVisiblePopup, setIsVisiblePopup] = useState(false);
+  const [isVisiblePopupImportExcel, setIsVisiblePopupImportExcel] = useState(
+    false
+  );
+  const [
+    isVisiblePopupCreateStudent,
+    setIsVisiblePopupCreateStudent,
+  ] = useState(false);
   const showConfirmModal = (action, record) => {
     Modal.confirm({
       title: `Are you sure you want to ${action} this group?`,
@@ -169,16 +171,23 @@ const ListStudentPage = (props) => {
                   className="searchInput"
                 />
               </div>
-              <GroupButton className="grBtn">
-                <Button className="btnAdd" onClick={handleAdd}>
+              <div className="flex items-center justify-center gap-4">
+                <Button
+                  type="primary"
+                  className="flex items-center justify-center"
+                  onClick={setIsVisiblePopupCreateStudent}
+                >
                   <UserAddOutlined />
                   Add a Student
                 </Button>
-                <Button className="btnImport" onClick={setIsVisiblePopup}>
+                <Button
+                  className="flex items-center justify-center"
+                  onClick={setIsVisiblePopupImportExcel}
+                >
                   <FolderAddOutlined />
                   Import Excel
                 </Button>
-              </GroupButton>
+              </div>
             </FlexBox>
             <TableComponent
               rowKey={(record) => record.id}
@@ -206,45 +215,15 @@ const ListStudentPage = (props) => {
               showLessItems
             />
           </div>
-          {/* <Form
-            {...formItemLayout}
-            variant="filled"
-            onFinish={handleSubmit}
-            className={`changeEmail ${isAdd ? "active" : ""}`}
-          >
-            <p className="bigTitle">Enter Student's Information</p>
-            <div className="inputForm">
-              <Form.Item
-                label="Email"
-                name="email"
-                rules={[{ required: true, message: "Please input!" }]}
-              >
-                <Input style={{ maxWidth: "100%" }} placeholder="Enter email" />
-              </Form.Item>
-            </div>
-            <div className="inputForm">
-              <Form.Item
-                label="fullName"
-                name="name"
-                rules={[{ required: true, message: "Please input!" }]}
-              >
-                <Input
-                  style={{ maxWidth: "100%" }}
-                  placeholder="Enter full name"
-                />
-              </Form.Item>
-            </div>
-            <div className="grBtn">
-              <Button className="btnCancel" onClick={handleAdd}>
-                Cancel
-              </Button>
-              <Button className="btnEdit">Submit</Button>
-            </div>
-          </Form> */}
           <PopupImportExcel
-            isVisiblePopup={isVisiblePopup}
-            setIsVisiblePopup={setIsVisiblePopup}
-            handleClosePopup={() => setIsVisiblePopup(false)}
+            isVisiblePopup={isVisiblePopupImportExcel}
+            setIsVisiblePopup={setIsVisiblePopupImportExcel}
+            handleClosePopup={() => setIsVisiblePopupImportExcel(false)}
+          />
+          <PopupCreateStudent
+            isVisiblePopup={isVisiblePopupCreateStudent}
+            setIsVisiblePopup={setIsVisiblePopupCreateStudent}
+            handleClosePopup={() => setIsVisiblePopupCreateStudent(false)}
           />
           <div
             className={`overlay ${isAdd ? "active" : ""} ${
