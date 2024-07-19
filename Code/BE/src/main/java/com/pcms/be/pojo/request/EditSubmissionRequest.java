@@ -1,7 +1,5 @@
 package com.pcms.be.pojo.request;
 
-import com.pcms.be.domain.Milestone;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

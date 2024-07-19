@@ -6,17 +6,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SemesterDTO {
-    public Long id;
-    public String code;
-    public String name;
-    public OffsetDateTime beginAt;
-    public OffsetDateTime endAt;
-    private List<SemesterMilestone2DTO> milestones;
+public class SemesterMilestoneDTO {
+    public Long milestone_id;
+    public OffsetDateTime start_date;
+    public OffsetDateTime end_date;
+    public String duration;
+
 }

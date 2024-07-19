@@ -1,6 +1,5 @@
 package com.pcms.be.pojo.request;
 
-import com.pcms.be.domain.Submission;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,5 +17,4 @@ public class EditMilestoneRequest {
     private String name;
     private OffsetDateTime beginAt;
     private int duration;
-    private List<Submission> submissions;
 }

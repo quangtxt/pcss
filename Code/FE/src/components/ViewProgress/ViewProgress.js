@@ -1,0 +1,78 @@
+import React, { memo, useCallback, useEffect, useState } from "react";
+import PropTypes from "prop-types";
+// Component
+// Ant design
+import { Avatar, Badge, Dropdown, Menu, message, Tabs, Steps } from "antd";
+import {
+  BellFilled,
+  CloseOutlined,
+  LogoutOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+// Other
+import { inject, observer } from "mobx-react";
+import { withRouter } from "react-router-dom";
+import moment from "moment";
+
+const { Step } = Steps;
+const ViewProgress = (props) => {
+  const { history, semesterStore, id } = props;
+  const currentDate = moment();
+  const [milestones, setMilestone] = useState([]);
+
+  useEffect(() => {
+    getMilestoneGuidance();
+  }, [id]);
+  const getMilestoneGuidance = async () => {
+    try {
+      const res = await semesterStore.getMilestoneGuidancePhase(id);
+      setMilestone(res.data);
+      console.log("mile", res.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getCurrentStepIndex = () => {
+    for (let i = 0; i < milestones.length; i++) {
+      if (
+        currentDate.isBetween(
+          milestones[i].startDate,
+          milestones[i].endDate,
+          null,
+          "[]"
+        )
+      ) {
+        return i;
+      }
+    }
+    return -1;
+  };
+
+  const currentStepIndex = getCurrentStepIndex();
+  return (
+    <Steps current={currentStepIndex === -1 ? 0 : currentStepIndex}>
+      {milestones.map((milestone, index) => (
+        <Step
+          key={index}
+          title={milestone.milestone?.name}
+          status={
+            currentStepIndex === -1
+              ? "wait"
+              : index < currentStepIndex
+              ? "finish"
+              : index === currentStepIndex
+              ? "process"
+              : "wait"
+          }
+        />
+      ))}
+    </Steps>
+  );
+};
+
+export default memo(
+  withRouter(
+    inject("semesterStore", "loadingAnimationStore")(observer(ViewProgress))
+  )
+);

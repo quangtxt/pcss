@@ -1,15 +1,12 @@
 package com.pcms.be.domain;
 
 import com.pcms.be.domain.user.Group;
-import com.pcms.be.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.time.OffsetDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -23,26 +20,23 @@ public class Milestone implements Serializable {
 
     @Column(name = "name")
     public String name;
+    @Column(name = "requirement")
+    public String requirement;
+    @Column(name = "product")
+    public String product;
+    @Column(name = "time")
+    public String time;
+    @Column(name = "person")
+    public String person;
+    @Column(name = "parent")
+    public Long parent;
 
-    @Column(name = "start_at")
-    public OffsetDateTime beginAt;
-
-    @Column(name = "duration")
-    public int duration;
-
-    @ManyToOne
-    @JoinColumn(name = "phase_id")
-    private CapstonePhase phase;
-
-    @OneToMany(mappedBy = "milestone", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Submission> submissions;
+    @ManyToMany(mappedBy = "milestones")
+    private Set<Semester> semesters = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "v_milestone_group",
             joinColumns = @JoinColumn(name = "milestone_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id"))
     private Set<Group> groups = new HashSet<>();
-
-//    @Column(name = "status")
-//    private String status;
 }

@@ -206,7 +206,7 @@ const ListStudentPage = (props) => {
               showLessItems
             />
           </div>
-          <Form
+          {/* <Form
             {...formItemLayout}
             variant="filled"
             onFinish={handleSubmit}
@@ -240,7 +240,7 @@ const ListStudentPage = (props) => {
               </Button>
               <Button className="btnEdit">Submit</Button>
             </div>
-          </Form>
+          </Form> */}
           <PopupImportExcel
             isVisiblePopup={isVisiblePopup}
             setIsVisiblePopup={setIsVisiblePopup}

@@ -1,10 +1,5 @@
-import {
-  FileTextOutlined,
-  LeftOutlined,
-  RightOutlined,
-  QuestionOutlined,
-} from "@ant-design/icons";
-import { Button, message, Table, Collapse, Row, Col } from "antd";
+import { FileExcelOutlined } from "@ant-design/icons";
+import { Button, message, Table, Collapse, Row, Tabs, Col } from "antd";
 import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { runInAction, toJS } from "mobx";
@@ -18,18 +13,21 @@ import React, {
   useLayoutEffect,
 } from "react";
 import { Helmet } from "react-helmet/es/Helmet";
-
+import { DATE_FORMAT_SLASH } from "../../constants";
+import uuid from "uuid";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import utils from "../../utils";
 import validator from "../../validator";
 import { FormLogin, LoginWrapper, Container } from "./HomePageStyled";
 const { Panel } = Collapse;
+const { TabPane } = Tabs;
 const HomePage = (props) => {
   const {
     history,
     location,
     authenticationStore,
     loadingAnimationStore,
+    semesterStore,
   } = props;
 
   const {
@@ -102,7 +100,6 @@ const HomePage = (props) => {
       if (response.status === 200) {
         loadingAnimationStore.showSpinner(true);
         const res = await authenticationStore.checkCurrentUser();
-        console.log(res);
         message.success(
           `Xin chào, ${utils.getNameInCapitalize(res.data.username)}!`
         );
@@ -234,355 +231,176 @@ const HomePage = (props) => {
       </LoginWrapper>
     </>
   );
-  const renderTest1 = [
+  const columns = [
     {
-      key: "1",
-      milestone: "Initiation",
-      from: "6/May",
-      to: "11/May",
-      notes: "1 week (week 1)",
+      title: "No.",
+      render: (record) => record.milestone.id,
     },
     {
-      key: "1-1",
-      milestone: "Report 1 (Intro)",
-      from: "",
-      to: "11/May",
-      notes:
-        "Giới thiệu về team, đề tài, các tính/chức năng chính, giải pháp tham khảo (hiện có)",
+      title: "Activity",
+      render: (record) => record.milestone.name,
     },
     {
-      key: "2",
-      milestone: "Definition",
-      from: "13/May",
-      to: "26/May",
-      notes: "2 weeks (weeks 2-3)",
+      title: "Requirements",
+      render: (record) => record.milestone.requirement,
     },
     {
-      key: "2-1",
-      milestone: "Report 2 (Plan)",
-      from: "",
-      to: "19/May",
-      notes: "Kế hoạch dự án dự kiến (v0.9)",
+      title: "Product",
+      render: (record) => record.milestone.product,
     },
     {
-      key: "2-2",
-      milestone: "Report 3 (SRS)",
-      from: "",
-      to: "26/May",
-      notes: "Đặc tả yêu cầu tổng quát (v0.9)",
+      title: "Time",
+      render: (record) => record.milestone.time,
     },
     {
-      key: "2-3",
-      milestone: "Project Plan v1.0",
-      from: "",
-      to: "26/May",
-      notes: "Kế hoạch dự án chính thức (v1.0)",
-    },
-    {
-      key: "2-4",
-      milestone: "Tech Prototype",
-      from: "",
-      to: "26/May",
-      notes:
-        "Technical training & prototype (sample workable full-stack codes)",
-    },
-    {
-      key: "3",
-      milestone: "Solution",
-      from: "27/May",
-      to: "9/June",
-      notes: "2 weeks (weeks 4-5)",
-    },
-    {
-      key: "3-1",
-      milestone: "Report 4 (SDD)",
-      from: "",
-      to: "9/June",
-      notes: "Đặc tả thiết kế tổng quát (v0.9)",
-    },
-    {
-      key: "3-2",
-      milestone: "SW Package v0.9",
-      from: "",
-      to: "9/June",
-      notes:
-        "Code/UT xong & demo khung chức năng & một số chức năng chung của ứng dụng",
-    },
-    {
-      key: "3-3",
-      milestone: "Project Plan v1.1",
-      from: "",
-      to: "9/June",
-      notes: "Project plan v1.1, Test plan document",
-    },
-    {
-      key: "3-4",
-      milestone: "SRS v1.0",
-      from: "",
-      to: "9/June",
-      notes: "Detailed requirements for iteration 1",
+      title: "Responsible Person",
+      render: (record) => record.milestone.person,
     },
   ];
-
-  const renderTest = [
-    {
-      key: "1",
-      milestone: "Initiation",
-      from: "6/May",
-      to: "11/May",
-      notes: "1 week (week 1)",
-      details: [
-        {
-          name: "- Report 1 (Intro)",
-          deadline: "11/May",
-          content:
-            "Giới thiệu về team, đề tài, các tính/chức năng chính, giải pháp tham khảo (hiện có)",
-        },
-      ],
-    },
-    {
-      key: "2",
-      milestone: "Definition",
-      from: "13/May",
-      to: "26/May",
-      notes: "2 weeks (weeks 2-3)",
-      details: [
-        {
-          name: "- Report 2 (Plan)",
-          deadline: "19/May",
-          content: "Kế hoạch dự án dự kiến (v0.9)",
-        },
-        {
-          name: "- Report 3 (SRS)",
-          deadline: "26/May",
-          content: "Đặc tả yêu cầu tổng quát (v0.9)",
-        },
-      ],
-    },
-    {
-      key: "3",
-      milestone: "Solution",
-      from: "27/May",
-      to: "9/June",
-      notes: "2 weeks (weeks 4-5)",
-      details: [
-        {
-          name: "Report 4 (SDD)",
-          deadline: "9/June",
-          content: "Đặc tả thiết kế tổng quát (v0.9)",
-        },
-        {
-          name: "SW Package v0.9",
-          deadline: "9/June",
-          content:
-            "Code/UT xong & demo khung chức năng & một số chức năng chung của ứng dụng",
-        },
-        {
-          name: "Project Plan v1.1",
-          deadline: "9/June",
-          content: "Project plan v1.1, Test plan document",
-        },
-        {
-          name: "SRS v1.0",
-          deadline: "9/June",
-          content: "Detailed requirements for iteration 1",
-        },
-      ],
-    },
-  ];
-  const columnMilestonePhase2 = [
+  const columnMilestoneGuidance = [
     {
       title: "#",
       dataIndex: "key",
       key: "key",
+      width: 50,
     },
     {
       title: "Milestone",
-      dataIndex: "milestone",
-      key: "milestone",
+      dataIndex: "name",
+      key: "name",
+      width: 200,
     },
     {
       title: "From",
-      dataIndex: "from",
-      key: "from",
+      render: (record) => record.fromDate.format(DATE_FORMAT_SLASH),
+      width: 200,
     },
     {
       title: "To/Deadline",
-      dataIndex: "to",
-      key: "to",
+      render: (record) => record.toDate.format(DATE_FORMAT_SLASH),
+      width: 200,
     },
     {
       title: "Notes",
-      dataIndex: "notes",
-      key: "notes",
-    },
-  ];
-  const data = [
-    {
-      key: "1",
-      step: "Lập Danh sách sinh viên dự kiến đủ điều kiện làm khóa luận",
-      requirement:
-        "Sinh viên phải đáp ứng yêu cầu môn điều kiện và syllabus khóa luận với giá trị điểm là các môn đang học đều pass.",
-      product: "Danh sách sinh viên dự kiến đủ điều kiện làm đồ án",
-      time: "Tuần 5 của học kỳ n-1",
-      person: "Phòng TC&QLĐT",
-      detail: "",
-      startDate: "2024-04-01",
-      endDate: "2024-04-07",
-    },
-    {
-      key: "2",
-      step: "Tổ chức ORT cho sinh viên",
-      requirement:
-        "100% sinh viên nằm trong DSSV dự kiến đủ điều kiện làm đồ án được mời tham gia ORT.",
-      product: "Thông báo/mời tham gia ORT, Slide ORT",
-      time: "x+4 tuần",
-      person: "Trường ban đào tạo Sinh viên",
-      detail: "",
-      startDate: "2024-07-08",
-      endDate: "2024-07-14",
-    },
-    {
-      key: "3",
-      step: "Tiếp nhận đăng ký đề tài và nhóm",
-      requirement:
-        "Đề tài phải phù hợp với chuyên ngành học của sinh viên, quy mô, phạm vi phải phù hợp với sinh viên và thời gian làm đồ án. Bộ môn cần có ý kiến cho sinh viên và GV hướng dẫn với những đồ án không phù hợp. Số lượng sinh viên tối đa, tối thiểu mỗi nhóm tùy theo từng đề tài.",
-      product: "Phiếu đăng ký đề tài và nhóm",
-      time: "x+4 tuần",
-      person: "Phòng TC&QLĐT Sinh viên",
-      detail: "",
-      startDate: "2024-01-15",
-      endDate: "2024-01-21",
-    },
-    {
-      key: "4",
-      step: "Phân GVHD, ra quyết định giao khóa luận",
-      requirement:
-        "1 GVHD chỉ được hướng dẫn tối đa 4 nhóm trong 1 học kỳ. GVHD có chuyên môn phù hợp với đề tài được giao.",
-      product: "Quyết định giao đề tài",
-      time: "x+2 tuần",
-      person:
-        "Lập: Phòng TC&QLĐT, Trưởng môn các ngành. Phê duyệt: Hiệu trưởng/Giám đốc cơ sở",
-      detail: "",
-      startDate: "2024-01-22",
-      endDate: "2024-01-28",
-    },
-    {
-      key: "5",
-      step: "Tổ chức thực hiện khóa luận",
-      requirement:
-        "Đảm bảo khóa luận đúng tiến độ và nội dung theo yêu cầu của syllabus. Các báo cáo nộp trong quá trình làm phải đúng theo tài liệu hướng dẫn. GVHD phải gặp nhóm làm khóa luận số buổi tối thiểu theo Syllabus.",
-      product:
-        "Khóa luận tốt nghiệp bản cứng/mềm. Các báo cáo và điểm đánh giá theo từng phần.",
-      time: "x+14 tuần",
-      person: "Sinh viên Giảng viên hướng dẫn",
-      detail: (
-        <Collapse accordion>
-          {renderTest.map((item) => (
-            <Panel
-              header={
-                <Row style={{ width: "100%" }}>
-                  <Col span={4}>{item.milestone}</Col>
-                  <Col span={4}>{item.from}</Col>
-                  <Col span={4}>{item.to}</Col>
-                  <Col span={12}>{item.notes}</Col>
-                </Row>
-              }
-              key={item.key}
-            >
-              {item.details.map((detail, index) => (
-                <Row key={index} style={{ paddingLeft: "24px" }}>
-                  <Col xs={8}>{detail.name}</Col>
-                  <Col xs={4}>{detail.deadline}</Col>
-                  <Col xs={12}>{detail.content}</Col>
-                </Row>
-              ))}
-            </Panel>
-          ))}
-        </Collapse>
-      ),
-      startDate: "2024-06-08",
-      endDate: "2024-08-14",
-    },
-    {
-      key: "6",
-      step: "Nhận xét của GVHD",
-      requirement:
-        "Đảm bảo khóa luận được đánh giá đầy đủ theo các tiêu chí theo mẫu nhận xét. GVHD phải gửi phiếu đánh giá về Khoa tối thiểu trước ngày báo vệ 3 ngày. GVHD chuyển điểm thành phần và nhận xét khóa luận trước buổi bảo vệ 3 ngày.",
-      product: "Phiếu nhận xét khóa luận của GVHD",
-      time: "Trước ngày báo vệ 3 ngày",
-      person: "Giảng viên hướng dẫn",
-      detail: "",
-      startDate: "2024-02-05",
-      endDate: "2024-02-11",
-    },
-    // Thêm các bước khác
-  ];
-
-  const columns = [
-    {
-      title: "TT",
-      dataIndex: "key",
-      key: "key",
-    },
-    {
-      title: "Các bước hoạt động",
-      dataIndex: "step",
-      key: "step",
-    },
-    {
-      title: "Yêu cầu của các bước",
-      dataIndex: "requirement",
-      key: "requirement",
-    },
-    {
-      title: "Sản phẩm",
-      dataIndex: "product",
-      key: "product",
-    },
-    {
-      title: "Thời gian thực hiện",
       dataIndex: "time",
       key: "time",
     },
+  ];
+  const columnMilestone2 = [
     {
-      title: "Người thực hiện",
-      dataIndex: "person",
-      key: "person",
+      title: "#",
+      width: 50,
+    },
+    {
+      title: "Product",
+      dataIndex: "product",
+      key: "product",
+      width: 200,
+    },
+    {
+      title: "From",
+      width: 200,
+      // render: (record) => record.fromDate.format(DATE_FORMAT_SLASH),
+    },
+    {
+      title: "To/Deadline",
+      render: (record) => record.toDate.format(DATE_FORMAT_SLASH),
+      width: 200,
+    },
+    {
+      title: "Requirement",
+      dataIndex: "requirement",
+      key: "requirement",
     },
   ];
 
-  const [currentStep, setCurrentStep] = useState(null);
-  const [tableData, setTableData] = useState(data);
-  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+  const [data1, setTable1] = useState();
   useEffect(() => {
-    const today = new Date();
-    const currentMilestone = data.find(
-      (item) =>
-        new Date(item.startDate) <= today && new Date(item.endDate) >= today
-    );
-    if (currentMilestone) {
-      console.log("hi");
-      setCurrentStep(currentMilestone.key);
-      setTableData(
-        !showAllSteps
-          ? data.filter((item) => item.key === currentMilestone.key)
-          : data
-      );
-      setExpandedRowKeys([currentMilestone.key]);
+    getSemester();
+  }, [currentUser]);
+  const [data, setData] = useState([]);
+  const [semesters, setSemesters] = useState([]);
+  const getSemester = async () => {
+    try {
+      const res = await semesterStore.getSemesters();
+      setSemesters(res.data);
+      setSemesterCurrent(res.data);
+    } catch (e) {
+      console.log(e);
     }
-  }, []);
-
-  const [showAllSteps, setShowAllSteps] = useState(false);
-
-  const handleViewAllClick = () => {
-    setShowAllSteps(!showAllSteps);
-    setTableData(
-      showAllSteps ? data.filter((item) => item.key === currentStep) : data
-    );
-    setExpandedRowKeys(!showAllSteps ? [] : [currentStep]);
   };
-  console.log("expandedRowKeys", expandedRowKeys);
+  const setSemesterCurrent = (semesters) => {
+    if (semesters.length > 0) {
+      const currentDate = moment();
+      const closestSemester = semesters.reduce((prev, curr) => {
+        const startDate = moment(curr.beginAt);
+        const endDate = startDate.clone().add(14, "weeks");
+        if (currentDate.isBetween(startDate, endDate, null, "[]")) {
+          return curr;
+        } else {
+          if (prev !== null) {
+            const prevDiff = Math.abs(
+              moment(prev.beginAt).diff(currentDate, "days")
+            );
+            const currDiff = Math.abs(startDate.diff(currentDate, "days"));
+            return currDiff < prevDiff ? curr : prev;
+          } else {
+            // If prev is null, return curr by default
+            return curr;
+          }
+        }
+      }, null);
+
+      if (closestSemester) {
+        setData(transformData(closestSemester.milestones));
+      }
+    }
+  };
+  function transformData(datatrs) {
+    const result = {};
+
+    function buildTree(items) {
+      // Lọc các phần tử có parent là null (cấp gốc)
+      const rootItems = items.filter((item) => item.milestone.parent === null);
+      // Duyệt qua các phần tử ở cấp gốc và xây dựng cây
+      setTable1(rootItems);
+      rootItems.forEach((root) => {
+        result[root.milestone.id] = {
+          id: root.milestone.id,
+          name: root.milestone.name,
+          requirement: root.milestone.requirement,
+          product: root.milestone.product,
+          time: root.milestone.time,
+          person: root.milestone.person,
+          detail: buildSubTree(items, root.milestone.id, 1),
+        };
+      });
+    }
+
+    // Hàm helper để xây dựng các cấp con
+    function buildSubTree(items, parentId, startingChildId) {
+      const children = items.filter(
+        (item) => item.milestone.parent === parentId
+      );
+      return children.map((child, index) => ({
+        id: child.milestone.id,
+        name: child.milestone.name,
+        requirement: child.milestone.requirement,
+        product: child.milestone.product,
+        time: child.milestone.time,
+        person: child.milestone.person,
+        fromDate: moment(child.startDate),
+        toDate: moment(child.endDate),
+        key: `${startingChildId + index}`,
+        detail: buildSubTree(items, child.milestone.id, 1),
+      }));
+    }
+
+    // Bắt đầu xây dựng cây
+    buildTree(datatrs);
+    return Object.values(result);
+  }
+  const exportToExcel = () => {};
 
   return (
     <div>
@@ -595,40 +413,96 @@ const HomePage = (props) => {
             <title>Home</title>
           </Helmet>
           <Container>
-            <div className="flex justify-between items-center border rounded-md shadow-md mb-2 p-2">
-              <div className="font-bold px-4">Minestone</div>
-              <Button onClick={handleViewAllClick} type={"primary"}>
-                {showAllSteps ? "Show Current Step" : "View All Steps"}
-              </Button>
-            </div>
-
-            <Table
-              className="custom-table"
-              columns={columns}
-              expandable={{
-                expandedRowRender: (record) => <>{record.detail}</>,
-                rowExpandable: (record) => record.detail !== "",
-              }}
-              expandedRowKeys={expandedRowKeys}
-              onExpand={(expanded, record) => {
-                if (showAllSteps) {
-                  setExpandedRowKeys(
-                    expanded
-                      ? [...expandedRowKeys, record.key]
-                      : expandedRowKeys.filter((key) => key !== record.key)
-                  );
-                } else {
-                  setExpandedRowKeys(expanded ? [record.key] : []);
-                }
-              }}
-              dataSource={tableData}
-              rowClassName={(record) =>
-                record.key === currentStep && !showAllSteps
-                  ? "current-milestone"
-                  : ""
+            <Tabs
+              defaultActiveKey="tab1"
+              tabBarExtraContent={
+                <Button
+                  type="primary"
+                  icon={<FileExcelOutlined />}
+                  onClick={exportToExcel}
+                >
+                  Export to Excel
+                </Button>
               }
-              pagination={false}
-            />
+            >
+              <TabPane tab="Milestone for guildance phase" key="tab1">
+                <Table
+                  columns={columnMilestoneGuidance}
+                  dataSource={data[4]?.detail}
+                  rowKey={(record) => record.id || uuid()}
+                  pagination={false}
+                  expandable={{
+                    expandedRowRender: (record) => (
+                      <>
+                        {record?.detail[0]?.name == null ? (
+                          <Table
+                            columns={columnMilestone2}
+                            dataSource={record?.detail}
+                            rowKey={(record) => record.id || uuid()}
+                            expandable={false}
+                            pagination={false}
+                            showHeader={false}
+                          />
+                        ) : (
+                          <Collapse accordion>
+                            {record?.detail.map((item) => (
+                              <Panel
+                                header={
+                                  <Row
+                                    style={{
+                                      width: "100%",
+                                      // paddingLeft: "50px",
+                                    }}
+                                  >
+                                    <Col span={4}>{item.name}</Col>
+                                    <Col span={4}>
+                                      {item?.fromDate?.format(
+                                        DATE_FORMAT_SLASH
+                                      )}
+                                    </Col>
+                                    <Col span={4}>
+                                      {item?.toDate?.format(DATE_FORMAT_SLASH)}
+                                    </Col>
+                                    <Col span={12}>{item.time}</Col>
+                                  </Row>
+                                }
+                                key={item.key}
+                              >
+                                {item.detail.map((detail, index) => (
+                                  <Row
+                                    key={index}
+                                    style={{ paddingLeft: "24px" }}
+                                  >
+                                    <Col xs={8}>{detail.product}</Col>
+                                    <Col xs={4}>
+                                      {detail?.toDate?.format(
+                                        DATE_FORMAT_SLASH
+                                      )}
+                                    </Col>
+                                    <Col xs={12}>{detail.time}</Col>
+                                  </Row>
+                                ))}
+                              </Panel>
+                            ))}
+                          </Collapse>
+                        )}
+                      </>
+                    ),
+                    rowExpandable: (record) => record.detail?.length > 0,
+                    expandIconColumnIndex: 0,
+                  }}
+                />
+              </TabPane>
+              <TabPane tab="Milestone" key="tab2">
+                <Table
+                  columns={columns}
+                  dataSource={data1}
+                  rowKey={(record) => record.id || uuid()}
+                  expandable={false}
+                  pagination={false}
+                />
+              </TabPane>
+            </Tabs>
           </Container>
         </DashboardLayout>
       ) : (
@@ -639,5 +513,9 @@ const HomePage = (props) => {
 };
 
 export default memo(
-  inject("loadingAnimationStore", "authenticationStore")(observer(HomePage))
+  inject(
+    "loadingAnimationStore",
+    "authenticationStore",
+    "semesterStore"
+  )(observer(HomePage))
 );
