@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, message, Modal, Space, Input, Upload } from "antd";
+import {
+  Button,
+  Form,
+  message,
+  Modal,
+  Space,
+  Input,
+  Upload,
+  Typography,
+} from "antd";
 import { withRouter } from "react-router-dom";
 import { inject, observer } from "mobx-react";
 import {
@@ -12,10 +21,12 @@ import {
   Profile,
   GroupButton,
   BoldContent,
+  NoMarginBottom,
 } from "../ProfilePage/ProfilePageStyled";
 import { FlexBox, PopupImport } from "./ListStudentPageStyled";
 import TableComponent from "../../components/Common/TableComponent";
 
+const { Title } = Typography;
 const PopupImportExcel = (props) => {
   const { isVisiblePopup, setIsVisiblePopup, handleClosePopup } = props;
   const { TextArea } = Input;
@@ -95,45 +106,38 @@ const PopupImportExcel = (props) => {
   return (
     <Modal
       footer={null}
+      title={
+        <NoMarginBottom>
+          <Title level={4}>Import file excel</Title>
+        </NoMarginBottom>
+      }
       className="custom-modal"
       closable={true}
       visible={isVisiblePopup}
       onCancel={handleClosePopup}
-      width={1200}
     >
-      <Profile>
-        <Form form={form}>
-          <FlexBox style={{ margin: "20px 0", gap: "20px" }}>
-            <BoldContent>Import file excel:</BoldContent>
-            <Upload>
-              <Button className="btnUpload">
-                <UploadOutlined />
-                Click to Upload
-              </Button>
-            </Upload>
-            <Button className="btnDownload">
-              <VerticalAlignBottomOutlined />
-              Download template
-            </Button>
-          </FlexBox>
-          <PopupImport>
-            <TableComponent
-              rowKey={(record) => record.id || uuid()}
-              dataSource={mentorList}
-              columns={columns}
-              pagination={false}
-              loading={loadingAnimationStore.tableLoading}
-              className="tbStudent"
-            />
-          </PopupImport>
-          <GroupButton>
-            <Button className="btnCancel" onClick={handleClosePopup}>
-              Cancel
-            </Button>
-            <Button className="btnEdit">Submit</Button>
-          </GroupButton>
-        </Form>
-      </Profile>
+      <Form form={form}>
+        <div className="flex items-center justify-center gap-6 mb-4">
+          <Button
+            className="flex items-center justify-center text-white"
+            style={{ backgroundColor: "#0F9D58" }}
+          >
+            <UploadOutlined />
+            Click to Upload
+          </Button>
+
+          <Button className="flex items-center justify-center">
+            <VerticalAlignBottomOutlined />
+            Download template
+          </Button>
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <Button type="danger" onClick={handleClosePopup}>
+            Cancel
+          </Button>
+          <Button type="primary">Submit</Button>
+        </div>
+      </Form>
     </Modal>
   );
 };
