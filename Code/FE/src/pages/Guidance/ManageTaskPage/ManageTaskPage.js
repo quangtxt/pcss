@@ -209,11 +209,11 @@ const ManageTaskPage = (props) => {
   return (
     <DashboardLayout>
       <Helmet>
-        <title>Quản lý Backlog</title>
+        <title>Manager Backlog</title>
       </Helmet>
       <PageTitle
         location={props.location}
-        title={"Quản lý Backlog"}
+        title={"Manager Backlog"}
         hiddenGoBack
       ></PageTitle>
       <ContentBlockWrapper>

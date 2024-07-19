@@ -6,7 +6,8 @@ import { QuestionCircleOutlined } from "@ant-design/icons";
 import htmlToPdfmake from "html-to-pdfmake";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-
+import moment, { duration } from "moment";
+import { DATE_FORMAT_SLASH } from "./constants";
 /** App utils */
 const { confirm } = Modal;
 const utils = {
@@ -439,6 +440,135 @@ const utils = {
     if (!results) return null;
     if (!results[2]) return "";
     return decodeURIComponent(results[2].replace(/\+/g, " "));
+  },
+  executeFromDate(startDate, timeString, holidays) {
+    const match = timeString.match(/(\d+) (week|weeks) \(weeks (\d+)-(\d+)\)/);
+    if (match) {
+      const duration = parseInt(match[1]);
+      const startWeek = parseInt(match[3]);
+      const startDate_moment = moment(startDate);
+      let fromDate_moment = startDate_moment
+        .clone()
+        .add(startWeek - 1, "weeks");
+
+      if (holidays) {
+        const holidayStart = moment(holidays[0]);
+        const holidayEnd = moment(holidays[1]);
+        if (
+          fromDate_moment.diff(holidayStart, "days") == 0 ||
+          fromDate_moment.isAfter(holidayEnd)
+        ) {
+          fromDate_moment = fromDate_moment.add(
+            holidayEnd.diff(holidayStart, "days") + 1,
+            "days"
+          );
+        }
+      }
+      return fromDate_moment;
+    }
+
+    const match1 = timeString.match(/(\d+) (week|weeks) \(week (\d+)\)/);
+    if (match1) {
+      const duration = parseInt(match1[1]);
+      const startWeek = parseInt(match1[3]);
+      const startDate_moment = moment(startDate);
+      let fromDate_moment = startDate_moment
+        .clone()
+        .add(startWeek - 1, "weeks");
+      if (holidays) {
+        const holidayStart = moment(holidays[0]);
+        const holidayEnd = moment(holidays[1]);
+        if (
+          fromDate_moment.diff(holidayStart, "days") == 0 ||
+          fromDate_moment.isAfter(holidayEnd)
+        ) {
+          fromDate_moment = fromDate_moment.add(
+            holidayEnd.diff(fromDate_moment, "days") + 1,
+            "days"
+          );
+        }
+      }
+      return fromDate_moment;
+    }
+
+    const match2 = timeString.match(/(\d+) (week|weeks)/);
+    if (match2) {
+      return moment(startDate);
+    }
+    return null;
+  },
+
+  executeToDate(startDate, timeString, holidays) {
+    const match = timeString.match(/(\d+) (week|weeks) \(weeks (\d+)-(\d+)\)/);
+    if (match) {
+      const duration = parseInt(match[1]);
+      const startWeek = parseInt(match[3]);
+      const endWeek = parseInt(match[4]);
+
+      // Calculate the end date using moment.js
+      const startDate_obj = moment(startDate);
+      let endDate_obj = startDate_obj.add(endWeek, "weeks").subtract(1, "day");
+      if (holidays) {
+        const holidayStart = moment(holidays[0]);
+        const holidayEnd = moment(holidays[1]);
+        if (
+          endDate_obj.isAfter(holidayEnd) ||
+          endDate_obj.diff(holidayEnd, "days") == 0
+        ) {
+          endDate_obj = endDate_obj.add(
+            holidayEnd.diff(holidayStart, "days") + 1,
+            "days"
+          );
+        }
+      }
+      return endDate_obj;
+    }
+
+    const match1 = timeString.match(/(\d+) (week|weeks) \(week (\d+)\)/);
+    if (match1) {
+      const duration = parseInt(match1[1]);
+      const startWeek = parseInt(match1[3]);
+
+      // Calculate the end date using moment.js
+      const startDate_obj = moment(startDate);
+      let endDate_obj = startDate_obj.add(duration * 7 - 1, "days");
+      if (holidays) {
+        const holidayStart = moment(holidays[0]);
+        const holidayEnd = moment(holidays[1]);
+        if (
+          endDate_obj.diff(holidayEnd, "days") == 0 ||
+          endDate_obj.isAfter(holidayEnd)
+        ) {
+          endDate_obj = endDate_obj.add(
+            holidayEnd.diff(holidayStart, "days") + 1,
+            "days"
+          );
+        }
+      }
+      return endDate_obj;
+    }
+
+    const match2 = timeString.match(/(\d+) (week|weeks)/);
+    if (match2) {
+      const duration = parseInt(match2[1]);
+      const startDate_obj = moment(startDate);
+      let endDate_obj = startDate_obj.add(duration, "weeks").subtract(1, "day");
+      if (holidays) {
+        const holidayStart = moment(holidays[0]);
+        const holidayEnd = moment(holidays[1]);
+        if (
+          endDate_obj.diff(holidayEnd, "days") == 0 ||
+          endDate_obj.isAfter(holidayEnd)
+        ) {
+          endDate_obj = endDate_obj.add(
+            holidayEnd.diff(holidayStart, "days") + 1,
+            "days"
+          );
+        }
+      }
+      return endDate_obj;
+    }
+    return null;
   },
   formatCurrency: (number) => {
     if (!number) return;

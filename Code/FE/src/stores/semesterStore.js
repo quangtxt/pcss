@@ -25,7 +25,6 @@ class SemesterStore {
         .then((response) => {
           this.semesterList = response.data.data;
           resolve(response);
-          console.log("res", response);
         })
         .catch((error) => {
           reject(error);
@@ -35,6 +34,39 @@ class SemesterStore {
   @action createSemester = (code, name, begin_at, end_at, list_phase) => {
     return new Promise((resolve, reject) => {
       SemesterRequest.createSemester(code, name, begin_at, end_at, list_phase)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action createSemester2 = (semester) => {
+    return new Promise((resolve, reject) => {
+      SemesterRequest.createSemester2(semester)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action getMilestoneTemplate = () => {
+    return new Promise((resolve, reject) => {
+      SemesterRequest.getMilestoneTemplate()
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action getMilestoneGuidancePhase = (id) => {
+    return new Promise((resolve, reject) => {
+      SemesterRequest.getMilestoneGuidancePhase(id)
         .then((response) => {
           resolve(response);
         })

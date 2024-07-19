@@ -13,6 +13,7 @@ import ListGroupPage from "./pages/ListGroupPage";
 import NotePage from "./pages/Meeting/Note/NotePage";
 import SchedulePage from "./pages/Guidance/SchedulePage";
 import ManageTaskPage from "./pages/Guidance/ManageTaskPage";
+import ManageGroupPage from "./pages/Guidance/ManageGroupPage";
 import ScheduleMentorPage from "./pages/Guidance/ScheduleMentorPage";
 import SemesterPage from "./pages/SemesterPage";
 import NotificationPage from "./pages/NotificationPage/NotificationPage";
@@ -112,6 +113,11 @@ export const routes = [
     component: ScheduleMentorPage,
     name: "ScheduleMentorPage",
   },
+  {
+    path: "/guidance/group",
+    component: ManageGroupPage,
+    name: "Manager Group",
+  },
 
   //staff
   {
@@ -131,7 +137,7 @@ export const routes = [
     name: "SemesterPage",
   },
   {
-    path: "/semesterDemo/manage",
+    path: "/admin/semester",
     component: SemesterPageDemo,
     name: "SemesterPageDemo",
   },

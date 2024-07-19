@@ -100,7 +100,16 @@ const validator = {
       return Promise.resolve();
     }
   },
-
+  validateSemesterName: (rule, value) => {
+    const regex = /^(Spring|Summer|Fall)\d{4}$/;
+    if (value && !regex.test(value)) {
+      return Promise.reject(
+        "Semester name is not in the correct format! Must begin with 'Spring', 'Summer' or 'Fall' along with the year.Example: Summer2024"
+      );
+    } else {
+      return Promise.resolve();
+    }
+  },
   validatePhoneNumber: (rule, value) => {
     // const regex = /0[0-9]{9,11}/g
     const regex = /((01|09|03|07|08|05|\+84|84)+([0-9]{8,9})\b)/g;

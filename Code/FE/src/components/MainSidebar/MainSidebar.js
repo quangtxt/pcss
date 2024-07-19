@@ -153,12 +153,16 @@ const MainSidebar = (props) => {
       title="Guidance Phase"
     >
       {isMentor && (
-        <Menu.Item key={"/kpi"} icon={<BarChartOutlined />} title>
-          <Link to={"/kpi"}>Submit results</Link>
+        <Menu.Item key={"/guidance/group"} icon={<BarChartOutlined />} title>
+          <Link to={"/guidance/group"}>Manager Group</Link>
         </Menu.Item>
       )}
       {isMentor && (
-        <Menu.Item key={"/guidance/schedule-mentor"} icon={<ScheduleOutlined />} title>
+        <Menu.Item
+          key={"/guidance/schedule-mentor"}
+          icon={<ScheduleOutlined />}
+          title
+        >
           <Link to={"/guidance/schedule-mentor"}>Schedule</Link>
         </Menu.Item>
       )}
@@ -168,7 +172,11 @@ const MainSidebar = (props) => {
         </Menu.Item>
       )}
       {isStudent && (
-        <Menu.Item key={"/guidance/task" } icon={<ReconciliationOutlined />} title>
+        <Menu.Item
+          key={"/guidance/task"}
+          icon={<ReconciliationOutlined />}
+          title
+        >
           <Link to={"/guidance/task"}>Manage Task</Link>
         </Menu.Item>
       )}
@@ -275,9 +283,6 @@ const MainSidebar = (props) => {
         {menuTrangChu}
         {menuRegistrationPhase}
         {menuGuidancePhase}
-        {menuPrepareProjectDefense}
-        {menuProjectDefense}
-        {menuAfterProjectDefense}
         {/* {isAccessControl(
           MODULE_CODE.lich_co_quan,
           ACL_ACTION_TYPE.menu__WORK_SCHEDULE

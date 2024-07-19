@@ -34,4 +34,32 @@ export const SemesterRequest = {
         phases: list_phase,
       },
     }),
+  createSemester2: (semester) =>
+    axios({
+      method: "post",
+      url: `${apiUrl}/api/v1/semester/create`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+      data: semester,
+    }),
+  getMilestoneTemplate: () =>
+    axios({
+      method: "get",
+      url: `${apiUrl}/api/v1/milestones`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+    }),
+  getMilestoneGuidancePhase: (id) =>
+    axios({
+      method: "get",
+      url: `${apiUrl}/api/v1/milestones/guidance/${id}`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+    }),
 };

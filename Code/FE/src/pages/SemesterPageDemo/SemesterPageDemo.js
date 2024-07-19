@@ -12,10 +12,11 @@ import {
   Select,
   Typography,
   Collapse,
+  Table,
   Col,
   Row,
 } from "antd";
-import uuid from "uuid";
+import { PlusOutlined } from "@ant-design/icons";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { TableBottomPaginationBlock } from "../../components/Common/Table";
 import ContentBlockWrapper from "../../components/ContentBlockWrapper";
@@ -33,35 +34,14 @@ import {
   SemesterItem,
   LimitLine,
 } from "./SemesterPageDemoStyled";
+import { DATE_FORMAT_SLASH } from "../../constants";
+import utils from "../../utils";
+import uuid from "uuid";
 import PopupCreateSemester from "./PopupCreateSemester";
 import PopupEditSemester from "./PopupEditSemester";
+import moment from "moment";
 const { Title } = Typography;
 const { TabPane } = Tabs;
-const { Panel } = Collapse;
-
-const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`;
-
-const items = [
-  {
-    key: "1",
-    label: "This is panel header 1",
-    children: <p>{text}</p>,
-  },
-  {
-    key: "2",
-    label: "This is panel header 2",
-    children: <p>{text}</p>,
-  },
-  {
-    key: "3",
-    label: "This is panel header 3",
-    children: <p>{text}</p>,
-  },
-];
 
 const SemesterPageDemo = (props) => {
   const {
@@ -73,11 +53,10 @@ const SemesterPageDemo = (props) => {
     authenticationStore,
   } = props;
 
-  const [semesters, setSemesters] = useState([]);
-  const [defaultSemester, setDefaultSemester] = useState(null);
   const [selectedSemesterId, setSelectedSemesterId] = useState(null);
-  const [phases, setPhases] = useState([]);
-  const [selectedPhase, setSelectedPhase] = useState(null);
+  const [data1, setTable1] = useState();
+
+  const [data, setData] = useState([]);
   const [
     isVisiblePopupCreateSemester,
     setIsVisiblePopupCreateSemester,
@@ -85,81 +64,185 @@ const SemesterPageDemo = (props) => {
   const [isVisiblePopupEditSemester, setIsVisiblePopupEditSemester] = useState(
     false
   );
-  const [selectedSemester, setSelectedSemester] = useState(null); // New state to hold the selected semester data
+  const [selectedSemester, setSelectedSemester] = useState();
+  const [semesters, setSemesters] = useState([]);
 
   useEffect(() => {
-    if (authenticationStore.currentUser) {
-      semesterStore.getSemesters().then((response) => {
-        console.log("respon", response.data);
-        const currentSemesters = response.data.map((semester) => ({
-          label: semester.name,
-          value: semester.id,
-          code: semester.code,
-          begin_at: semester.beginAt,
-          end_at: semester.endAt,
-          phases: semester.phases,
-        }));
-        setSemesters(currentSemesters);
-
-        // Set default semester based on current date
-        const currentDate = new Date();
-        const defaultSem = currentSemesters.find(
-          (sem) =>
-            new Date(sem.begin_at) <= currentDate &&
-            new Date(sem.end_at) >= currentDate
-        );
-        setDefaultSemester(defaultSem || currentSemesters[0]);
-        setSelectedSemesterId(defaultSem?.value);
-        setPhases(defaultSem?.phases || []);
-        if (defaultSem?.phases.length > 0) {
-          setSelectedPhase(defaultSem.phases[0]);
-        }
-      });
+    getSemester();
+  }, []);
+  const getSemester = async () => {
+    try {
+      const res = await semesterStore.getSemesters();
+      setSemesters(res.data);
+      setSemesterCurrent(res.data);
+    } catch (e) {
+      console.log(e);
     }
-    return () => {
-      semesterStore.clearStore();
-    };
-  }, [authenticationStore.currentUser, semesterStore]);
-
-  console.log("sem", defaultSemester);
-
-  const [activeTab, setActiveTab] = useState("tab1");
-  const onChange = (key) => {
-    setActiveTab(key);
   };
-  const onChangeCollapse = (key) => {
-    console.log(key);
-  };
+
   const onSelectChange = (value) => {
     setSelectedSemesterId(value);
-    const selectedSemester = semesters.find((sem) => sem.value === value);
-    setPhases(selectedSemester.phases);
-    setSelectedSemester(selectedSemester); // Set the selected semester data
+    const semester = getSemesterById(value);
+    setData(transformData(semester.milestones));
   };
-
-  const handlePhaseClick = (phase) => {
-    setSelectedPhase(phase);
+  const getSemesterById = (id) => {
+    return semesters.find((semester) => semester.id === id);
   };
-
-  const handleEditSemesterClick = () => {
-    const selectedSemester = semesters.find(
-      (sem) => sem.value === selectedSemesterId
-    );
-    setSelectedSemester(selectedSemester); // Ensure the selected semester data is set
-    setIsVisiblePopupEditSemester(true);
+  const setSemesterCurrent = (semesters) => {
+    // Kiểm tra xem mảng semesters có dữ liệu không
+    if (semesters.length > 0) {
+      // Tìm semester có start date gần nhất với hiện tại
+      const currentDate = new Date();
+      const closestSemester = semesters.reduce((prev, curr) => {
+        const prevDiff = Math.abs(new Date(prev.startDate) - currentDate);
+        const currDiff = Math.abs(new Date(curr.startDate) - currentDate);
+        return currDiff < prevDiff ? curr : prev;
+      });
+      setData(transformData(closestSemester.milestones));
+      // Gán giá trị của closestSemester.id vào selectedSemesterId
+      setSelectedSemesterId(closestSemester.id);
+    }
   };
+  const columns = [
+    {
+      title: "TT",
+      render: (record) => record.milestone.id,
+    },
+    {
+      title: "Các bước hoạt động",
+      render: (record) => record.milestone.name,
+    },
+    {
+      title: "Yêu cầu của các bước",
+      render: (record) => record.milestone.requirement,
+    },
+    {
+      title: "Sản phẩm",
+      render: (record) => record.milestone.product,
+    },
+    {
+      title: "Thời gian ",
+      render: (record) => record.milestone.time,
+    },
+    {
+      title: "Người thực hiện",
+      render: (record) => record.milestone.person,
+    },
+  ];
+  const columnMilestoneGuidance = [
+    {
+      title: "#",
+      dataIndex: "key",
+      key: "key",
+      width: 50,
+    },
+    {
+      title: "Milestone",
+      dataIndex: "name",
+      key: "name",
+      width: 200,
+    },
+    {
+      title: "From",
+      render: (record) => record.fromDate.format(DATE_FORMAT_SLASH),
+      width: 200,
+    },
+    {
+      title: "To/Deadline",
+      render: (record) => record.toDate.format(DATE_FORMAT_SLASH),
+      width: 200,
+    },
+    {
+      title: "Notes",
+      dataIndex: "time",
+      key: "time",
+    },
+  ];
+  const columnMilestone2 = [
+    {
+      title: "#",
+      width: 50,
+    },
+    {
+      title: "Product",
+      dataIndex: "product",
+      key: "product",
+      width: 200,
+    },
+    {
+      title: "From",
+      width: 200,
+      // render: (record) => record.fromDate.format(DATE_FORMAT_SLASH),
+    },
+    {
+      title: "To/Deadline",
+      render: (record) => record.toDate.format(DATE_FORMAT_SLASH),
+      width: 200,
+    },
+    {
+      title: "Requirement",
+      dataIndex: "requirement",
+      key: "requirement",
+    },
+  ];
+  function transformData(datatrs) {
+    const result = {};
 
+    function buildTree(items) {
+      // Lọc các phần tử có parent là null (cấp gốc)
+      const rootItems = items.filter((item) => item.milestone.parent === null);
+      // Duyệt qua các phần tử ở cấp gốc và xây dựng cây
+      setTable1(rootItems);
+      rootItems.forEach((root) => {
+        result[root.milestone.id] = {
+          id: root.milestone.id,
+          name: root.milestone.name,
+          requirement: root.milestone.requirement,
+          product: root.milestone.product,
+          time: root.milestone.time,
+          person: root.milestone.person,
+          detail: buildSubTree(items, root.milestone.id, 1),
+        };
+      });
+    }
+
+    // Hàm helper để xây dựng các cấp con
+    function buildSubTree(items, parentId, startingChildId) {
+      const children = items.filter(
+        (item) => item.milestone.parent === parentId
+      );
+      return children.map((child, index) => ({
+        id: child.milestone.id,
+        name: child.milestone.name,
+        requirement: child.milestone.requirement,
+        product: child.milestone.product,
+        time: child.milestone.time,
+        person: child.milestone.person,
+        fromDate: moment(child.startDate),
+        toDate: moment(child.endDate),
+        key: `${startingChildId + index}`,
+        detail: buildSubTree(items, child.milestone.id, 1),
+      }));
+    }
+
+    // Bắt đầu xây dựng cây
+    buildTree(datatrs);
+    return Object.values(result);
+  }
   return (
     <DashboardLayout>
       <Helmet>
-        <title>Registration | List Supervisors</title>
+        <title>Admin | Semester</title>
       </Helmet>
-      <PageTitle
-        location={props.location}
-        title={"List Supervisors"}
-        hiddenGoBack
-      />
-      <div className="flex gap-5 items-start">
+      <PageTitle location={props.location} title={"Semester"} hiddenGoBack>
+        <Button
+          onClick={() => setIsVisiblePopupCreateSemester(true)}
+          type={"primary"}
+        >
+          <PlusOutlined /> Create New Semester
+        </Button>
+      </PageTitle>
+      <div className=" gap-5 items-start">
         <ContentInformation
           className="w-2/6 "
           style={{ backgroundColor: "unset" }}
@@ -172,15 +255,12 @@ const SemesterPageDemo = (props) => {
               value={selectedSemesterId}
               onChange={onSelectChange}
               style={{ width: "200px" }}
-              options={semesters}
+              options={semesters?.map((semester) => ({
+                value: semester.id,
+                label: semester.name,
+              }))}
             />
-            <Button
-              className="flex items-center justify-center"
-              type="primary"
-              onClick={handleEditSemesterClick} // Use the handler to open the popup
-            >
-              Edit Semester
-            </Button>
+
             <PopupEditSemester
               isVisiblePopup={isVisiblePopupEditSemester}
               setIsVisiblePopup={setIsVisiblePopupEditSemester}
@@ -188,95 +268,54 @@ const SemesterPageDemo = (props) => {
               semester={selectedSemester} // Pass the selected semester data to the popup
             />
           </div>
-          <div className="bg-white p-8 rounded-md mb-5">
-            {phases.map((phase, index) => (
-              <NoMarginBottom
-                key={index} // Add a key for each phase
-                className="py-3"
-                style={{
-                  borderBottom: "1px solid #d9d9d9",
-                  cursor: "pointer",
+        </ContentInformation>
+        <div className="bg-white p-8 rounded-md mb-5">
+          <Tabs defaultActiveKey="tab1">
+            <TabPane tab="Milestone" key="tab1">
+              <Table
+                columns={columns}
+                dataSource={data1}
+                rowKey={(record) => record.id || uuid()}
+                expandable={false}
+                pagination={false}
+              />
+            </TabPane>
+            <TabPane tab="Milestone for guildance phase" key="tab2">
+              <Table
+                columns={columnMilestoneGuidance}
+                dataSource={data[4]?.detail}
+                rowKey={(record) => record.id || uuid()}
+                pagination={false}
+                expandable={{
+                  expandedRowRender: (record) => (
+                    <>
+                      {record?.detail[0]?.name == null ? (
+                        <Table
+                          columns={columnMilestone2}
+                          dataSource={record?.detail}
+                          rowKey={(record) => record.id || uuid()}
+                          expandable={false}
+                          pagination={false}
+                          showHeader={false}
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </>
+                  ),
+                  rowExpandable: (record) => record.detail?.length > 0,
+                  expandIconColumnIndex: 0,
                 }}
-                onClick={() => handlePhaseClick(phase)}
-              >
-                <LimitLine>
-                  <Title level={5}>
-                    Phase {index + 1}: {phase.name}
-                  </Title>
-                </LimitLine>
-              </NoMarginBottom>
-            ))}
-          </div>
-          <div className="bg-white w-full flex flex-col items-center justify-center rounded-md p-8">
-            <Title level={5}>
-              If you want to add a new semester, click here
-            </Title>
-            <Button
-              className="flex items-center justify-center"
-              type="primary"
-              onClick={() => setIsVisiblePopupCreateSemester(true)} // Open the create semester popup
-            >
-              Create a New Semester
-            </Button>
-            <PopupCreateSemester
-              isVisiblePopup={isVisiblePopupCreateSemester}
-              setIsVisiblePopup={setIsVisiblePopupCreateSemester}
-              handleClosePopup={() => setIsVisiblePopupCreateSemester(false)}
-            />
-          </div>
-        </ContentInformation>
-        <ContentInformation className="w-4/6 bg-white p-8">
-          <FlexBox className="gap-8">
-            <NoMarginBottom>
-              <Title level={3}>
-                {selectedPhase ? selectedPhase.name : "Name of Phase"}
-              </Title>
-            </NoMarginBottom>
-            <Button className="flex items-center justify-center" type="primary">
-              Edit Phase
-            </Button>
-          </FlexBox>
-          <Collapse
-            className="mb-6"
-            bordered={false}
-            defaultActiveKey={["1"]}
-            onChange={onChangeCollapse}
-          >
-            {selectedPhase?.milestones.map((milestone, milestoneIndex) => (
-              <Panel
-                header={
-                  <NoMarginBottom>
-                    <Title level={5}>{milestone.name}</Title>
-                  </NoMarginBottom>
-                }
-                key={milestoneIndex + 1}
-              >
-                <Collapse
-                  bordered={false}
-                  defaultActiveKey={["1"]}
-                  onChange={onChangeCollapse}
-                >
-                  {milestone.submissions.map((submission, submissionIndex) => (
-                    <Panel
-                      header={
-                        <NoMarginBottom>
-                          <Title level={5}>{submission.name}</Title>
-                        </NoMarginBottom>
-                      }
-                      key={submissionIndex + 1}
-                    >
-                      <p>Due Date: {submission.dueDate}</p>
-                      <p style={{ fontSize: "14px" }}>
-                        Description: {submission.description}
-                      </p>
-                    </Panel>
-                  ))}
-                </Collapse>
-              </Panel>
-            ))}
-          </Collapse>
-        </ContentInformation>
+              />
+            </TabPane>
+          </Tabs>
+        </div>
       </div>
+      <PopupCreateSemester
+        isVisiblePopup={isVisiblePopupCreateSemester}
+        setIsVisiblePopup={setIsVisiblePopupCreateSemester}
+        handleClosePopup={() => setIsVisiblePopupCreateSemester(false)}
+      />
     </DashboardLayout>
   );
 };

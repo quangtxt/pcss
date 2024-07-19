@@ -1,6 +1,5 @@
 package com.pcms.be.pojo.request;
 
-import com.pcms.be.domain.CapstonePhase;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +18,4 @@ public class EditSemesterRequest {
     private String name;
     private OffsetDateTime beginAt;
     private OffsetDateTime endAt;
-    //    private Set<SpecificMajor> specificMajors = new HashSet<>();
-    private List<CapstonePhase> phases;
 }

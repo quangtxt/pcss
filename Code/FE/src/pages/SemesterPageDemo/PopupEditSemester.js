@@ -45,7 +45,6 @@ const PopupEditSemester = (props) => {
   useEffect(() => {
     if (authenticationStore.currentUser) {
       semesterStore.getSemesters().then((response) => {
-        console.log("Response: ", response.data);
         const currentSemesters = response.data.map((semester) => ({
           label: semester.name,
           value: semester.id,

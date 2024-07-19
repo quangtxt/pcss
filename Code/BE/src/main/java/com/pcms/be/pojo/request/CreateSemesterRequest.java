@@ -1,5 +1,6 @@
 package com.pcms.be.pojo.request;
 
+import com.pcms.be.pojo.DTO.SemesterMilestoneDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,11 +11,11 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class CreatedMilestoneRequest {
-    private int phaseId;
+@AllArgsConstructor
+public class CreateSemesterRequest {
+    private String code;
     private String name;
-    private OffsetDateTime beginAt;
-    private int duration;
+    private OffsetDateTime start_at;
+    private List<SemesterMilestoneDTO> milestone;
 }
