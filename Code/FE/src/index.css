@@ -39,3 +39,6 @@
 .border-1px {
     border-width: 1px;
 }
+.ant-progress-outer {
+    width: 75%;
+}

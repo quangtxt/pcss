@@ -104,7 +104,13 @@ const ManageGroupPage = (props) => {
       render: (record) => (
         <div>
           <Tooltip title="View">
-            <Button onClick={() => history.push("/")}>View</Button>
+            <Button
+              onClick={() =>
+                history.push(`/guidance/group/progress/${record.id}`)
+              }
+            >
+              View
+            </Button>
           </Tooltip>
         </div>
       ),

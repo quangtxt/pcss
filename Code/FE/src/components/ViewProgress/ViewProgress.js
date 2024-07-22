@@ -36,12 +36,10 @@ const ViewProgress = (props) => {
   const getCurrentStepIndex = () => {
     for (let i = 0; i < milestones.length; i++) {
       if (
-        currentDate.isBetween(
-          milestones[i].startDate,
-          milestones[i].endDate,
-          null,
-          "[]"
-        )
+        moment(currentDate).format("YYYY-MM-DD") >=
+          moment(milestones[i].startDate).format("YYYY-MM-DD") &&
+        moment(currentDate).format("YYYY-MM-DD") <=
+          moment(milestones[i].endDate).format("YYYY-MM-DD")
       ) {
         return i;
       }
