@@ -18,6 +18,7 @@ import ScheduleMentorPage from "./pages/Guidance/ScheduleMentorPage";
 import SemesterPage from "./pages/SemesterPage";
 import NotificationPage from "./pages/NotificationPage/NotificationPage";
 import SemesterPageDemo from "./pages/SemesterPageDemo";
+import ManageGroupProgressPage from "./pages/Guidance/ManageGroupProgressPage/ManageGroupProgressPage";
 
 export const normalRoutes = [
   {
@@ -117,6 +118,11 @@ export const routes = [
     path: "/guidance/group",
     component: ManageGroupPage,
     name: "Manager Group",
+  },
+  {
+    path: "/guidance/group/progress/:id",
+    component: ManageGroupProgressPage,
+    name: "Manager Group Progress",
   },
 
   //staff

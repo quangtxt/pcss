@@ -83,7 +83,7 @@ const SemesterPageDemo = (props) => {
   const onSelectChange = (value) => {
     setSelectedSemesterId(value);
     const semester = getSemesterById(value);
-    setData(transformData(semester.milestones));
+    setData(utils.transformData(semester.milestones));
   };
   const getSemesterById = (id) => {
     return semesters.find((semester) => semester.id === id);
@@ -98,7 +98,8 @@ const SemesterPageDemo = (props) => {
         const currDiff = Math.abs(new Date(curr.startDate) - currentDate);
         return currDiff < prevDiff ? curr : prev;
       });
-      setData(transformData(closestSemester.milestones));
+      setData(utils.transformData(closestSemester.milestones));
+      setTable1(utils.getPhase(closestSemester.milestones));
       // Gán giá trị của closestSemester.id vào selectedSemesterId
       setSelectedSemesterId(closestSemester.id);
     }
@@ -185,50 +186,7 @@ const SemesterPageDemo = (props) => {
       key: "requirement",
     },
   ];
-  function transformData(datatrs) {
-    const result = {};
 
-    function buildTree(items) {
-      // Lọc các phần tử có parent là null (cấp gốc)
-      const rootItems = items.filter((item) => item.milestone.parent === null);
-      // Duyệt qua các phần tử ở cấp gốc và xây dựng cây
-      setTable1(rootItems);
-      rootItems.forEach((root) => {
-        result[root.milestone.id] = {
-          id: root.milestone.id,
-          name: root.milestone.name,
-          requirement: root.milestone.requirement,
-          product: root.milestone.product,
-          time: root.milestone.time,
-          person: root.milestone.person,
-          detail: buildSubTree(items, root.milestone.id, 1),
-        };
-      });
-    }
-
-    // Hàm helper để xây dựng các cấp con
-    function buildSubTree(items, parentId, startingChildId) {
-      const children = items.filter(
-        (item) => item.milestone.parent === parentId
-      );
-      return children.map((child, index) => ({
-        id: child.milestone.id,
-        name: child.milestone.name,
-        requirement: child.milestone.requirement,
-        product: child.milestone.product,
-        time: child.milestone.time,
-        person: child.milestone.person,
-        fromDate: moment(child.startDate),
-        toDate: moment(child.endDate),
-        key: `${startingChildId + index}`,
-        detail: buildSubTree(items, child.milestone.id, 1),
-      }));
-    }
-
-    // Bắt đầu xây dựng cây
-    buildTree(datatrs);
-    return Object.values(result);
-  }
   return (
     <DashboardLayout>
       <Helmet>

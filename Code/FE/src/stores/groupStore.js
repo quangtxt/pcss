@@ -82,6 +82,17 @@ class GroupStore {
         });
     });
   };
+  @action getGroupByGroupId = (id) => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.getGroupByGroupId(id)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   @action updateInvitationStatus = (groupId, status, studentId) => {
     return new Promise((resolve, reject) => {
       GroupRequest.updateInvitationStatus(groupId, status, studentId)

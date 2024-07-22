@@ -1,4 +1,4 @@
-import { FileExcelOutlined } from "@ant-design/icons";
+import { PrinterOutlined } from "@ant-design/icons";
 import { Button, message, Table, Collapse, Row, Tabs, Col } from "antd";
 import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
@@ -19,6 +19,7 @@ import DashboardLayout from "../../layouts/DashboardLayout";
 import utils from "../../utils";
 import validator from "../../validator";
 import { FormLogin, LoginWrapper, Container } from "./HomePageStyled";
+import MilestonePDF from "./MilestonePDF";
 const { Panel } = Collapse;
 const { TabPane } = Tabs;
 const HomePage = (props) => {
@@ -400,7 +401,9 @@ const HomePage = (props) => {
     buildTree(datatrs);
     return Object.values(result);
   }
-  const exportToExcel = () => {};
+  const exportToExcel = () => {
+    utils.exportPDF("divToPrint", "SEP490");
+  };
 
   return (
     <div>
@@ -416,13 +419,17 @@ const HomePage = (props) => {
             <Tabs
               defaultActiveKey="tab1"
               tabBarExtraContent={
-                <Button
-                  type="primary"
-                  icon={<FileExcelOutlined />}
-                  onClick={exportToExcel}
-                >
-                  Export to Excel
-                </Button>
+                isMentor && (
+                  <Button
+                    type="primary"
+                    icon={<PrinterOutlined />}
+                    onClick={() => {
+                      exportToExcel();
+                    }}
+                  >
+                    Export to PDF
+                  </Button>
+                )
               }
             >
               <TabPane tab="Milestone for guildance phase" key="tab1">
@@ -503,6 +510,9 @@ const HomePage = (props) => {
                 />
               </TabPane>
             </Tabs>
+            <div style={{ display: "none" }}>
+              <MilestonePDF milestones={data[4]?.detail} />
+            </div>
           </Container>
         </DashboardLayout>
       ) : (

@@ -70,6 +70,18 @@ export const GroupRequest = {
         "Content-Type": "application/json",
       },
     }),
+  getGroupByGroupId: (id) =>
+    axios({
+      method: "get",
+      url: `${apiUrl}/api/v1/group/view`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+      params: {
+        groupId: id,
+      },
+    }),
 
   updateInvitationStatus: (groupId, status, studentId) =>
     axios({
