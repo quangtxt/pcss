@@ -78,7 +78,7 @@ export const GroupButton = styled.div`
 `;
 
 export const BoldContent = styled.div`
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   text-align: center;
 `;
@@ -109,5 +109,11 @@ export const TextForm = styled.div`
   input,
   textarea {
     font-size: 14px;
+  }
+`;
+export const FontSize14px = styled.div`
+  font-size: 14px !important;
+  ß .ant-table {
+    font-size: 14px !important;
   }
 `;
