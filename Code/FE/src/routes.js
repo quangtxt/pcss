@@ -19,6 +19,7 @@ import SemesterPage from "./pages/SemesterPage";
 import NotificationPage from "./pages/NotificationPage/NotificationPage";
 import SemesterPageDemo from "./pages/SemesterPageDemo";
 import ManageGroupProgressPage from "./pages/Guidance/ManageGroupProgressPage/ManageGroupProgressPage";
+import ProgressPage from "./pages/ProgressPage";
 
 export const normalRoutes = [
   {
@@ -101,6 +102,21 @@ export const routes = [
     path: "/notification",
     component: NotificationPage,
     name: "NotificationPage",
+  },
+  {
+    path: "/student/progress",
+    component: ProgressPage,
+    name: "ProgressPage",
+  },
+  {
+    path: "/student/progressdemo",
+    component: ProgressPageDemo,
+    name: "ProgressPageDemo",
+  },
+  {
+    path: "/student/progress",
+    component: ProgressPage,
+    name: "ProgressPage",
   },
 
   //mentor
