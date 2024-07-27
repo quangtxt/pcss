@@ -1,6 +1,7 @@
 package com.pcms.be.domain.user;
 
 import com.pcms.be.domain.Milestone;
+import com.pcms.be.domain.Semester;
 import com.pcms.be.domain.meeting.Meeting;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -62,10 +63,13 @@ public class Group implements Serializable {
     private Set<Mentor> mentors = new HashSet<>();
 
     @ManyToMany(mappedBy = "groups")
-    private Set<Milestone> milestones5 = new HashSet<>();
+    private Set<Milestone> milestones = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "semester_id")
+    private Semester semester;
 
     @Column(name = "git_id")
     private String gitId;
-
     // Getters, setters, constructors, etc.
 }

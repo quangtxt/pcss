@@ -28,6 +28,6 @@ public interface NotificationTemplate {
         String deleteMeetingTemplate = "Cuộc họp với mentor của bạn và nhóm vào lúc _Time-txt_ đã được huỷ.";
     }
     interface MilestoneProcessNotification{
-        String unfinishedSubmissionTemplate = "Milestone _MilestoneName-txt_ của nhóm bạn chưa được hoàn thành. Hãy hoàn thành các submission của milestone này. ";
+        String cannotFindInGit = "Hệ thống không thể tìm thấy folder của Milestone: _MilestoneName-txt_ trong Gitlab của dự án nhóm các bạn.  ";
     }
 }

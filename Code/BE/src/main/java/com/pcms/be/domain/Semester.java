@@ -1,5 +1,7 @@
 package com.pcms.be.domain;
 
+import com.pcms.be.domain.meeting.Meeting;
+import com.pcms.be.domain.user.Group;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,4 +44,7 @@ public class Semester implements Serializable {
             joinColumns = @JoinColumn(name = "semester_id"),
             inverseJoinColumns = @JoinColumn(name = "milestone_id"))
     private Set<Milestone> milestones = new HashSet<>();
+
+    @OneToMany(mappedBy = "semester", cascade = CascadeType.ALL)
+    private List<Group> groups;
 }

@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface MilestoneService {
     ResponseEntity<MilestoneDTO> getById(int id);
     ResponseEntity<String> createdMileStone(CreatedMilestoneRequest createdMilestoneRequest) throws ServiceException;
-    ResponseEntity<String> editMilestone(EditMilestoneRequest editMilestoneRequest) throws ServiceException;
+//    ResponseEntity<String> editMilestone(EditMilestoneRequest editMilestoneRequest) throws ServiceException;
 //    Optional<Milestone> findLatestMilestoneEndDate();
     void setCronForSchedule();
     void updateStatusMilestone() throws ServiceException;

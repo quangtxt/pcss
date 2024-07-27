@@ -58,6 +58,8 @@ public class GroupServiceImpl implements GroupService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final SemesterRepository semesterRepository;
+    private final MilestoneRepository milestoneRepository;
+    private final MilestoneGroupRepository milestoneGroupRepository;
 
 
 
@@ -303,32 +305,37 @@ public class GroupServiceImpl implements GroupService {
                }
 
             }
+
         }catch (Exception e){
             throw new ServiceException(ErrorCode.FAILED_EDIT_GROUP);
         }
-        List<Group> groups = groupRepository.findAll();
-        for (Group gr : groups) {
-            Map<String, String> map = new HashMap<>();
-            String listMember = "";
-            String leaderName = "";
-            List<User> users = new ArrayList<>();
-            for (Member m : gr.getMembers()) {
-                listMember += m.getStudent().getUser().getName() + ";";
-                users.add(m.getStudent().getUser());
-                if (m.getRole().equals(Constants.MemberRole.OWNER)) {
-                    leaderName = m.getStudent().getUser().getName();
+        List<Group> groups = groupRepository.findAllNewGroup();
+        if (groups!= null && !groups.isEmpty()){
+            for (Group gr : groups) {
+                Map<String, String> map = new HashMap<>();
+                String listMember = "";
+                String leaderName = "";
+                List<User> users = new ArrayList<>();
+                for (Member m : gr.getMembers()) {
+                    listMember += m.getStudent().getUser().getName() + ";";
+                    users.add(m.getStudent().getUser());
+                    if (m.getRole().equals(Constants.MemberRole.OWNER)) {
+                        leaderName = m.getStudent().getUser().getName();
+                    }
                 }
-            }
 
-            map.put("_ListMember-txt", listMember.substring(0, listMember.length() - 1));
-            map.put("_GroupName-txt_", gr.getName());
-            map.put("_Leader-txt_", leaderName);
-            String content = notificationService.   createContentNotification(NotificationTemplate.UserNotification.joinGroupTemplate, map);
-            for (User u : users){
-                notificationService.saveNotification(u, content);
-            }
+                map.put("_ListMember-txt", listMember.substring(0, listMember.length() - 1));
+                map.put("_GroupName-txt_", gr.getName());
+                map.put("_Leader-txt_", leaderName);
+                String content = notificationService.createContentNotification(NotificationTemplate.UserNotification.joinGroupTemplate, map);
+                for (User u : users){
+                    notificationService.saveNotification(u, content);
+                }
 
+            }
         }
+        setMilestoneGroup(groups);
+        setSemesterForGroup();
         return ResponseEntity.ok("Automatically grouped successfully");
     }
 
@@ -552,6 +559,7 @@ public class GroupServiceImpl implements GroupService {
             memberRepository.save(member);
         }
     }
+    @Transactional
     public void createGroups(List<Student> students){
         List<Student> listStudentToCreateNewGroup = students.subList(0, students.size() - students.size()%5);
         for (int i = 0; i < listStudentToCreateNewGroup.size(); i += 5) {
@@ -628,6 +636,40 @@ public class GroupServiceImpl implements GroupService {
                 groupRepository.save(group);
             }
         }
+    }
+
+    @Transactional
+    public void setSemesterForGroup() throws ServiceException{
+        List<Group> groups = groupRepository.findAllNewGroup();
+        if (groups != null && !groups.isEmpty()){
+            OffsetDateTime now = OffsetDateTime.now();
+            Optional<Semester> semester = semesterRepository.findByCurrent(now);
+            if (semester.isEmpty()){
+                throw new ServiceException(ErrorCode.SEMESTER_NOT_FOUND_BY_CURRENT);
+            }
+            for (Group g : groups){
+                g.setSemester(semester.get());
+                groupRepository.save(g);
+            }
+        }
+
+    }
+
+    @Transactional
+    public void setMilestoneGroup(List<Group> groups){
+        List<Milestone> milestones = milestoneRepository.findAllSubmission();
+        if (groups != null && !groups.isEmpty() && milestones != null && !milestones.isEmpty()){
+            for (Group gr : groups){
+                for (Milestone m : milestones){
+                    MilestoneGroup milestoneGroup = new MilestoneGroup();
+                    milestoneGroup.setMilestone(m);
+                    milestoneGroup.setGroup(gr);
+                    milestoneGroup.setStatus(false);
+                    milestoneGroupRepository.save(milestoneGroup);
+                }
+            }
+        }
+
     }
 
 

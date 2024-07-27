@@ -1,8 +1,19 @@
 package com.pcms.be.service.impl;
 
+import com.pcms.be.domain.Campus;
+import com.pcms.be.domain.user.Mentor;
+import com.pcms.be.domain.user.Role;
+import com.pcms.be.domain.user.Student;
 import com.pcms.be.domain.user.User;
+import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
-import com.pcms.be.pojo.DTO.ExcelUserDTO;
+import com.pcms.be.functions.Constants;
+import com.pcms.be.functions.ValidateData;
+import com.pcms.be.pojo.DTO.ExcelMentorDTO;
+import com.pcms.be.pojo.DTO.ExcelStudentDTO;
+import com.pcms.be.repository.MentorRepository;
+import com.pcms.be.repository.RoleRepository;
+import com.pcms.be.repository.StudentRepository;
 import com.pcms.be.repository.UserRepository;
 import com.pcms.be.service.ExcelService;
 import com.pcms.be.service.UserService;
@@ -11,73 +22,192 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Set;
 
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ExcelServiceImpl implements ExcelService {
+    public static final List<String> formatExcel_listStudent = new ArrayList<>(List.of("RollNumber", "Email", "MemberCode", "FullName", "Status", "Note"));
     private final UserRepository userRepository;
     private final UserService userService;
-
+    private final ValidateData validateData;
+    private final RoleRepository roleRepository;
+    private final StudentRepository studentRepository;
+    private final MentorRepository mentorRepository;
 
     @Override
-    public List<ExcelUserDTO> getDataFromFile(MultipartFile file) {
+    public List<ExcelStudentDTO> getStudentsFromFile(MultipartFile file) throws IOException, ServiceException {
+        User user = null;
+        if (!validateData.checkFormatExcel(file, formatExcel_listStudent)) {
+            throw new ServiceException(ErrorCode.EXCEL_IS_NOT_IN_THE_CORRECT_FORMAT);
+        }
+        try {
+            user = userService.getCurrentUser();
+        } catch (ServiceException e) {
+            throw new RuntimeException(e);
+        }
+        List<ExcelStudentDTO> data = new ArrayList<>();
+        if (file.isEmpty()) {
+            return data;
+        }
+
+        Workbook workbook = new XSSFWorkbook(file.getInputStream());
+        Sheet sheet = workbook.getSheetAt(0);
+        Campus campus = user.getCampus();
+        for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
+
+            String userName = sheet.getRow(i).getCell(2).getStringCellValue();
+            String fullName = sheet.getRow(i).getCell(3).getStringCellValue();
+            String email = sheet.getRow(i).getCell(1).getStringCellValue();
+            //Doi van Quang tao bang Staff de lay Campus
+//userRepository.findByUsernameIgnoreCase(userName).isEmpty() && userRepository.findByEmail(email).isEmpty() && validateData.isValidEmail(email)
+            ExcelStudentDTO excelStudentDTO = new ExcelStudentDTO();
+            excelStudentDTO.setUsername(userName);
+            excelStudentDTO.setFullName(fullName);
+            excelStudentDTO.setEmail(email);
+            String note = "";
+            if (userRepository.findByUsernameIgnoreCase(userName).isPresent()){
+                note = note.concat("User name: " + userName + " đã tồn tại trong hệ thống.");
+            }
+            if (userRepository.findByEmail(email).isPresent()){
+                note = note.concat("Email: " + email + " đã tồn tại trong hệ thống.");
+            }
+            if (!validateData.isValidEmail(email)){
+                note = note.concat("Email: "+ email + " không đúng định dạng");
+            }
+            excelStudentDTO.setNote(note);
+            data.add(excelStudentDTO);
+        }
+        return data;
+    }
+
+    @Override
+    public List<ExcelMentorDTO> getMentorsFromFile(MultipartFile file) throws IOException, ServiceException {
         User user = null;
         try {
             user = userService.getCurrentUser();
         } catch (ServiceException e) {
             throw new RuntimeException(e);
         }
-        String patternNum = "^\\d+$";
-        List<ExcelUserDTO> data = new ArrayList<>();
+        List<ExcelMentorDTO> data = new ArrayList<>();
         if (file.isEmpty()) {
             return data;
         }
-        return null;
+        Workbook workbook = new XSSFWorkbook(file.getInputStream());
+        Sheet sheet = workbook.getSheetAt(0);
+        Campus campus = user.getCampus();
+        for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++){
+
+            String emailFE = sheet.getRow(i).getCell(8).getStringCellValue();
+            String emailFPT = sheet.getRow(i).getCell(7).getStringCellValue();
+            String userName =  emailFE.split("@")[0];
+            String fullName = sheet.getRow(i).getCell(1).getStringCellValue();
+            String phoneNumber = sheet.getRow(i).getCell(9).getStringCellValue();
+            String genderTxt = sheet.getRow(i).getCell(2).getStringCellValue();
+            //Doi van Quang tao bang Staff de lay Campus
+
+//            userRepository.findByUsernameIgnoreCase(userName).isEmpty() && userRepository.findByEmail(emailFE).isEmpty()
+//                    && validateData.isValidEmail(emailFE) && validateData.isValidPhoneNumber(phoneNumber) && validateData.isValidGender(genderTxt)
+            ExcelMentorDTO excelMentorDTO = new ExcelMentorDTO();
+            excelMentorDTO.setEmailFE(emailFE);
+            excelMentorDTO.setEmailFPT(emailFPT);
+            excelMentorDTO.setUserName(userName);
+            excelMentorDTO.setFullName(fullName);
+            excelMentorDTO.setPhoneNumber(phoneNumber);
+            excelMentorDTO.setGenderTxt(genderTxt);
+            String note = "";
+            if (userRepository.findByUsernameIgnoreCase(userName).isPresent()){
+                note = note.concat("User name: " + userName + " đã tồn tại trong hệ thống.");
+            }
+            if (userRepository.findByEmail(emailFE).isPresent()){
+                note = note.concat("Email: " + emailFE + " đã tồn tại trong hệ thống.");
+            }
+            if (!validateData.isValidEmail(emailFE)){
+                note = note.concat("Email: "+ emailFE + " không đúng định dạng.");
+            }
+            if (!validateData.isValidPhoneNumber(phoneNumber)){
+                note = note.concat("Số điện thoại: " + phoneNumber + " không đúng định dạng.");
+            }
+            if (!validateData.isValidGender(genderTxt)){
+                note =  note.concat("Gender không đúng định dạng.");
+            }
+            excelMentorDTO.setNote(note);
+            data.add(excelMentorDTO);
+        }
+
+        return data;
     }
 
     @Override
-    public void saveData(List<ExcelUserDTO> data) throws ServiceException {
+    public void saveStudents(List<ExcelStudentDTO> data) throws ServiceException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
-//        for (ExcelUserDTO dto : data) {
-//
-//            User currentUser = userService.getCurrentUser();
-//
-//            User user = new User();
-//            user.setEmail(dto.getEmail());
-//            user.setIsAdmin(false);
-//            user.setCompanyCode(currentUser.getCompanyCode());
-//            user.setUsername(dto.getUsername());
-//            user.setPassword(dto.getUsername());
-//            user.setStatus(true);
-//
-//            UserDetail userDetail = new UserDetail();
-//            userDetail.setNameUppercase(dto.getFullName().toUpperCase());
-//            userDetail.setNameLowercase(dto.getFullName().toLowerCase());
-//            userDetail.setMaNv(dto.getUsername());
-//            userDetail.setPositionCode(position.getCode());
-//            userDetail.setDepartmentCode(department.getCode());
-//            userDetail.setPhone(dto.getPhone());
-//            userDetail.setGender(dto.getGender().equals("Nam") ? 1 : 0);
-//            userDetail.setBirthday(LocalDate.parse(dto.getBirthday(), formatter));
-//
-//            user.setUserDetail(userDetail);
-//
-//            userService.saveUser(user);
-//        }
+        User user = null;
+        try {
+            user = userService.getCurrentUser();
+        } catch (ServiceException e) {
+            throw new RuntimeException(e);
+        }
+        Campus campus = user.getCampus();
+        for (ExcelStudentDTO s : data){
+            Set<Role> roles = new HashSet<>();
+            roles.add(roleRepository.findByName(Constants.RoleConstants.STUDENT).orElseThrow());
+            User newUser = new User();
+            newUser.setUsername(s.getUsername());
+            newUser.setName(s.getFullName());
+            newUser.setEmail(s.getEmail());
+            newUser.setStatus(true);
+            newUser.setIsAdmin(false);
+            newUser.setRoles(roles);
+            newUser.setCampus(campus);
+            userRepository.save(newUser);
+
+            Student newStudent = new Student();
+            newStudent.setUser(newUser);
+            studentRepository.save(newStudent);
+        }
+    }
+
+    @Override
+    public void saveMentors(List<ExcelMentorDTO> data) throws ServiceException {
+        User user = null;
+        try {
+            user = userService.getCurrentUser();
+        } catch (ServiceException e) {
+            throw new RuntimeException(e);
+        }
+        Campus campus = user.getCampus();
+        for (ExcelMentorDTO m : data){
+            Set<Role> roles = new HashSet<>();
+            roles.add(roleRepository.findByName(Constants.RoleConstants.MENTOR).orElseThrow());
+            User newUser = new User();
+            newUser.setUsername(m.getUserName());
+            newUser.setName(m.getFullName());
+            newUser.setEmail(m.getEmailFE());
+            newUser.setStatus(true);
+            newUser.setIsAdmin(false);
+            newUser.setRoles(roles);
+            newUser.setCampus(campus);
+            userRepository.save(newUser);
+            Mentor mentor = new Mentor();
+            mentor.setUser(newUser);
+            boolean gender = m.getGenderTxt().trim().equalsIgnoreCase("m");
+            String phone =  m.getPhoneNumber();
+            mentor.setGender(gender);
+            mentor.setPhone(phone);
+            mentorRepository.save(mentor);
+        }
     }
 
     @Override
@@ -161,5 +291,14 @@ public class ExcelServiceImpl implements ExcelService {
         }
         return username;
     }
-
+    public boolean checkFormatExcel(MultipartFile file, List<String> formatExcel) throws IOException {
+        Workbook workbook = new XSSFWorkbook(file.getInputStream());
+        Sheet sheet = workbook.getSheetAt(0);
+        for (int i = 0; i < sheet.getRow(0).getLastCellNum(); i++){
+            if (!sheet.getRow(0).getCell(i).getStringCellValue().equals(formatExcel.get(i).trim())){
+                return false;
+            }
+        }
+        return true;
+    }
 }

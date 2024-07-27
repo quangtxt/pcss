@@ -9,6 +9,6 @@ public interface MailTemplate {
     interface CanNotFindGitFolder{
         String recipient = "_Email-txt_";
         String subject = "Hello, _Name-txt_!\n\n";
-        String template = "_MilestoneName-txt_ ";
+        String template = "We can not find folder of Milestone: _MilestoneName-txt_ in Gitlab project of your team. ";
     }
 }

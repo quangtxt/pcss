@@ -1,5 +1,6 @@
 package com.pcms.be.configuration;
 
+import com.pcms.be.domain.Milestone;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;

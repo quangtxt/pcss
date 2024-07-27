@@ -32,6 +32,9 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
             "WHERE g.id = (SELECT m.group_id FROM v_members m\n" +
             "WHERE m.student_id = :studentId);", nativeQuery = true)
     Optional<Group> findByStudentId(int studentId);
+    @Query(value = "SELECT g.* FROM v_group g " +
+            "WHERE g.semester_id IS NULL", nativeQuery = true)
+    List<Group> findAllNewGroup();
 
 //    SELECT g.* FROM v_group g  \n" +
 //            "WHERE g.id IN(SELECT count_member.group_id FROM (SELECT COUNT(m.id) as total_member, m.group_id\n" +
