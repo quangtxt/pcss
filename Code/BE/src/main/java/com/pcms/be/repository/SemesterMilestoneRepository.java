@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,9 @@ public interface SemesterMilestoneRepository extends JpaRepository<Semester_Mile
             "WHERE sm.end_date != :offsetDateTime AND m.name is null AND  sm.start_date < NOW() AND sm.end_date >= NOW()\n" +
             "ORDER BY ABS(TIMESTAMPDIFF(SECOND, NOW(), sm.end_date)) ASC\n" +
             "LIMIT 1;", nativeQuery = true)
-    Optional<Semester_Milestone> findLatestSemesterMilestoneAndDifferentOffSetDateTime(OffsetDateTime offsetDateTime);
-    List<Semester_Milestone> findByEndDate(OffsetDateTime endDate);
+    Optional<Semester_Milestone> findLatestSemesterMilestoneAndDifferentCron(LocalDateTime offsetDateTime);
+    @Query(value = "SELECT sm.*\n" +
+            "FROM Semester_Milestone sm\n" +
+            "Where sm.end_date = :endDate", nativeQuery = true)
+    List<Semester_Milestone> findByEndDate(LocalDateTime endDate);
 }
