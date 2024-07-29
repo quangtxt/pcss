@@ -31,7 +31,7 @@ const PopupImportExcel = (props) => {
   const { isVisiblePopup, setIsVisiblePopup, handleClosePopup } = props;
   const { TextArea } = Input;
   const [form] = Form.useForm();
-  const [mentor, setMentor] = useState();
+  const [supervisor, setSupervisor] = useState();
   const {
     history,
     loadingAnimationStore,

@@ -127,7 +127,6 @@ const MemberItem = (props) => {
   return (
     <InformMember>
       <Info>
-        <UserAvatar src={member?.avatar} alt="Avatar" />
         <MemberInfo>
           <MemberEmail onClick={() => handleEmailClick(member?.student.id)}>
             {member?.student.user.email}

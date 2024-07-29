@@ -3,16 +3,16 @@ package com.pcms.be.controller;
 import com.pcms.be.domain.user.Group;
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
-import com.pcms.be.pojo.DTO.MentorDTO;
+import com.pcms.be.pojo.DTO.SupervisorDTO;
 import com.pcms.be.pojo.DTO.StudentDTO;
-import com.pcms.be.pojo.request.AddMentorRequest;
+import com.pcms.be.pojo.request.AddSupervisorRequest;
 import com.pcms.be.pojo.request.AddStudentRequest;
 import com.pcms.be.pojo.request.SetActiveStudentRequest;
 import com.pcms.be.repository.GroupRepository;
 import com.pcms.be.repository.MemberRepository;
 import com.pcms.be.repository.StudentRepository;
 import com.pcms.be.service.GroupService;
-import com.pcms.be.service.MentorService;
+import com.pcms.be.service.SupervisorService;
 import com.pcms.be.service.NotificationService;
 import com.pcms.be.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class StaffController {
     private StudentService studentService;
 
     @Autowired
-    private MentorService mentorService;
+    private SupervisorService supervisorService;
     @Autowired
     private GroupService groupService;
 
@@ -83,25 +83,25 @@ public class StaffController {
         return studentService.addStudentsByExcel(file);
     }
 
-    @GetMapping("/checkFormatMentorsExcel")//done
-    public  ResponseEntity<String> checkFormatExcel_Mentors(@RequestParam("file") MultipartFile file) throws ServiceException {
+    @GetMapping("/checkFormatSupervisorsExcel")//done
+    public  ResponseEntity<String> checkFormatExcel_Supervisors(@RequestParam("file") MultipartFile file) throws ServiceException {
         try {
-            return mentorService.checkFormatExcel_Mentor(file);
+            return supervisorService.checkFormatExcel_Supervisor(file);
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
-    @PostMapping("/addMentor")//done
-    public ResponseEntity<MentorDTO> addMentor(@RequestBody AddMentorRequest addMentorRequest) throws ServiceException {
+    @PostMapping("/addSupervisor")//done
+    public ResponseEntity<SupervisorDTO> addSupervisor(@RequestBody AddSupervisorRequest addSupervisorRequest) throws ServiceException {
         try {
-            return mentorService.addMentor(addMentorRequest);
+            return supervisorService.addSupervisor(addSupervisorRequest);
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
-    @PostMapping("/addMentors")//done
-    public ResponseEntity<String> addListMentorByExcel(@RequestParam("file") MultipartFile file){
-        return mentorService.addMentorsByExcel(file);
+    @PostMapping("/addSupervisors")//done
+    public ResponseEntity<String> addListSupervisorByExcel(@RequestParam("file") MultipartFile file){
+        return supervisorService.addSupervisorsByExcel(file);
     }
 
     @PostMapping("/student/automatically/create/groups")//Can notification

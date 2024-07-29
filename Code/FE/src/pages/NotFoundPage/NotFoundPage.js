@@ -18,11 +18,9 @@ const NotFoundPage = (props) => {
         subTitle="Trang bạn tìm kiếm không tồn tại."
         extra={
           <Fragment>
-            <Button onClick={() => history.goBack()}>
-              Quay lại trang trước
-            </Button>
+            <Button onClick={() => history.goBack()}>Back</Button>
             <Button type={"primary"} onClick={() => history.push("/")}>
-              Về trang chủ
+              Home
             </Button>
           </Fragment>
         }

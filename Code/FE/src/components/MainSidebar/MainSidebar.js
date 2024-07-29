@@ -50,7 +50,7 @@ const MainSidebar = (props) => {
     currentUser,
     isAccountAdmin,
     isSuperAdmin,
-    isMentor,
+    isSupervisor,
     isStaff,
     isStudent,
   } = authenticationStore;
@@ -92,10 +92,10 @@ const MainSidebar = (props) => {
     return true;
   };
 
-  // Menu trang chủ
+  // Menu Home
   const menuTrangChu = (
     <Menu.Item key={"/home"} icon={<HomeOutlined />}>
-      <Link to={"/home"}>Trang chủ</Link>
+      <Link to={"/home"}>Home</Link>
     </Menu.Item>
   );
 
@@ -106,7 +106,7 @@ const MainSidebar = (props) => {
       icon={<CalendarOutlined />}
       title="Registration Phase"
     >
-      {isMentor && (
+      {isSupervisor && (
         <Menu.Item key={"/registration/std-request"}>
           <Link to={"/registration/std-request"}>
             Registration Group You Recommend
@@ -119,8 +119,8 @@ const MainSidebar = (props) => {
         </Menu.Item>
       )}
       {isStaff && (
-        <Menu.Item key={"/registration/mentor"}>
-          <Link to={"/registration/mentor"}>Manager Mentor</Link>
+        <Menu.Item key={"/registration/supervisor"}>
+          <Link to={"/registration/supervisor"}>Manager Supervisor</Link>
         </Menu.Item>
       )}
       {isStudent && (
@@ -152,18 +152,18 @@ const MainSidebar = (props) => {
       icon={<ProfileOutlined />}
       title="Guidance Phase"
     >
-      {isMentor && (
+      {isSupervisor && (
         <Menu.Item key={"/guidance/group"} icon={<BarChartOutlined />} title>
           <Link to={"/guidance/group"}>Manager Group</Link>
         </Menu.Item>
       )}
-      {isMentor && (
+      {isSupervisor && (
         <Menu.Item
-          key={"/guidance/schedule-mentor"}
+          key={"/guidance/schedule-supervisor"}
           icon={<ScheduleOutlined />}
           title
         >
-          <Link to={"/guidance/schedule-mentor"}>Schedule</Link>
+          <Link to={"/guidance/schedule-supervisor"}>Schedule</Link>
         </Menu.Item>
       )}
       {isStudent && (
@@ -230,7 +230,7 @@ const MainSidebar = (props) => {
   };
 
   useEffect(() => {
-    // Trang chủ
+    // Home
     if (location.pathname.includes("/home")) {
       commonStore.setPage(["/home"]);
       setOpenedSubMenu([]);

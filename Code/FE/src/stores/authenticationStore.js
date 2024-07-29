@@ -4,7 +4,7 @@ class AuthenticationStore {
   constructor() {
     autorun(() => {
       this.isAccountAdmin = this.checkAccountAdmin; //admin vpdt
-      this.isMentor = this.checkMentor;
+      this.isSupervisor = this.checkSupervisor;
       this.isStudent = this.checkStudent;
       this.isStaff = this.checkStaff;
     });
@@ -77,12 +77,12 @@ class AuthenticationStore {
   @computed get checkAccountAdmin() {
     return this.currentUser && this.currentUser.is_admin === true;
   }
-  @observable isMentor = undefined;
+  @observable isSupervisor = undefined;
 
-  @computed get checkMentor() {
+  @computed get checkSupervisor() {
     return (
       this.currentUser &&
-      this.currentUser.roles.some((role) => role.name.includes("MENTOR"))
+      this.currentUser.roles.some((role) => role.name.includes("SUPERVISOR"))
     );
   }
   @observable isStudent = undefined;

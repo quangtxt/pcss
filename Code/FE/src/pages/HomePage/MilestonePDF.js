@@ -83,7 +83,9 @@ const MilestonePdf = (props) => {
                 Target: students to work in teams of 5 students, to complete a
                 specific software application or system.
               </li>
-              <li>Product topic & scope: as provided/agreed with the mentor</li>
+              <li>
+                Product topic & scope: as provided/agreed with the supervisor
+              </li>
               <li>
                 Product size are required to be equivalent to 20-25 medium UCs
                 (3-7 transactions for each UC; action buttons on the screen, end
@@ -109,7 +111,7 @@ const MilestonePdf = (props) => {
             <ul>
               <li>
                 Technologies/Platforms: decided by the students, with consulting
-                from mentor
+                from supervisor
               </li>
               <li>
                 Recommended Tools (using student’s FPT email account):
@@ -211,10 +213,10 @@ const MilestonePdf = (props) => {
                 thesis presentation council in the final presentation)
               </li>
               <li>
-                Comments for thesis: mentors to be requested to send in the week
-                13
+                Comments for thesis: supervisors to be requested to send in the
+                week 13
               </li>
-              <li>Who: supervisor/mentor/GVHD</li>
+              <li>Who: supervisor/supervisor/GVHD</li>
               <li>
                 When:
                 <ul>

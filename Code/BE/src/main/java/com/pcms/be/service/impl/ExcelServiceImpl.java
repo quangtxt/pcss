@@ -1,7 +1,7 @@
 package com.pcms.be.service.impl;
 
 import com.pcms.be.domain.Campus;
-import com.pcms.be.domain.user.Mentor;
+import com.pcms.be.domain.user.Supervisor;
 import com.pcms.be.domain.user.Role;
 import com.pcms.be.domain.user.Student;
 import com.pcms.be.domain.user.User;
@@ -9,9 +9,9 @@ import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.functions.Constants;
 import com.pcms.be.functions.ValidateData;
-import com.pcms.be.pojo.DTO.ExcelMentorDTO;
+import com.pcms.be.pojo.DTO.ExcelSupervisorDTO;
 import com.pcms.be.pojo.DTO.ExcelStudentDTO;
-import com.pcms.be.repository.MentorRepository;
+import com.pcms.be.repository.SupervisorRepository;
 import com.pcms.be.repository.RoleRepository;
 import com.pcms.be.repository.StudentRepository;
 import com.pcms.be.repository.UserRepository;
@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,7 +44,7 @@ public class ExcelServiceImpl implements ExcelService {
     private final ValidateData validateData;
     private final RoleRepository roleRepository;
     private final StudentRepository studentRepository;
-    private final MentorRepository mentorRepository;
+    private final SupervisorRepository supervisorRepository;
 
     @Override
     public List<ExcelStudentDTO> getStudentsFromFile(MultipartFile file) throws IOException, ServiceException {
@@ -94,14 +93,14 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     @Override
-    public List<ExcelMentorDTO> getMentorsFromFile(MultipartFile file) throws IOException, ServiceException {
+    public List<ExcelSupervisorDTO> getSupervisorsFromFile(MultipartFile file) throws IOException, ServiceException {
         User user = null;
         try {
             user = userService.getCurrentUser();
         } catch (ServiceException e) {
             throw new RuntimeException(e);
         }
-        List<ExcelMentorDTO> data = new ArrayList<>();
+        List<ExcelSupervisorDTO> data = new ArrayList<>();
         if (file.isEmpty()) {
             return data;
         }
@@ -120,13 +119,13 @@ public class ExcelServiceImpl implements ExcelService {
 
 //            userRepository.findByUsernameIgnoreCase(userName).isEmpty() && userRepository.findByEmail(emailFE).isEmpty()
 //                    && validateData.isValidEmail(emailFE) && validateData.isValidPhoneNumber(phoneNumber) && validateData.isValidGender(genderTxt)
-            ExcelMentorDTO excelMentorDTO = new ExcelMentorDTO();
-            excelMentorDTO.setEmailFE(emailFE);
-            excelMentorDTO.setEmailFPT(emailFPT);
-            excelMentorDTO.setUserName(userName);
-            excelMentorDTO.setFullName(fullName);
-            excelMentorDTO.setPhoneNumber(phoneNumber);
-            excelMentorDTO.setGenderTxt(genderTxt);
+            ExcelSupervisorDTO excelSupervisorDTO = new ExcelSupervisorDTO();
+            excelSupervisorDTO.setEmailFE(emailFE);
+            excelSupervisorDTO.setEmailFPT(emailFPT);
+            excelSupervisorDTO.setUserName(userName);
+            excelSupervisorDTO.setFullName(fullName);
+            excelSupervisorDTO.setPhoneNumber(phoneNumber);
+            excelSupervisorDTO.setGenderTxt(genderTxt);
             String note = "";
             if (userRepository.findByUsernameIgnoreCase(userName).isPresent()){
                 note = note.concat("User name: " + userName + " đã tồn tại trong hệ thống.");
@@ -143,8 +142,8 @@ public class ExcelServiceImpl implements ExcelService {
             if (!validateData.isValidGender(genderTxt)){
                 note =  note.concat("Gender không đúng định dạng.");
             }
-            excelMentorDTO.setNote(note);
-            data.add(excelMentorDTO);
+            excelSupervisorDTO.setNote(note);
+            data.add(excelSupervisorDTO);
         }
 
         return data;
@@ -180,7 +179,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     @Override
-    public void saveMentors(List<ExcelMentorDTO> data) throws ServiceException {
+    public void saveSupervisors(List<ExcelSupervisorDTO> data) throws ServiceException {
         User user = null;
         try {
             user = userService.getCurrentUser();
@@ -188,9 +187,9 @@ public class ExcelServiceImpl implements ExcelService {
             throw new RuntimeException(e);
         }
         Campus campus = user.getCampus();
-        for (ExcelMentorDTO m : data){
+        for (ExcelSupervisorDTO m : data){
             Set<Role> roles = new HashSet<>();
-            roles.add(roleRepository.findByName(Constants.RoleConstants.MENTOR).orElseThrow());
+            roles.add(roleRepository.findByName(Constants.RoleConstants.SUPERVISOR).orElseThrow());
             User newUser = new User();
             newUser.setUsername(m.getUserName());
             newUser.setName(m.getFullName());
@@ -200,13 +199,13 @@ public class ExcelServiceImpl implements ExcelService {
             newUser.setRoles(roles);
             newUser.setCampus(campus);
             userRepository.save(newUser);
-            Mentor mentor = new Mentor();
-            mentor.setUser(newUser);
+            Supervisor supervisor = new Supervisor();
+            supervisor.setUser(newUser);
             boolean gender = m.getGenderTxt().trim().equalsIgnoreCase("m");
             String phone =  m.getPhoneNumber();
-            mentor.setGender(gender);
-            mentor.setPhone(phone);
-            mentorRepository.save(mentor);
+            supervisor.setGender(gender);
+            supervisor.setPhone(phone);
+            supervisorRepository.save(supervisor);
         }
     }
 

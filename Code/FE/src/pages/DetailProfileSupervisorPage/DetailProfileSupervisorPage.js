@@ -19,13 +19,13 @@ import { ContentInformation } from "../ProfilePage/ProfilePageStyled";
 import PageTitle from "../../components/PageTitle";
 
 const DetailProfileSupervisorPage = (props) => {
-  const { history, mentorStore, loadingAnimationStore } = props;
+  const { history, supervisorStore, loadingAnimationStore } = props;
   const { state } = useLocation();
   const { Title } = Typography;
 
   useEffect(() => {
     if (state && state.userId) {
-      getMentorProfile(state.userId);
+      getSupervisorProfile(state.userId);
     } else {
       history.push("/");
     }
@@ -33,14 +33,14 @@ const DetailProfileSupervisorPage = (props) => {
   const { TextArea } = Input;
   const [form] = Form.useForm();
 
-  const [mentor, setMentor] = useState();
+  const [supervisor, setSupervisor] = useState();
 
-  const getMentorProfile = async (userId) => {
+  const getSupervisorProfile = async (userId) => {
     try {
       loadingAnimationStore.showSpinner(true);
-      const response = await mentorStore.getMentorProfileById(userId);
+      const response = await supervisorStore.getSupervisorProfileById(userId);
       if (response.status === 200) {
-        setMentor(response.data);
+        setSupervisor(response.data);
         form.setFieldsValue({
           fptEmail: response.data.fptEmail,
           personalEmail: response.data.personalEmail,
@@ -77,7 +77,7 @@ const DetailProfileSupervisorPage = (props) => {
               />
             </Space>
           </Space>
-          <Title level={4}>{mentor?.fullName}</Title>
+          <Title level={4}>{supervisor?.fullName}</Title>
         </ContentInformation>
         <ContentInformation className="w-70p p-8 rounded-md">
           <Form
@@ -105,7 +105,7 @@ const DetailProfileSupervisorPage = (props) => {
                 rows={5}
                 style={{ maxWidth: "100%", resize: "none" }}
                 readOnly
-                value={mentor?.selfDescription}
+                value={supervisor?.selfDescription}
               />
             </Form.Item>
           </Form>
@@ -117,7 +117,7 @@ const DetailProfileSupervisorPage = (props) => {
 export default memo(
   withRouter(
     inject(
-      "mentorStore",
+      "supervisorStore",
       "loadingAnimationStore"
     )(observer(DetailProfileSupervisorPage))
   )

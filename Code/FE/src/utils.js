@@ -11,6 +11,16 @@ import { DATE_FORMAT_SLASH } from "./constants";
 /** App utils */
 const { confirm } = Modal;
 const utils = {
+  getRollNumberFromEmail(email) {
+    const parts = email.split("@");
+    if (parts.length !== 2) {
+      return null;
+    }
+
+    const username = parts[0];
+    const rollNumber = username.slice(-8);
+    return rollNumber;
+  },
   getBase64FromImageUrl(url) {
     return new Promise((resolve, reject) => {
       var img = new Image();

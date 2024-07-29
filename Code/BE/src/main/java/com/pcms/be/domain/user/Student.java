@@ -33,12 +33,6 @@ public class Student {
     @Column(name = "alternative_email")
     public String alternativeEmail;
 
-//    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JoinTable(name = "v_group_mentor_invitation",
-//            joinColumns = @JoinColumn(name = "mentor_id"),
-//            inverseJoinColumns = @JoinColumn(name = "group_id"))
-//    private Set<Group> groups = new HashSet<>();
-
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Member> members;
 

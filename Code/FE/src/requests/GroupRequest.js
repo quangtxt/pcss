@@ -125,7 +125,7 @@ export const GroupRequest = {
       },
     }),
 
-  submitGroup: (groupId, mentorIds) =>
+  submitGroup: (groupId, supervisorIds) =>
     axios({
       method: "post",
       url: `${apiUrl}/api/v1/group/submitGroup`,
@@ -135,7 +135,7 @@ export const GroupRequest = {
       },
       data: {
         groupId: groupId,
-        mentorIds: mentorIds,
+        supervisorIds: supervisorIds,
       },
     }),
   empowerOwner: (groupId, studentId) =>
@@ -153,13 +153,16 @@ export const GroupRequest = {
     }),
 
   //memtor
-  getGroupByMentorId: () =>
+  getGroupOfSupervisorBySemester: (semesterId) =>
     axios({
       method: "get",
-      url: `${apiUrl}/api/v1/group-mentor/list`,
+      url: `${apiUrl}/api/v1/group-supervisor/list/${semesterId}`,
       headers: {
         Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
         "Content-Type": "application/json",
+      },
+      params: {
+        semesterId: semesterId,
       },
     }),
 
@@ -181,17 +184,17 @@ export const GroupRequest = {
   getGroupInvitation: () =>
     axios({
       method: "get",
-      url: `${apiUrl}/api/v1/group-mentor/list`,
+      url: `${apiUrl}/api/v1/group-supervisor/list`,
       headers: {
         Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
         "Content-Type": "application/json",
       },
     }),
 
-  updateGroupMentorStatus: (id, status) =>
+  updateGroupSupervisorStatus: (id, status) =>
     axios({
       method: "put",
-      url: `${apiUrl}/api/v1/group-mentor/${id}/status`,
+      url: `${apiUrl}/api/v1/group-supervisor/${id}/status`,
       headers: {
         Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
         "Content-Type": "application/json",
@@ -201,10 +204,10 @@ export const GroupRequest = {
       },
     }),
 
-  getGroupsOfMentor: () =>
+  getGroupsOfSupervisor: () =>
     axios({
       method: "get",
-      url: `${apiUrl}/api/v1/group-mentor/getGroupsOfMentor`,
+      url: `${apiUrl}/api/v1/group-supervisor/getGroupsOfSupervisor`,
       headers: {
         Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
         "Content-Type": "application/json",

@@ -41,8 +41,4 @@ public class Member implements Serializable {
     @Column(name = "status", nullable = false)
     private String status;
 
-    // Getters, setters, constructors, etc.
-
-
-
 }

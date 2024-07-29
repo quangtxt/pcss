@@ -23,6 +23,7 @@ public interface GroupService {
     GroupResponse editGroup(EditGroupRequest editGroupDTO) throws ServiceException;
     GroupResponse getGroupByMemberId() throws ServiceException;
     GroupResponse getGroupById(int groupId) throws  ServiceException;
+    List<GroupResponse> getGroupsBySupervisor(int supervisorId,int semesterId) throws  ServiceException;
     SubmitGroupResponse submitGroup(SubmitGroupRequest submitGroupRequest) throws ServiceException;
     ResponseEntity<String> automaticallyCreateGroups() throws ServiceException;
     ResponseEntity<Map<String, Object>> getGroups(Pageable pageable, String keyword);

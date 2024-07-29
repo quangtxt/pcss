@@ -25,7 +25,7 @@ import { DATE_FORMAT_SLASH, MEMBER_STATUS } from "../../../constants";
 import moment from "moment";
 import EmptyPage from "../../EmptyPage/EmptyPage";
 import PopupEditTeam from "./PopupEditTeam";
-import PopupSendToMentor from "./PopupSendToMentor";
+import PopupSendToSupervisor from "./PopupSendToSupervisor";
 import ContentBlockWrapper from "../../../components/ContentBlockWrapper";
 import {
   ContentInformation,
@@ -289,7 +289,7 @@ const RegTeamPage = (props) => {
         setRefresh={setRefresh}
       />
 
-      <PopupSendToMentor
+      <PopupSendToSupervisor
         group={group}
         isVisiblePopupSend={isVisiblePopupSend}
         setIsVisiblePopupSend={setIsVisiblePopupSend}

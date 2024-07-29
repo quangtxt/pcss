@@ -24,8 +24,8 @@ export const SUPER_ADMIN = "SUPER_ADMIN";
 export const ADMIN = "ADMIN";
 export const STAFF = "STAFF";
 export const SECRETARY = "SECRETARY";
-export const MENTOR_LEADER = "MENTOR_LEADER";
-export const MENTOR = "MENTOR";
+export const SUPERVISOR_LEADER = "SUPERVISOR_LEADER";
+export const SUPERVISOR = "SUPERVISOR";
 export const STUDENT = "STUDENT";
 
 export const STATUS_DEFAULT = {
@@ -48,10 +48,10 @@ export const MEMBER_STATUS = {
   OUT_GROUP: "OUTGROUP",
 };
 
-export const MENTOR_STATUS = {
-  PENDING: "PENDING_MENTOR",
-  REJECT: "REJECT_MENTOR",
-  ACCEPT: "ACCEPT_MENTOR",
+export const SUPERVISOR_STATUS = {
+  PENDING: "PENDING_SUPERVISOR",
+  REJECT: "REJECT_SUPERVISOR",
+  ACCEPT: "ACCEPT_SUPERVISOR",
 };
 
 export const ACL_TYPE = {};

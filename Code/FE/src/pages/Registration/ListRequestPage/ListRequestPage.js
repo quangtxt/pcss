@@ -17,7 +17,7 @@ const ListRequestPage = (props) => {
   const {
     history,
     loadingAnimationStore,
-    mentorStore,
+    supervisorStore,
     authenticationStore,
     groupStore,
   } = props;
@@ -152,7 +152,7 @@ export default memo(
     inject(
       "authenticationStore",
       "loadingAnimationStore",
-      "mentorStore",
+      "supervisorStore",
       "groupStore"
     )(observer(ListRequestPage))
   )
