@@ -29,6 +29,7 @@ public class SystemController {
 //        scheduleConfig.setUpdateStatusMilestoneCron(getCronExpressionFromOffsetDateTime(milestone.get().getBeginAt().plusDays(milestone.get().getDuration()*7)));
 //        log.info(scheduleConfig.getUpdateStatusMilestoneCron());
         milestoneService.setCronForSchedule();
+        log.info(scheduleConfig.getUpdateStatusMilestoneCron());
     }
 
     @Scheduled(cron = "0 0 0 * * ?")// can lam them mail
@@ -41,6 +42,7 @@ public class SystemController {
     public void UpdateStatusMilestone() throws ServiceException {
         log.info("Function da chay");
         milestoneService.updateStatusMilestone();
+        log.info(scheduleConfig.getUpdateStatusMilestoneCron());
     }
 
     private String getCronExpressionFromOffsetDateTime(OffsetDateTime offsetDateTime) {

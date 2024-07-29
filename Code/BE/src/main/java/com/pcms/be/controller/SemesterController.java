@@ -44,7 +44,7 @@ public class SemesterController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createdSemester2(@RequestBody CreateSemesterRequest createdSemesterRequest) throws ServiceException {
+    public ResponseEntity<String> createdSemester(@RequestBody CreateSemesterRequest createdSemesterRequest) throws ServiceException {
         try {
             return semesterService.createSemester(createdSemesterRequest);
         } catch (ServiceException e) {
