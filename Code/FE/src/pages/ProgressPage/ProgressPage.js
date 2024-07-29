@@ -40,6 +40,7 @@ const ProgressPage = (props) => {
     loadingAnimationStore,
     groupStore,
     semesterStore,
+    authenticationStore,
     match,
   } = props;
   const [data, setData] = useState([]);
@@ -47,6 +48,7 @@ const ProgressPage = (props) => {
   const [visible, setVisible] = useState(false);
   const [members, setMembers] = useState([]);
   const [group, setGroup] = useState();
+  const [refresh, setRefresh] = useState(false);
   const showDrawer = () => {
     setVisible(true);
   };
@@ -59,21 +61,26 @@ const ProgressPage = (props) => {
     getSemester();
   }, []);
   useEffect(() => {
-    const getGroupInfo = async () => {
-      loadingAnimationStore.showSpinner(true);
-      try {
-        const res = await groupStore.getGroupByGroupId(id);
-        setGroup(res.data);
-        setMembers(res.data.members);
-      } catch (err) {
-        console.log(err);
-        loadingAnimationStore.showSpinner(false);
-      } finally {
-        loadingAnimationStore.showSpinner(false);
-      }
-    };
-    getGroupInfo();
-  }, [id]);
+    if (authenticationStore.currentUser?.group) {
+      getGroupInfo();
+    }
+  }, [refresh, authenticationStore.currentUser]);
+
+  const getGroupInfo = async () => {
+    loadingAnimationStore.showSpinner(true);
+    try {
+      const res = await groupStore.getGroupByMemberId();
+      setGroup(res.data);
+      setMembers(res.data.members);
+    } catch (err) {
+      console.log(err);
+      loadingAnimationStore.showSpinner(false);
+    } finally {
+      loadingAnimationStore.showSpinner(false);
+    }
+  };
+  console.log("data", members);
+
   const getSemester = async () => {
     try {
       const res = await semesterStore.getSemesters();
@@ -110,6 +117,17 @@ const ProgressPage = (props) => {
     }
   };
 
+  const rowExpandable = (record) => {
+    const currentDate = moment();
+    const fromDate = moment(record.fromDate);
+    const toDate = moment(record.toDate);
+
+    return (
+      currentDate.isBetween(fromDate, toDate, null, "[]") ||
+      record.detail?.length > 0
+    );
+  };
+
   const columnMilestoneGuidance = [
     {
       title: "#",
@@ -125,7 +143,7 @@ const ProgressPage = (props) => {
     },
     {
       title: "Start at",
-      render: (record) => record.toDate.format(DATE_FORMAT_SLASH),
+      render: (record) => record.fromDate.format(DATE_FORMAT_SLASH),
       width: 125,
     },
     {
@@ -151,7 +169,7 @@ const ProgressPage = (props) => {
     },
     {
       title: "Start at",
-      render: (record) => record.toDate.format(DATE_FORMAT_SLASH),
+      render: (record) => record.fromDate.format(DATE_FORMAT_SLASH),
       width: 125,
     },
     {
@@ -188,46 +206,48 @@ const ProgressPage = (props) => {
         title={"Manager group"}
         hiddenGoBack
       ></PageTitle>
-      <ContentBlockWrapper className="mb-5">
-        {selectedSemesterId && <ViewProgress id={selectedSemesterId} />}
-      </ContentBlockWrapper>
       <div className="flex items-start gap-5">
-        <ContentInformation className="w-8/12">
-          <FontSize14px>
-            <Table
-              columns={columnMilestoneGuidance}
-              dataSource={data[4]?.detail}
-              rowKey={(record) => record.id || uuid()}
-              pagination={false}
-              expandable={{
-                expandedRowRender: (record) => (
-                  <>
-                    {record?.detail[0]?.name == null ? (
-                      <Table
-                        columns={columnMilestone2}
-                        dataSource={record?.detail}
-                        rowKey={(record) => record.id || uuid()}
-                        expandable={false}
-                        pagination={false}
-                        showHeader={false}
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </>
-                ),
-                rowExpandable: (record) => record.detail?.length > 0,
-                expandIconColumnIndex: 0,
-              }}
-            />
-          </FontSize14px>
-        </ContentInformation>
+        <div className="w-8/12">
+          <ContentInformation className="py-6 mb-5">
+            {selectedSemesterId && <ViewProgress id={selectedSemesterId} />}
+          </ContentInformation>
+          <ContentInformation>
+            <FontSize14px>
+              <Table
+                columns={columnMilestoneGuidance}
+                dataSource={data[4]?.detail}
+                rowKey={(record) => record.id || uuid()}
+                pagination={false}
+                expandable={{
+                  expandedRowRender: (record) => (
+                    <>
+                      {record?.detail[0]?.name == null ? (
+                        <Table
+                          columns={columnMilestone2}
+                          dataSource={record?.detail}
+                          rowKey={(record) => record.id || uuid()}
+                          expandable={false}
+                          pagination={false}
+                          showHeader={false}
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </>
+                  ),
+                  rowExpandable: (record) => record.detail?.length > 0,
+                  expandIconColumnIndex: 0,
+                }}
+              />
+            </FontSize14px>
+          </ContentInformation>
+        </div>
         <ContentInformation className="w-4/12 p-8">
           <Title className="text-center" level={4}>
             GROUP {group?.name}
           </Title>
           <FontSize14px>
-            <div className="mb-2">English name:{group?.name}</div>
+            <div className="mb-2">English name: {group?.name}</div>
             <div className="mb-2">
               Vietnamese name: {group?.vietnameseTitle}
             </div>
@@ -243,6 +263,11 @@ const ProgressPage = (props) => {
             <div className="mb-2">{group?.description}</div>
             <div className="mb-2">Keywords: {group?.keywords}</div>
             <div>Members:</div>
+            <div className="members">
+              {members.map((member, index) => (
+                <div>{member?.student.user.name}</div>
+              ))}
+            </div>
             <div className="mb-2"></div>
             <div className="flex items-center justify-center">
               <Button
@@ -264,7 +289,8 @@ export default memo(
       "authenticationStore",
       "loadingAnimationStore",
       "semesterStore",
-      "groupStore"
+      "groupStore",
+      "authenticationStore"
     )(observer(ProgressPage))
   )
 );
