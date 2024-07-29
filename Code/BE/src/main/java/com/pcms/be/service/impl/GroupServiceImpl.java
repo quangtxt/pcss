@@ -5,11 +5,9 @@ import com.pcms.be.domain.user.*;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.functions.Constants;
-import com.pcms.be.functions.Git;
 import com.pcms.be.functions.NotificationTemplate;
-import com.pcms.be.pojo.DTO.GitFolder;
 import com.pcms.be.pojo.DTO.GroupDTO;
-import com.pcms.be.pojo.DTO.GroupMentorDTO;
+import com.pcms.be.pojo.DTO.GroupSupervisorDTO;
 import com.pcms.be.pojo.DTO.MemberDTO;
 import com.pcms.be.pojo.request.CreateGroupRequest;
 import com.pcms.be.pojo.request.EditGroupRequest;
@@ -17,25 +15,15 @@ import com.pcms.be.pojo.request.SubmitGroupRequest;
 import com.pcms.be.pojo.response.GroupResponse;
 import com.pcms.be.pojo.response.SubmitGroupResponse;
 import com.pcms.be.repository.*;
-import com.pcms.be.service.GroupService;
-import com.pcms.be.service.NotificationService;
-import com.pcms.be.service.UserNotificationService;
-import com.pcms.be.service.UserService;
+import com.pcms.be.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -50,9 +38,9 @@ public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
     private final UserService userService;
     private final MemberRepository memberRepository;
-    private final MentorRepository mentorRepository;
+    private final SupervisorRepository supervisorRepository;
     private final StudentRepository studentRepository;
-    private final GroupMentorRepository groupMentorRepository;
+    private final GroupSupervisorRepository groupSupervisorRepository;
     private final ModelMapper modelMapper;
     private final NotificationService notificationService;
     private final NotificationRepository notificationRepository;
@@ -207,6 +195,30 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public List<GroupResponse> getGroupsBySupervisor(int supervisorId, int semesterId) throws ServiceException {
+        List<GroupResponse> groupResponses = new ArrayList<>();
+        try {
+            Optional<Group> group = groupRepository.findById(Long.valueOf(supervisorId));
+            if (group.isPresent()) {
+                Group group1 = group.get();
+                GroupResponse groupResponse = modelMapper.map(group1, GroupResponse.class);
+                List<Member> memberInGroup = memberRepository.findAllByGroupIdAndStatus(groupResponse.getId(), Constants.MemberStatus.INGROUP);
+                List<MemberDTO> memberDTOList = new ArrayList<>();
+                List<GroupSupervisorDTO> groupSupervisorDTOS = new ArrayList<>();
+                for (Member member : memberInGroup
+                ) {
+                    memberDTOList.add(modelMapper.map(member, MemberDTO.class));
+                }
+                groupResponse.setMembers(memberDTOList);
+                groupResponses.add( groupResponse);
+            }
+            return groupResponses;
+        } catch (Exception e) {
+            throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
+        }
+    }
+
+    @Override
     @Transactional
     public SubmitGroupResponse submitGroup(SubmitGroupRequest submitGroupRequest) throws ServiceException {
         try {
@@ -215,8 +227,8 @@ public class GroupServiceImpl implements GroupService {
             if (group == null) {
                 throw new ServiceException(ErrorCode.GROUP_NOT_FOUND);
             }
-            if (submitGroupRequest.getMentorIds().size() > 2) {
-                throw new ServiceException(ErrorCode.MAXIMUM_SIZE_MENTOR_OF_A_GROUP);
+            if (submitGroupRequest.getSupervisorIds().size() > 2) {
+                throw new ServiceException(ErrorCode.MAXIMUM_SIZE_SUPERVISOR_OF_A_GROUP);
             }
             List<Member> members = memberRepository.findAllByGroupIdAndStatus(group.getId(), Constants.MemberStatus.PENDING);
             for (Member m : members) {
@@ -228,28 +240,28 @@ public class GroupServiceImpl implements GroupService {
 
             List<Member> memberInGroup = memberRepository.findAllByGroupIdAndStatus(group.getId(), Constants.MemberStatus.INGROUP);
             List<MemberDTO> memberDTOList = new ArrayList<>();
-            List<GroupMentorDTO> groupMentorDTOS = new ArrayList<>();
+            List<GroupSupervisorDTO> groupSupervisorDTOS = new ArrayList<>();
             for (Member member : memberInGroup
             ) {
                 memberDTOList.add(modelMapper.map(member, MemberDTO.class));
             }
-            if (submitGroupRequest.getMentorIds().size() <= 2) {
-                for (Integer mentorId : submitGroupRequest.getMentorIds()) {
-                    Optional<Mentor> m = mentorRepository.findById(Long.valueOf(mentorId));
+            if (submitGroupRequest.getSupervisorIds().size() <= 2) {
+                for (Integer supervisorId : submitGroupRequest.getSupervisorIds()) {
+                    Optional<Supervisor> m = supervisorRepository.findById(Long.valueOf(supervisorId));
                     if (m.isPresent()) {
-                        GroupMentor groupMentor = new GroupMentor();
-                        groupMentor.setGroup(group);
-                        groupMentor.setMentor(m.get());
-                        groupMentor.setStatus(Constants.MentorStatus.PENDING_MENTOR);
-                        groupMentorRepository.save(groupMentor);
-                        groupMentorDTOS.add(modelMapper.map(groupMentor, GroupMentorDTO.class));
+                        GroupSupervisor groupSupervisor = new GroupSupervisor();
+                        groupSupervisor.setGroup(group);
+                        groupSupervisor.setSupervisor(m.get());
+                        groupSupervisor.setStatus(Constants.SupervisorStatus.PENDING_SUPERVISOR);
+                        groupSupervisorRepository.save(groupSupervisor);
+                        groupSupervisorDTOS.add(modelMapper.map(groupSupervisor, GroupSupervisorDTO.class));
                     }
                 }
             }
             group.setStatus(Constants.GroupStatus.SUBMITTED);
             groupRepository.save(group);
             submitGroupResponse = modelMapper.map(group, SubmitGroupResponse.class);
-            submitGroupResponse.setGroupMentors(groupMentorDTOS);
+            submitGroupResponse.setGroupSupervisors(groupSupervisorDTOS);
             submitGroupResponse.setMembers(memberDTOList);
             return submitGroupResponse;
         } catch (Exception e) {

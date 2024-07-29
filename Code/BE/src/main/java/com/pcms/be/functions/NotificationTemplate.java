@@ -20,12 +20,12 @@ public interface NotificationTemplate {
         String NEWS = "NEWS";
     }
     interface MeetingNotification{
-        String createMeetingTemplate = "Bạn và nhóm có một cuộc họp với mentor: _MentorName-txt_ vào lúc _Time-txt_.\n" +
+        String createMeetingTemplate = "Bạn và nhóm có một cuộc họp với supervisor: _SupervisorName-txt_ vào lúc _Time-txt_.\n" +
                 "Địa điểm: _Location-txt_";
-        String updateMeetingTemplate = "Cuộc họp với mentor của bạn và nhóm vào lúc _OldTime-txt_ đã được cập nhật thay đổi.\n" +
+        String updateMeetingTemplate = "Cuộc họp với supervisor của bạn và nhóm vào lúc _OldTime-txt_ đã được cập nhật thay đổi.\n" +
                 "Lịch họp: _Time-txt\n"+
                 "Địa điểm: _Location-txt_";
-        String deleteMeetingTemplate = "Cuộc họp với mentor của bạn và nhóm vào lúc _Time-txt_ đã được huỷ.";
+        String deleteMeetingTemplate = "Cuộc họp với supervisor của bạn và nhóm vào lúc _Time-txt_ đã được huỷ.";
     }
     interface MilestoneProcessNotification{
         String cannotFindInGit = "Hệ thống không thể tìm thấy folder của Milestone: _MilestoneName-txt_ trong Gitlab của dự án nhóm các bạn.  ";

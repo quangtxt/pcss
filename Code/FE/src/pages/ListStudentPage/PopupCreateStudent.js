@@ -33,7 +33,7 @@ const PopupCreateStudent = (props) => {
   const {
     history,
     loadingAnimationStore,
-    mentorStore,
+    supervisorStore,
     studentStore,
     authenticationStore,
   } = props;
@@ -41,12 +41,12 @@ const PopupCreateStudent = (props) => {
   useEffect(() => {
     if (authenticationStore.currentUser) {
       loadingAnimationStore.setTableLoading(true);
-      mentorStore.getMentorList().finally(() => {
+      supervisorStore.getSupervisorList().finally(() => {
         loadingAnimationStore.setTableLoading(false);
       });
     }
     return () => {
-      mentorStore.clearStore();
+      supervisorStore.clearStore();
     };
   }, [authenticationStore.currentUser]);
 
@@ -124,7 +124,7 @@ export default withRouter(
   inject(
     "loadingAnimationStore",
     "authenticationStore",
-    "mentorStore",
+    "supervisorStore",
     "studentStore"
   )(observer(PopupCreateStudent))
 );

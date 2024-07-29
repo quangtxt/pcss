@@ -1,13 +1,11 @@
 package com.pcms.be.service.impl;
 
 import com.pcms.be.domain.*;
-import com.pcms.be.domain.user.Mentor;
 import com.pcms.be.domain.user.Role;
 import com.pcms.be.domain.user.Student;
 import com.pcms.be.functions.Constants;
 import com.pcms.be.functions.ValidateData;
 import com.pcms.be.pojo.*;
-import com.pcms.be.pojo.DTO.MentorDTO;
 import com.pcms.be.pojo.DTO.StudentDTO;
 import com.pcms.be.pojo.request.*;
 import com.pcms.be.repository.*;
@@ -32,7 +30,6 @@ import com.pcms.be.errors.ServiceException;
 import com.pcms.be.pojo.response.StudentProfileResponse;
 import com.pcms.be.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,7 +37,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.*;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +53,7 @@ public class StudentServiceImpl implements StudentService {
     private StudentRepository studentRepository;
 
     @Autowired
-    private MentorRepository mentorRepository;
+    private SupervisorRepository supervisorRepository;
     @Autowired
     private RoleRepository roleRepository;
     @Autowired

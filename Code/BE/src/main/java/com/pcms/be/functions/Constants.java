@@ -44,8 +44,8 @@ public interface Constants {
         String SUPER_ADMIN = "SUPER_ADMIN";
         String STAFF = "STAFF";
         String SECRETARY = "SECRETARY";
-        String MENTOR_LEADER = "MENTOR_LEADER";
-        String MENTOR = "MENTOR";
+        String SUPERVISOR_LEADER = "SUPERVISOR_LEADER";
+        String SUPERVISOR = "SUPERVISOR";
         String STUDENT = "STUDENT";
     }
      interface MemberRole {
@@ -64,10 +64,10 @@ public interface Constants {
         String INGROUP = "INGROUP";
         String OUTGROUP = "OUTGROUP";
     }
-    interface MentorStatus {
-        String PENDING_MENTOR = "PENDING_MENTOR";
+    interface SupervisorStatus {
+        String PENDING_SUPERVISOR = "PENDING_SUPERVISOR";
         String PENDING_LEADER_TEACHER = "PENDING_LEADER_TEACHER";
-        String ACCEPT_MENTOR = "ACCEPT_MENTOR";
+        String ACCEPT_SUPERVISOR = "ACCEPT_SUPERVISOR";
 
     }
     interface CampusCode {

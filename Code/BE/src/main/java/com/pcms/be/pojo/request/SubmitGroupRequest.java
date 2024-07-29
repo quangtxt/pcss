@@ -8,5 +8,5 @@ import java.util.List;
 @Setter
 public class SubmitGroupRequest {
     int groupId;
-    List<Integer> mentorIds;
+    List<Integer> supervisorIds;
 }

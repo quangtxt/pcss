@@ -24,11 +24,12 @@ import { Helmet } from "react-helmet/es/Helmet";
 import ViewProgress from "../../../components/ViewProgress/ViewProgress";
 import moment from "moment";
 import utils from "../../../utils";
-import { DATE_FORMAT_SLASH } from "../../../constants";
+import { DATE_FORMAT_SLASH, MEMBER_STATUS } from "../../../constants";
 const { TextArea } = Input;
 const { Title } = Typography;
 import MemberItem from "../../Registration/TeamPage/MemberItem";
-
+import MilestoneEvaluationModal from "./MilestoneEvaluationModal";
+import ViewAllEvaluationModal from "./ViewAllEvaluationModal";
 const ManageGroupProgressPage = (props) => {
   const {
     history,
@@ -42,6 +43,7 @@ const ManageGroupProgressPage = (props) => {
   const [visible, setVisible] = useState(false);
   const [members, setMembers] = useState([]);
   const [group, setGroup] = useState();
+
   const showDrawer = () => {
     setVisible(true);
   };
@@ -77,7 +79,6 @@ const ManageGroupProgressPage = (props) => {
       console.log(e);
     }
   };
-
   const setSemesterCurrent = (semesters) => {
     if (semesters.length > 0) {
       const currentDate = moment();
@@ -132,26 +133,13 @@ const ManageGroupProgressPage = (props) => {
       ),
     },
     {
-      title: "Nhận xét",
-      dataIndex: "feedback",
-      key: "feedback",
+      title: "Mark",
       width: 200,
-      render: (feedback) => feedback || "Chưa có nhận xét",
-    },
-    {
-      title: "Đánh giá",
-      dataIndex: "score",
-      key: "score",
-      width: 200,
-      render: (score, record) => (
+      render: (record) => (
         <div>
-          {score ? (
-            <div>{score}</div>
-          ) : (
-            <Button type="primary" onClick={() => setVisiblePopup(true)}>
-              Đánh giá
-            </Button>
-          )}
+          <Button type="primary" onClick={() => handleOpenPopup(record)}>
+            Mark
+          </Button>
         </div>
       ),
     },
@@ -178,14 +166,18 @@ const ManageGroupProgressPage = (props) => {
     },
   ];
   const [visiblePopup, setVisiblePopup] = useState(false);
-
-  const handleEvaluate = () => {
-    // Save the evaluation to the record
-    setVisiblePopup(false);
+  const [visiblePopupAll, setVisiblePopupAll] = useState(false);
+  const [currentMilestone, setCurrentMilestone] = useState("");
+  const handleOpenPopup = (milestone) => {
+    setCurrentMilestone(milestone);
+    setVisiblePopup(true);
   };
 
   const handleCancel = () => {
     setVisiblePopup(false);
+  };
+  const handleCancelPopupAll = () => {
+    setVisiblePopupAll(false);
   };
   return (
     <DashboardLayout>
@@ -225,17 +217,6 @@ const ManageGroupProgressPage = (props) => {
                   </p>
                 </NoMarginBottom>
               </div>
-              {group?.status === "PENDING" && (
-                <Button
-                  type="primary"
-                  shape="round"
-                  icon={<EditOutlined />}
-                  onClick={navigateToEdit}
-                  className="flex items-center "
-                >
-                  Edit Team Profile
-                </Button>
-              )}
             </div>
             <Row>
               <Col span={12}>
@@ -319,16 +300,24 @@ const ManageGroupProgressPage = (props) => {
             </div>
           </Drawer>
         </div>
-        <div className="border rounded-md shadow-md m-4 w-1/2 mx-auto">
-          <div className="p-4 flex items-center justify-center">
-            <div>GROUP: SEP490 _ G27</div>
+        <div className="flex ">
+          <div className="border rounded-md shadow-md m-4 w-1/2 ">
+            <div className="p-4 flex items-center justify-center">
+              <div>GROUP: SEP490 _ G27</div>
+            </div>
+            <div className="flex items-center justify-center">
+              <div className="p-4">English name:{group?.name}</div>
+              <div className="p-4">
+                Vietnamese name: {group?.vietnameseTitle}
+              </div>
+            </div>
           </div>
-          <div className="flex items-center justify-center">
-            <div className="p-4">English name:{group?.name}</div>
-            <div className="p-4">Vietnamese name: {group?.vietnameseTitle}</div>
+          <div className="flex justify-end m-4 mt-8">
+            <Button type="primary" onClick={() => setVisiblePopupAll(true)}>
+              View evaluation for all milestone of group
+            </Button>
           </div>
         </div>
-
         <Table
           columns={columnMilestoneGuidance}
           dataSource={data[4]?.detail}
@@ -355,24 +344,20 @@ const ManageGroupProgressPage = (props) => {
             expandIconColumnIndex: 0,
           }}
         />
-        <Modal
+        <MilestoneEvaluationModal
           visible={visiblePopup}
-          onOk={handleEvaluate}
-          onCancel={handleCancel}
-          title="Đánh giá"
-        >
-          <label>Điểm:</label>
-          <Input
-            type="number"
-            // value={score}
-            // onChange={(e) => setScore(e.target.value)}
-          />
-          <label>Nhận xét:</label>
-          <TextArea
-          // value={feedback}
-          // onChange={(e) => setFeedback(e.target.value)}
-          />
-        </Modal>
+          setVisiblePopup={setVisiblePopup}
+          currentMilestone={currentMilestone}
+          group={group}
+          handleCancel={handleCancel}
+        />
+        <ViewAllEvaluationModal
+          visible={visiblePopupAll}
+          semesterId={selectedSemesterId}
+          setVisiblePopup={setVisiblePopupAll}
+          group={group}
+          handleCancel={handleCancelPopupAll}
+        />
       </ContentBlockWrapper>
     </DashboardLayout>
   );

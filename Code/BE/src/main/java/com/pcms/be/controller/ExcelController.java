@@ -2,7 +2,7 @@ package com.pcms.be.controller;
 
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
-import com.pcms.be.pojo.DTO.ExcelMentorDTO;
+import com.pcms.be.pojo.DTO.ExcelSupervisorDTO;
 import com.pcms.be.pojo.DTO.ExcelStudentDTO;
 import com.pcms.be.service.ExcelService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,9 +26,9 @@ public class ExcelController {
         return ResponseEntity.ok(data);
     }
 
-    @PostMapping("/import-excel/mentors")
-    public ResponseEntity<List<ExcelMentorDTO>> importMentorExcel(@RequestParam("file") MultipartFile file) throws ServiceException, IOException {
-        List<ExcelMentorDTO> data = excelService.getMentorsFromFile(file);
+    @PostMapping("/import-excel/supervisors")
+    public ResponseEntity<List<ExcelSupervisorDTO>> importsupervisorExcel(@RequestParam("file") MultipartFile file) throws ServiceException, IOException {
+        List<ExcelSupervisorDTO> data = excelService.getSupervisorsFromFile(file);
         return ResponseEntity.ok(data);
     }
 
@@ -41,10 +41,10 @@ public class ExcelController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
-    @PostMapping("/save-data/mentors")
-    public ResponseEntity<Void> saveMentors(@RequestBody List<ExcelMentorDTO> data){
+    @PostMapping("/save-data/supervisors")
+    public ResponseEntity<Void> savesupervisors(@RequestBody List<ExcelSupervisorDTO> data){
         try {
-            excelService.saveMentors(data);
+            excelService.saveSupervisors(data);
             return ResponseEntity.ok().build();
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());

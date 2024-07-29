@@ -57,10 +57,10 @@ public class Group implements Serializable {
     private List<Meeting> meetings;
 
     @ManyToMany
-    @JoinTable(name = "v_group_mentor",
+    @JoinTable(name = "v_group_supervisor",
             joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name = "mentor_id"))
-    private Set<Mentor> mentors = new HashSet<>();
+            inverseJoinColumns = @JoinColumn(name = "supervisor_id"))
+    private Set<Supervisor> supervisors = new HashSet<>();
 
     @ManyToMany(mappedBy = "groups")
     private Set<Milestone> milestones = new HashSet<>();

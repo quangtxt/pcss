@@ -1,13 +1,12 @@
 package com.pcms.be.controller;
 
-import com.pcms.be.domain.user.Student;
 import com.pcms.be.errors.ApiException;
 import com.pcms.be.errors.ServiceException;
-import com.pcms.be.pojo.request.EditMentorProfileRequest;
+import com.pcms.be.pojo.request.EditSupervisorProfileRequest;
 import com.pcms.be.pojo.request.EditStudentProfileRequest;
-import com.pcms.be.pojo.response.MentorProfileResponse;
+import com.pcms.be.pojo.response.SupervisorProfileResponse;
 import com.pcms.be.pojo.response.StudentProfileResponse;
-import com.pcms.be.service.MentorService;
+import com.pcms.be.service.SupervisorService;
 import com.pcms.be.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ public class ProfileController {
     @Autowired
     private StudentService studentService;
     @Autowired
-    private MentorService mentorService;
+    private SupervisorService supervisorService;
     @GetMapping("/student")
     public ResponseEntity<StudentProfileResponse> getStudentInformation(@RequestParam int Id) throws ServiceException {
         try {
@@ -41,19 +40,19 @@ public class ProfileController {
         }
     }
 
-    @GetMapping("/mentor")
-    public ResponseEntity<MentorProfileResponse> getMentorInformation(@RequestParam int Id) throws ServiceException {
+    @GetMapping("/supervisor")
+    public ResponseEntity<SupervisorProfileResponse> getSupervisorInformation(@RequestParam int Id) throws ServiceException {
         try {
-            return ResponseEntity.ok(mentorService.getMentorProfile(Id));
+            return ResponseEntity.ok(supervisorService.getSupervisorProfile(Id));
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
 
-    @PostMapping("/update/mentor")
-    public ResponseEntity<MentorProfileResponse> updateMentorProfile(@RequestBody EditMentorProfileRequest editMentorProfileRequest){
+    @PostMapping("/update/supervisor")
+    public ResponseEntity<SupervisorProfileResponse> updateSupervisorProfile(@RequestBody EditSupervisorProfileRequest editSupervisorProfileRequest){
         try {
-            return ResponseEntity.ok(mentorService.editMentorProfile(editMentorProfileRequest));
+            return ResponseEntity.ok(supervisorService.editSupervisorProfile(editSupervisorProfileRequest));
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }

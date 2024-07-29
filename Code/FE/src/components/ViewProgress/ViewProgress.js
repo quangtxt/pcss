@@ -27,7 +27,6 @@ const ViewProgress = (props) => {
     try {
       const res = await semesterStore.getMilestoneGuidancePhase(id);
       setMilestone(res.data);
-      console.log("mile", res.data);
     } catch (e) {
       console.log(e);
     }

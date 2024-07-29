@@ -33,7 +33,7 @@ const PopupEditSemester = (props) => {
   const {
     history,
     loadingAnimationStore,
-    mentorStore,
+    supervisorStore,
     semesterStore,
     authenticationStore,
   } = props;
@@ -256,7 +256,7 @@ export default withRouter(
   inject(
     "loadingAnimationStore",
     "authenticationStore",
-    "mentorStore",
+    "supervisorStore",
     "semesterStore"
   )(observer(PopupEditSemester))
 );
