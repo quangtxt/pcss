@@ -140,28 +140,32 @@ public class MilestoneServiceImpl implements MilestoneService {
             throw new ServiceException(ErrorCode.SEMESTER_NOT_FOUND_BY_CURRENT);
         }
         OffsetDateTime cron = getOffsetDateTimeFromCronExpression(scheduleConfig.getUpdateStatusMilestoneCron());
-        List<Semester_Milestone> semesterMilestones = semesterMilestoneRepository.findByEndDate(cron);
+        List<Semester_Milestone> semesterMilestones = semesterMilestoneRepository.findByEndDate(cron.toLocalDateTime());
         List<Group> groups = optSemester.get().getGroups();
         if (semesterMilestones != null && !semesterMilestones.isEmpty()){
             for (Semester_Milestone sm : semesterMilestones){
-                String path = "Report";
+                String path = "";
                 if (sm.getMilestone() != null){
                     Milestone milestone = sm.getMilestone();
-                    path += "/" + milestone.getName();
+                    //path = milestone.getName();
                     while (milestone.getParent() != null){
                         Optional<Milestone> parentMilestone = milestoneRepository.findById(milestone.getParent());
                         if (parentMilestone.isPresent()){
                             milestone = parentMilestone.get();
-                            path += "/" + milestone.getName();
+                            path = milestone.getName() + "/" + path;
                         }else{
                             break;
                         }
                     }
+                    path = path.substring(0, path.length() - 1);
                     for (Group gr : groups){
                         String href = Git.GitSrc.repositorySubTree.replace("_projectId-txt_", gr.getGitId()).replace("_SubtreeName-txt_", path);
                         List<GitFolder> gitFolder = getObjectByCallApiToGit(href);
-                        Optional<MilestoneGroup> milestoneGroup = milestoneGroupRepository.findByGroupIdAndMilestoneId(Integer.parseInt(gr.getId().toString()), Integer.parseInt(milestone.getId().toString()));
-                        if (gitFolder == null && gitFolder.isEmpty()){
+                        Optional<MilestoneGroup> milestoneGroup = milestoneGroupRepository.findByGroupIdAndMilestoneId(Integer.parseInt(gr.getId().toString()), Integer.parseInt(sm.getMilestone().getId().toString()));
+                        if (milestoneGroup.isEmpty()){
+                            continue;
+                        }
+                        if (gitFolder == null || gitFolder.isEmpty()){
                             for (Member m : gr.getMembers()){
                                 Map<String, String> map = new HashMap<>();
                                 map.put("_MilestoneName-txt_", milestone.getName());
@@ -173,16 +177,26 @@ public class MilestoneServiceImpl implements MilestoneService {
 //                                String subject = MailTemplate.MilestoneUnfinished.subject.replace("_Name-txt_", m.getStudent().getUser().getName());
 //                                String body = MailTemplate.MilestoneUnfinished.template.replace("_MilestoneName-txt_", milestone.getName());
 //                                emailService.sendEmail(to, subject, body);
-                        }
-                        if (milestoneGroup.isPresent()){
-                            milestoneGroup.get().setStatus(checkSubmission(gitFolder, milestone));
+                            milestoneGroup.get().setStatus(false);
+                            milestoneGroupRepository.save(milestoneGroup.get());
+                        }else{
+                            milestoneGroup.get().setStatus(checkSubmission(gitFolder, sm.getMilestone()));
+//                            milestoneGroup.get().setStatus(true);
                             milestoneGroupRepository.save(milestoneGroup.get());
                         }
+//                        if (milestoneGroup.isPresent()){
+//                            if (gitFolder == null ||gitFolder.isEmpty()){
+//                                milestoneGroup.get().setStatus(false);
+//                            }else {
+//                                milestoneGroup.get().setStatus(checkSubmission(gitFolder, milestone));
+//                                milestoneGroupRepository.save(milestoneGroup.get());
+//                            }
+//                        }
                     }
                 }
             }
         }
-        Optional<Semester_Milestone> semesterMilestone = semesterMilestoneRepository.findLatestSemesterMilestoneAndDifferentOffSetDateTime(cron);
+        Optional<Semester_Milestone> semesterMilestone = semesterMilestoneRepository.findLatestSemesterMilestoneAndDifferentCron(cron.toLocalDateTime());
         semesterMilestone.ifPresent(semester_milestone -> scheduleConfig.setUpdateStatusMilestoneCron(getCronExpressionFromOffsetDateTime(semester_milestone.getEndDate())));
     }
 
@@ -228,12 +242,29 @@ public class MilestoneServiceImpl implements MilestoneService {
         }
     }
     private boolean checkSubmission(List<GitFolder> gitFolders, Milestone milestone){
+        String strCheck = sanitizeFileName(milestone.getProduct()).toLowerCase();
         for (GitFolder g : gitFolders){
-            if (g.getName().contains(milestone.getProduct()) && g.getType().equals("blob")){
+            if (g.getName().toLowerCase().contains(strCheck) && g.getType().equals("blob")){
                 return true;
             }
         }
         return false;
+    }
+    public static String sanitizeFileName(String fileName) {
+        // Thay thế khoảng trắng bằng dấu gạch dưới
+        fileName = fileName.replace(" ", "_");
+
+        // Chuyển đổi chữ hoa sang chữ thường
+        fileName = fileName.toLowerCase();
+
+
+        // Loại bỏ các ký tự đặc biệt
+        fileName = fileName.replaceAll("[/\\\\:*?\"<>|]", "_");
+
+        // Thay thế các ký tự không được hỗ trợ bằng dấu gạch dưới
+        fileName = fileName.replaceAll("[^a-zA-Z0-9_.-]", "_");
+
+        return fileName;
     }
 
 //    private boolean checkSubmissionFolder(List<GitFolder> gitFolders, String pathRoot) throws ServiceException {

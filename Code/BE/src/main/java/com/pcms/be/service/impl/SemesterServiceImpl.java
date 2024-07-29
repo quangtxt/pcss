@@ -113,9 +113,10 @@ public class SemesterServiceImpl implements SemesterService {
         if (!createdSemesterRequest.getMilestone().isEmpty()) {
             List<Semester_Milestone> semesterMilestones = new ArrayList<>();
             for (SemesterMilestoneDTO c : createdSemesterRequest.getMilestone()) {
+                OffsetDateTime newEndDate = c.getEnd_date().withNano(0);
                 Semester_Milestone semesterMilestone = new Semester_Milestone();
                 semesterMilestone.setStartDate(c.getStart_date());
-                semesterMilestone.setEndDate(c.getEnd_date());
+                semesterMilestone.setEndDate(newEndDate);
                 semesterMilestone.setDuration(c.getDuration());
                 semesterMilestone.setSemester(semester);
                 semesterMilestone.setMilestone(milestoneRepository.findById(c.getMilestone_id()).orElseThrow());
