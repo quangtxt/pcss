@@ -3,7 +3,6 @@ package com.pcms.be.domain.user;
 import com.pcms.be.domain.Campus;
 
 import com.pcms.be.domain.Notification;
-import com.pcms.be.domain.SpecificMajor;
 import com.pcms.be.domain.meeting.Note;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -75,7 +74,7 @@ public class User implements UserDetails, Serializable {
     private Student student;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Mentor mentor;
+    private Supervisor supervisor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "campus_code", referencedColumnName = "campus_code")

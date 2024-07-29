@@ -71,9 +71,9 @@ class GroupStore {
         });
     });
   };
-  @action getGroupByMemberId = () => {
+  @action getGroupOfSupervisorBySemester = (semesterId) => {
     return new Promise((resolve, reject) => {
-      GroupRequest.getGroupByMemberId()
+      GroupRequest.getGroupOfSupervisorBySemester(semesterId)
         .then((response) => {
           resolve(response);
         })
@@ -126,9 +126,9 @@ class GroupStore {
         });
     });
   };
-  @action submitGroup = (groupId, mentorIds) => {
+  @action submitGroup = (groupId, supervisorIds) => {
     return new Promise((resolve, reject) => {
-      GroupRequest.submitGroup(groupId, mentorIds)
+      GroupRequest.submitGroup(groupId, supervisorIds)
         .then((response) => {
           resolve(response);
         })
@@ -187,9 +187,9 @@ class GroupStore {
     this.groupListKeyword = undefined;
   };
 
-  @action updateGroupMentorStatus = (id, status) => {
+  @action updateGroupSupervisorStatus = (id, status) => {
     return new Promise((resolve, reject) => {
-      GroupRequest.updateGroupMentorStatus(id, status)
+      GroupRequest.updateGroupSupervisorStatus(id, status)
         .then((response) => {
           resolve(response);
         })
@@ -199,9 +199,9 @@ class GroupStore {
     });
   };
 
-  @action getGroupsOfMentor = () => {
+  @action getGroupsOfSupervisor = () => {
     return new Promise((resolve, reject) => {
-      GroupRequest.getGroupsOfMentor()
+      GroupRequest.getGroupsOfSupervisor()
         .then((response) => {
           resolve(response);
         })

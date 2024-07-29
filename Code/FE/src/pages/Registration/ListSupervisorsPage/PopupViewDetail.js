@@ -8,7 +8,7 @@ const PopupViewDetail = (props) => {
   const { isVisiblePopup, setIsVisiblePopup, handleClosePopup } = props;
   const { TextArea } = Input;
   const [form] = Form.useForm();
-  const [mentor, setMentor] = useState();
+  const [supervisor, setSupervisor] = useState();
 
   return (
     <Modal
@@ -40,7 +40,7 @@ const PopupViewDetail = (props) => {
               rows={5}
               style={{ maxWidth: "100%" }}
               disabled
-              value={mentor?.selfDescription}
+              value={supervisor?.selfDescription}
             />
           </Form.Item>
         </div>

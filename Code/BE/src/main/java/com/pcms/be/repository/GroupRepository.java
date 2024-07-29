@@ -36,11 +36,4 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
             "WHERE g.semester_id IS NULL", nativeQuery = true)
     List<Group> findAllNewGroup();
 
-//    SELECT g.* FROM v_group g  \n" +
-//            "WHERE g.id IN(SELECT count_member.group_id FROM (SELECT COUNT(m.id) as total_member, m.group_id\n" +
-//            "FROM v_members m\n" +
-//            "WHERE m.status = 'INGROUP'\n" +
-//            "GROUP BY m.group_id\n" +
-//            "HAVING COUNT(m.id) < :number\n" +
-//            "ORDER BY total_member desc)as count_member)
 }

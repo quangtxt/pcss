@@ -4,12 +4,12 @@ import { message } from "antd";
 import utils from "../utils";
 
 class SemesterStore {
-  /** Get mentors list */
+  /** Get supervisors list */
   @observable semesterList = [];
-  // @observable mentorListTotalCount = 0;
-  // @observable mentorListPageIndex = 0;
-  // @observable mentorListPageSize = 5;
-  // @observable mentorListKeyword = undefined;
+  // @observable supervisorListTotalCount = 0;
+  // @observable supervisorListPageIndex = 0;
+  // @observable supervisorListPageSize = 5;
+  // @observable supervisorListKeyword = undefined;
   // @observable selectGroupData = [];
   // @observable groupList = [];
   // @action setSelectGroupData = (payloadSelect) => {

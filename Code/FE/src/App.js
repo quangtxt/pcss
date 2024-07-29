@@ -21,7 +21,7 @@ import accountStore from "./stores/accountStore";
 import moduleStore from "./stores/moduleStore";
 import aclStore from "./stores/aclStore";
 import userStore from "./stores/userStore";
-import mentorStore from "./stores/mentorStore.js";
+import supervisorStore from "./stores/supervisorStore.js";
 import companyStore from "./stores/companyStore";
 import groupStore from "./stores/groupStore";
 import meetingStore from "./stores/meetingStore";
@@ -45,6 +45,7 @@ import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
 import notificationStore from "./stores/notificationStore";
 import studentStore from "./stores/studentStore.js";
 import fileStore from "./stores/fileStore.js";
+import scoreStore from "./stores/scoreStore.js";
 const ProtectedRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
@@ -80,11 +81,12 @@ const rootStore = {
   userStore,
   companyStore,
   groupStore,
-  mentorStore,
+  supervisorStore,
   studentStore,
   meetingStore,
   semesterStore,
   fileStore,
+  scoreStore,
 };
 
 axios.defaults.timeout = 60000;

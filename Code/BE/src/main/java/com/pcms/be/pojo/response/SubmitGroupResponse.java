@@ -1,6 +1,6 @@
 package com.pcms.be.pojo.response;
 
-import com.pcms.be.pojo.DTO.GroupMentorDTO;
+import com.pcms.be.pojo.DTO.GroupSupervisorDTO;
 import com.pcms.be.pojo.DTO.MemberDTO;
 import com.pcms.be.pojo.DTO.StudentDTO;
 import lombok.Getter;
@@ -22,5 +22,5 @@ public class SubmitGroupResponse {
     private StudentDTO owner;
     private String status;
     private List<MemberDTO> members;
-    private List<GroupMentorDTO> groupMentors;
+    private List<GroupSupervisorDTO> groupSupervisors;
 }

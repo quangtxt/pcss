@@ -80,19 +80,32 @@ public class GroupController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+
     @GetMapping("/view")
-    public ResponseEntity<GroupResponse> getGroupById(@RequestParam int groupId){
+    public ResponseEntity<GroupResponse> getGroupById(@RequestParam int groupId) {
         try {
-        GroupResponse groupResponse = groupService.getGroupById(groupId);
-        groupResponse.setMembers(memberService.getGroupMember(groupId));
-        return ResponseEntity.ok(groupResponse);
+            GroupResponse groupResponse = groupService.getGroupById(groupId);
+            groupResponse.setMembers(memberService.getGroupMember(groupId));
+            return ResponseEntity.ok(groupResponse);
 
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+
+    @GetMapping("/supervisor/view")
+    public ResponseEntity<List<GroupResponse>> getGroupsBySupervisor(@RequestParam int supervisorId,@RequestParam int semesterId) {
+        try {
+            List<GroupResponse> groupResponse = groupService.getGroupsBySupervisor(supervisorId,semesterId);
+            return ResponseEntity.ok(groupResponse);
+
+        } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
+    }
+
     @GetMapping("/view-group")
-    public ResponseEntity<GroupResponse> getGroupByMemberId(){
+    public ResponseEntity<GroupResponse> getGroupByMemberId() {
         try {
             GroupResponse groupResponse = groupService.getGroupByMemberId();
             groupResponse.setMembers(memberService.getGroupMemberIncludePending(Integer.parseInt(Long.toString(groupResponse.getId()))));
@@ -102,29 +115,31 @@ public class GroupController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+
     @GetMapping("/delete")
-    public ResponseEntity<Void> Delete(@RequestParam int groupId){
+    public ResponseEntity<Void> Delete(@RequestParam int groupId) {
 
         Group group = groupRepository.findById(Long.valueOf(groupId))
                 .orElseThrow(() -> new IllegalArgumentException("Group not found with id: " + groupId));
 
         groupRepository.delete(group);
-            return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();
 
 
     }
+
     @PostMapping("inviteMember")
-    public ResponseEntity<List<MemberResponse>> inviteMember(@Valid @RequestBody InviteMemberRequest inviteMemberRequest){
+    public ResponseEntity<List<MemberResponse>> inviteMember(@Valid @RequestBody InviteMemberRequest inviteMemberRequest) {
         try {
             List<MemberResponse> memberResponse = memberService.inviteMember(inviteMemberRequest);
-            return  ResponseEntity.ok(memberResponse);
+            return ResponseEntity.ok(memberResponse);
         } catch (ServiceException e) {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
 
     @PostMapping("submitGroup")
-    public ResponseEntity<SubmitGroupResponse> sumitGroup(@Valid @RequestBody SubmitGroupRequest submitGroupRequest){
+    public ResponseEntity<SubmitGroupResponse> sumitGroup(@Valid @RequestBody SubmitGroupRequest submitGroupRequest) {
         try {
             SubmitGroupResponse submitGroupResponse = groupService.submitGroup(submitGroupRequest);
             return ResponseEntity.ok(submitGroupResponse);
@@ -132,8 +147,9 @@ public class GroupController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+
     @PostMapping("/empowerOwner")
-    public ResponseEntity<List<MemberResponse>> empowerOwner(@RequestParam int groupId, @RequestParam int studentId){
+    public ResponseEntity<List<MemberResponse>> empowerOwner(@RequestParam int groupId, @RequestParam int studentId) {
         try {
             List<MemberResponse> memberResponses = memberService.empowerOwner(groupId, studentId);
             return ResponseEntity.ok(memberResponses);

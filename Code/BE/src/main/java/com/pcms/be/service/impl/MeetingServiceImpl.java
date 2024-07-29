@@ -9,7 +9,7 @@ import com.pcms.be.functions.NotificationTemplate;
 import com.pcms.be.pojo.DTO.MeetingDTO;
 import com.pcms.be.pojo.request.CreateMeetingRequest;
 import com.pcms.be.pojo.request.EditMeetingRequest;
-import com.pcms.be.repository.GroupMentorRepository;
+import com.pcms.be.repository.GroupSupervisorRepository;
 import com.pcms.be.repository.GroupRepository;
 import com.pcms.be.repository.MeetingRepository;
 import com.pcms.be.service.MeetingService;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MeetingServiceImpl implements MeetingService {
     private final GroupRepository groupRepository;
-    private final GroupMentorRepository groupMentorRepository;
+    private final GroupSupervisorRepository groupSupervisorRepository;
     private final MeetingRepository meetingRepository;
     private final UserService userService;
     private final ModelMapper modelMapper;
@@ -67,8 +67,8 @@ public class MeetingServiceImpl implements MeetingService {
                 }
                 Group group1 = group.get();
                 User user = userService.getCurrentUser();
-                GroupMentor groupMentor = groupMentorRepository.findByGroupAndMentorAndStatus(group1, user.getMentor(), "ACCEPT_MENTOR");
-                if (groupMentor == null) {
+                GroupSupervisor groupSupervisor = groupSupervisorRepository.findByGroupAndSupervisorAndStatus(group1, user.getSupervisor(), "ACCEPT_SUPERVISOR");
+                if (groupSupervisor == null) {
                     throw new ServiceException(ErrorCode.USER_NOT_ALLOW);
                 }
 
@@ -96,9 +96,9 @@ public class MeetingServiceImpl implements MeetingService {
                 }
                 //Tạo notification
                 Map<String, String> map = new HashMap<>();
-                //Bạn có một cuộc họp với mentor: _MentorName-txt_ vào lúc _Time-txt_.\n" +
+                //Bạn có một cuộc họp với supervisor: _SupervisorName-txt_ vào lúc _Time-txt_.\n" +
                 //                "Link Meeting: _Location-txt_
-                map.put("_MentorName-txt_", group1.getMentors().stream().map(Mentor::getUser).map(User::getName).collect(Collectors.joining(". ")));
+                map.put("_SupervisorName-txt_", group1.getSupervisors().stream().map(Supervisor::getUser).map(User::getName).collect(Collectors.joining(". ")));
                 map.put("_Time-txt_", String.valueOf(meet.getStartAt().getHour())+":"+String.valueOf(meet.getStartAt().getMinute()+" "+ meet.getStartAt().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("vi")))
                 +" " + meet.getStartAt().getDayOfMonth() + "/" + meet.getStartAt().getMonth()+"/"+meet.getStartAt().getYear());
                 map.put("_Location-txt_", meet.getLocation());
@@ -161,8 +161,8 @@ public class MeetingServiceImpl implements MeetingService {
                     throw new ServiceException(ErrorCode.NOT_FOUND);
                 }
                 User user = userService.getCurrentUser();
-                GroupMentor groupMentor = groupMentorRepository.findByGroupAndMentorAndStatus(meeting.get().getGroup(), user.getMentor(), "ACCEPT_MENTOR");
-                if (groupMentor == null) {
+                GroupSupervisor groupSupervisor = groupSupervisorRepository.findByGroupAndSupervisorAndStatus(meeting.get().getGroup(), user.getSupervisor(), "ACCEPT_SUPERVISOR");
+                if (groupSupervisor == null) {
                     throw new ServiceException(ErrorCode.USER_NOT_ALLOW);
                 }
                 if(!meeting.get().getStatus().equals(Constants.MeetingStatus.PENDING)){
@@ -186,11 +186,11 @@ public class MeetingServiceImpl implements MeetingService {
                 meetingRepository.save(editMeeting);
                 meetingDTOS.add(modelMapper.map(editMeeting, MeetingDTO.class));
                 Map<String, String> map = new HashMap<>();
-                //Bạn có một cuộc họp với mentor: _MentorName-txt_ vào lúc _Time-txt_.\n" +
+                //Bạn có một cuộc họp với supervisor: _SupervisorName-txt_ vào lúc _Time-txt_.\n" +
                 //                "Link Meeting: _Location-txt_
                 map.put("_OldTime-txt_",String.valueOf(oldTime.getHour())+":"+String.valueOf(oldTime.getMinute()+" "+ oldTime.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("vi")))
                         +" " + meet.getStartAt().getDayOfMonth() + "/" + meet.getStartAt().getMonth()+"/"+meet.getStartAt().getYear());
-                map.put("_MentorName-txt_", meeting.get().getGroup().getMentors().stream().map(Mentor::getUser).map(User::getName).collect(Collectors.joining(". ")));
+                map.put("_SupervisorName-txt_", meeting.get().getGroup().getSupervisors().stream().map(Supervisor::getUser).map(User::getName).collect(Collectors.joining(". ")));
                 map.put("_Time-txt_", String.valueOf(meet.getStartAt().getHour())+":"+String.valueOf(meet.getStartAt().getMinute()+" "+ meet.getStartAt().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("vi")))
                         +" " + meet.getStartAt().getDayOfMonth() + "/" + meet.getStartAt().getMonth()+"/"+meet.getStartAt().getYear());
                 map.put("_Location-txt_", meet.getLocation());
@@ -216,8 +216,8 @@ public class MeetingServiceImpl implements MeetingService {
                 throw new ServiceException(ErrorCode.USER_NOT_ALLOW);
             }
             User user = userService.getCurrentUser();
-            GroupMentor groupMentor = groupMentorRepository.findByGroupAndMentorAndStatus(meeting.get().getGroup(), user.getMentor(), "ACCEPT_MENTOR");
-            if (groupMentor == null) {
+            GroupSupervisor groupSupervisor = groupSupervisorRepository.findByGroupAndSupervisorAndStatus(meeting.get().getGroup(), user.getSupervisor(), "ACCEPT_SUPERVISOR");
+            if (groupSupervisor == null) {
                 throw new ServiceException(ErrorCode.USER_NOT_ALLOW);
             }
             Map<String, String> map = new HashMap<>();

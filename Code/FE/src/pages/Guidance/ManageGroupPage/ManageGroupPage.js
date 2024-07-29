@@ -25,8 +25,12 @@ const ManageGroupPage = (props) => {
 
   useEffect(() => {
     getSemester();
-    GetGroupListBySemester();
   }, []);
+  useEffect(() => {
+    if (selectedSemesterId) {
+      GetGroupListBySemester(selectedSemesterId);
+    }
+  }, [selectedSemesterId]);
   const getSemester = async () => {
     try {
       const res = await semesterStore.getSemesters();
@@ -36,10 +40,11 @@ const ManageGroupPage = (props) => {
       console.log(e);
     }
   };
-  const GetGroupListBySemester = async () => {
+  const GetGroupListBySemester = async (semesterId) => {
     try {
-      const res = await groupStore.getGroupList();
-      setGroups(res.data.data);
+      const res = await groupStore.getGroupOfSupervisorBySemester(semesterId);
+      console.log("res.data", res.data);
+      setGroups(res.data);
     } catch (e) {
       console.log(e);
     }
@@ -75,7 +80,6 @@ const ManageGroupPage = (props) => {
           }
         }
       }, null);
-      console.log("closestSemester", closestSemester);
       if (closestSemester) {
         setSelectedSemesterId(closestSemester.id);
       }
@@ -90,12 +94,12 @@ const ManageGroupPage = (props) => {
     {
       title: "Group Name",
       width: "200",
-      render: (record) => record?.name,
+      render: (record) => record?.group.name,
     },
     {
       title: "Vietnamese Title",
       width: "25%",
-      render: (record) => record?.vietnameseTitle,
+      render: (record) => record?.group.vietnameseTitle,
     },
     {
       title: "Action",
@@ -106,7 +110,7 @@ const ManageGroupPage = (props) => {
           <Tooltip title="View">
             <Button
               onClick={() =>
-                history.push(`/guidance/group/progress/${record.id}`)
+                history.push(`/guidance/group/progress/${record.group.id}`)
               }
             >
               View

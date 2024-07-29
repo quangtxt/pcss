@@ -10,7 +10,7 @@ const PopupViewDetail = (props) => {
   const { isVisiblePopup, setIsVisiblePopup, handleClosePopup, note } = props;
   const { TextArea } = Input;
   const [form] = Form.useForm();
-  const [mentor, setMentor] = useState();
+  const [supervisor, setSupervisor] = useState();
   const EDITOR_REF = useRef();
   useEffect(() => {
     console.log("note", note);

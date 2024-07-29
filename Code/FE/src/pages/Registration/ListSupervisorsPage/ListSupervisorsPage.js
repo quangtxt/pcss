@@ -18,46 +18,46 @@ const ListSupervisorsPage = (props) => {
   const {
     history,
     loadingAnimationStore,
-    mentorStore,
+    supervisorStore,
     authenticationStore,
   } = props;
 
   const {
-    mentorList,
-    mentorListTotalCount,
-    mentorListPageSize,
-    mentorListPageIndex,
+    supervisorList,
+    supervisorListTotalCount,
+    supervisorListPageSize,
+    supervisorListPageIndex,
     setFilter,
-  } = mentorStore;
+  } = supervisorStore;
 
   // const [isVisiblePopup, setIsVisiblePopup] = useState(false);
 
   useEffect(() => {
     if (authenticationStore.currentUser) {
       loadingAnimationStore.setTableLoading(true);
-      mentorStore.getMentorList().finally(() => {
+      supervisorStore.getSupervisorList().finally(() => {
         loadingAnimationStore.setTableLoading(false);
       });
     }
     return () => {
-      mentorStore.clearStore();
+      supervisorStore.clearStore();
     };
   }, [authenticationStore.currentUser]);
 
   const onSearchByEmailOrName = (keyword) => {
-    setFilter("mentorListPageIndex", 0);
-    setFilter("mentorListKeyword", keyword);
+    setFilter("supervisorListPageIndex", 0);
+    setFilter("supervisorListKeyword", keyword);
     loadingAnimationStore.setTableLoading(true);
-    mentorStore.getMentorList().finally(() => {
+    supervisorStore.getSupervisorList().finally(() => {
       loadingAnimationStore.setTableLoading(false);
     });
   };
 
   const onChangePagination = (e) => {
-    setFilter("mentorListPageIndex", e - 1);
+    setFilter("supervisorListPageIndex", e - 1);
     loadingAnimationStore.setTableLoading(true);
-    mentorStore
-      .getMentorList()
+    supervisorStore
+      .getSupervisorList()
       .finally(() => loadingAnimationStore.setTableLoading(false));
   };
 
@@ -107,7 +107,7 @@ const ListSupervisorsPage = (props) => {
           </div>
           <TableComponent
             rowKey={(record) => record.id || uuid()}
-            dataSource={mentorList}
+            dataSource={supervisorList}
             columns={columns}
             pagination={false}
             loading={loadingAnimationStore.tableLoading}
@@ -124,9 +124,9 @@ const ListSupervisorsPage = (props) => {
           <Pagination
             onChange={(e) => onChangePagination(e)}
             hideOnSinglePage={true}
-            total={mentorListTotalCount}
-            pageSize={mentorListPageSize}
-            current={mentorListPageIndex + 1}
+            total={supervisorListTotalCount}
+            pageSize={supervisorListPageSize}
+            current={supervisorListPageIndex + 1}
             showSizeChanger={false}
             showLessItems
           />
@@ -145,7 +145,7 @@ export default memo(
     inject(
       "authenticationStore",
       "loadingAnimationStore",
-      "mentorStore"
+      "supervisorStore"
     )(observer(ListSupervisorsPage))
   )
 );

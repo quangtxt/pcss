@@ -408,7 +408,7 @@ export default withRouter(
   inject(
     "loadingAnimationStore",
     "authenticationStore",
-    "mentorStore",
+    "supervisorStore",
     "semesterStore"
   )(observer(PopupCreateSemester))
 );

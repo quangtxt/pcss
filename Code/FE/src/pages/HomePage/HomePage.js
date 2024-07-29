@@ -35,7 +35,7 @@ const HomePage = (props) => {
     currentUser,
     isAccountAdmin,
     isStudent,
-    isMentor,
+    isSupervisor,
   } = authenticationStore;
   // const { statistic } = statisticStore
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -419,7 +419,7 @@ const HomePage = (props) => {
             <Tabs
               defaultActiveKey="tab1"
               tabBarExtraContent={
-                isMentor && (
+                isSupervisor && (
                   <Button
                     type="primary"
                     icon={<PrinterOutlined />}

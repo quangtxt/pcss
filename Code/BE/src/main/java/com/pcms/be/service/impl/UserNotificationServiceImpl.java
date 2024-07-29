@@ -4,7 +4,6 @@ import com.pcms.be.domain.user.User;
 import com.pcms.be.domain.user.UserNotification;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
-import com.pcms.be.pojo.DTO.MentorDTO;
 import com.pcms.be.pojo.response.PageUserNotificationResponse;
 import com.pcms.be.pojo.response.UserNotificationResponse;
 import com.pcms.be.repository.UserNotificationRepository;
@@ -49,9 +48,6 @@ public class UserNotificationServiceImpl implements UserNotificationService {
             PageUserNotificationResponse response = new PageUserNotificationResponse();
             response.setTotalPage(userNotifications.getTotalPages());
             response.setTotalCount(userNotifications.getTotalElements());
-//            List<MentorDTO> mentorDTOs = mentorPage.stream()
-//                    .map(mentor -> modelMapper.map(mentor, MentorDTO.class))
-//                    .collect(Collectors.toList());
             List<UserNotificationResponse> userNotificationResponses = userNotifications.stream()
                     .map(usernoti -> modelMapper.map(usernoti, UserNotificationResponse.class))
                     .collect(Collectors.toList());

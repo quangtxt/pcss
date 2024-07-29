@@ -4,7 +4,7 @@ import TeamPage from "./pages/Registration/TeamPage/TeamPage";
 import ListRequestPage from "./pages/Registration/ListRequestPage/ListRequestPage";
 import CreateIdeaPage from "./pages/Registration/CreateIdeaPage/CreateIdeaPage";
 import ListSupervisorsPage from "./pages/Registration/ListSupervisorsPage/ListSupervisorsPage";
-import GroupInvitedMentorPage from "./pages/GroupInvitedMentorPage/GroupInvitedMentorPage";
+import GroupInvitedSupervisorPage from "./pages/GroupInvitedSupervisorPage/GroupInvitedSupervisorPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import CreateNotePage from "./pages/Meeting/Note/CreateNotePage";
 import DetailProfileSupervisorPage from "./pages/DetailProfileSupervisorPage";
@@ -14,7 +14,7 @@ import NotePage from "./pages/Meeting/Note/NotePage";
 import SchedulePage from "./pages/Guidance/SchedulePage";
 import ManageTaskPage from "./pages/Guidance/ManageTaskPage";
 import ManageGroupPage from "./pages/Guidance/ManageGroupPage";
-import ScheduleMentorPage from "./pages/Guidance/ScheduleMentorPage";
+import ScheduleSupervisorPage from "./pages/Guidance/ScheduleSupervisorPage";
 import SemesterPage from "./pages/SemesterPage";
 import NotificationPage from "./pages/NotificationPage/NotificationPage";
 import SemesterPageDemo from "./pages/SemesterPageDemo";
@@ -33,7 +33,7 @@ export const routes = [
   {
     path: "/",
     component: HomePage,
-    name: "Trang chủ",
+    name: "Home",
   },
   {
     path: "/home",
@@ -119,16 +119,16 @@ export const routes = [
     name: "ProgressPage",
   },
 
-  //mentor
+  //supervisor
   {
     path: "/registration/std-request",
-    component: GroupInvitedMentorPage,
-    name: "GroupInvitedMentorPage",
+    component: GroupInvitedSupervisorPage,
+    name: "GroupInvitedSupervisorPage",
   },
   {
-    path: "/guidance/schedule-mentor",
-    component: ScheduleMentorPage,
-    name: "ScheduleMentorPage",
+    path: "/guidance/schedule-supervisor",
+    component: ScheduleSupervisorPage,
+    name: "ScheduleSupervisorPage",
   },
   {
     path: "/guidance/group",
