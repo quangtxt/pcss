@@ -113,7 +113,7 @@ export const TextForm = styled.div`
 `;
 export const FontSize14px = styled.div`
   font-size: 14px !important;
-  ß .ant-table {
+  .ant-table {
     font-size: 14px !important;
   }
 `;

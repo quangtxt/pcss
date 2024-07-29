@@ -109,11 +109,6 @@ export const routes = [
     name: "ProgressPage",
   },
   {
-    path: "/student/progressdemo",
-    component: ProgressPageDemo,
-    name: "ProgressPageDemo",
-  },
-  {
     path: "/student/progress",
     component: ProgressPage,
     name: "ProgressPage",

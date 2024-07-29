@@ -48,7 +48,10 @@ const ViewProgress = (props) => {
 
   const currentStepIndex = getCurrentStepIndex();
   return (
-    <Steps current={currentStepIndex === -1 ? 0 : currentStepIndex}>
+    <Steps
+      labelPlacement="vertical"
+      current={currentStepIndex === -1 ? 0 : currentStepIndex}
+    >
       {milestones.map((milestone, index) => (
         <Step
           key={index}
