@@ -46,7 +46,6 @@ const ListStudentPage = (props) => {
     if (authenticationStore.currentUser) {
       loadingAnimationStore.setTableLoading(true);
       studentStore.getStudentList().finally(() => {
-        console.log("list", studentList);
         loadingAnimationStore.setTableLoading(false);
       });
     }
@@ -62,8 +61,14 @@ const ListStudentPage = (props) => {
       .getStudentList()
       .finally(() => loadingAnimationStore.setTableLoading(false));
   };
-  const [isAdd, setIsAdd] = useState(false);
-  const [isImport, setIsImport] = useState(false);
+  const onSearchByEmailOrName = (keyword) => {
+    setFilter("studentListPageIndex", 0);
+    setFilter("studentListKeyword", keyword);
+    loadingAnimationStore.setTableLoading(true);
+    studentStore.getStudentList().finally(() => {
+      loadingAnimationStore.setTableLoading(false);
+    });
+  };
 
   const [isVisiblePopupImportExcel, setIsVisiblePopupImportExcel] = useState(
     false
@@ -74,10 +79,9 @@ const ListStudentPage = (props) => {
   ] = useState(false);
   const showConfirmModal = (action, record) => {
     Modal.confirm({
-      title: `Are you sure you want to ${action} this group?`,
+      title: `Are you sure to deActive this account?`,
       onOk: () => {
         if (action === "confirm") {
-          console.log(`switch to ${checked}`);
         } else {
         }
       },
@@ -85,9 +89,6 @@ const ListStudentPage = (props) => {
       okText: "Yes",
       cancelText: "No",
     });
-  };
-  const onChange = (checked) => {
-    showConfirmModal;
   };
   const columns = [
     {
@@ -112,63 +113,27 @@ const ListStudentPage = (props) => {
       ),
     },
   ];
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 6 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 14 },
-    },
-  };
 
-  const handleSubmit = async (values) => {
-    try {
-      loadingAnimationStore.showSpinner(true);
-
-      const response = await studentStore.createStudent(
-        values.email,
-        values.name
-      );
-      if (response.status === 200) {
-        message.success("Add student successfully");
-        console.log(response);
-      }
-    } catch (err) {
-      console.log(err);
-      loadingAnimationStore.showSpinner(false);
-      message.error(err.en || "Login failed response status!");
-    } finally {
-      loadingAnimationStore.showSpinner(false);
-    }
-  };
-
-  const handleAdd = useCallback(() => {
-    setIsAdd((prevState) => !prevState);
-  }, []);
-  const handleImport = useCallback(() => {
-    setIsImport((prevState) => !prevState);
-  }, []);
   return (
     <DashboardLayout>
       <Helmet>
-        <title>Registration | List Supervisors</title>
+        <title>Registration | List students</title>
       </Helmet>
       <PageTitle
         location={props.location}
-        title={"List Supervisors"}
+        title={"List students"}
         hiddenGoBack
       ></PageTitle>
       <ContentBlockWrapper>
         <Profile>
           <TableStudents>
             <FlexBox style={{ marginBottom: "20px" }}>
-              <div className="searchSupervisors">
+              <div className="searchstudents">
                 <Search
                   allowClear
                   placeholder={"FE Email or Name"}
                   className="searchInput"
+                  onSearch={onSearchByEmailOrName}
                 />
               </div>
               <div className="flex items-center justify-center gap-4">
@@ -225,11 +190,6 @@ const ListStudentPage = (props) => {
             setIsVisiblePopup={setIsVisiblePopupCreateStudent}
             handleClosePopup={() => setIsVisiblePopupCreateStudent(false)}
           />
-          <div
-            className={`overlay ${isAdd ? "active" : ""} ${
-              isImport ? "active" : ""
-            }`}
-          ></div>
         </Profile>
       </ContentBlockWrapper>
     </DashboardLayout>

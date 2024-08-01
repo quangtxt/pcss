@@ -5,6 +5,7 @@ import com.pcms.be.errors.ServiceException;
 import com.pcms.be.service.MilestoneGroupService;
 import com.pcms.be.service.MilestoneService;
 import jakarta.annotation.PostConstruct;
+import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -39,7 +40,7 @@ public class SystemController {
 
     //    @Scheduled(cron = "#{T(org.springframework.beans.factory.annotation).getBean('scheduleConfig').getUpdateStatusMilestoneCron()}")
     @Scheduled(cron = "#{@scheduleConfig.getUpdateStatusMilestoneCron()}")
-    public void UpdateStatusMilestone() throws ServiceException {
+    public void UpdateStatusMilestone() throws ServiceException, MessagingException {
         log.info("Function da chay");
         milestoneService.updateStatusMilestone();
         log.info(scheduleConfig.getUpdateStatusMilestoneCron());

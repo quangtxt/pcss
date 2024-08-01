@@ -5,7 +5,7 @@ import utils from "../utils";
 import { update } from "lodash";
 
 export const StudentRequest = {
-  getStudentList: (pageSize, pageNumber) =>
+  getStudentList: (pageSize, pageNumber, keyword) =>
     axios({
       method: "get",
       url: `${apiUrl}/api/v1/staff/students`,
@@ -15,8 +15,8 @@ export const StudentRequest = {
       },
       params: {
         page: pageNumber,
-        size: pageSize
-        // keyword: keyword || "",
+        size: pageSize,
+        keyword: keyword || "",
       },
     }),
 
@@ -70,13 +70,13 @@ export const StudentRequest = {
         fullName: name,
       },
     }),
-    automaticallyCreateGroups: () =>
+  automaticallyCreateGroups: () =>
     axios({
       method: "post",
       url: `${apiUrl}/api/v1/staff/student/automatically/create/groups`,
       headers: {
         Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
         "Content-Type": "application/json",
-      }
+      },
     }),
 };

@@ -2,49 +2,16 @@ import React, { useEffect, useState, useMemo } from "react";
 // Ant design
 // Mobx
 import { inject, observer } from "mobx-react";
-import { toJS } from "mobx";
-import {
-  Avatar,
-  Button,
-  Col,
-  Comment,
-  Input,
-  message,
-  Pagination,
-  Row,
-  Switch,
-  Tooltip,
-  Upload,
-  Modal,
-} from "antd";
-import {
-  CloseCircleOutlined,
-  EditOutlined,
-  FilterOutlined,
-  PlusCircleOutlined,
-  FileAddOutlined,
-  InboxOutlined,
-} from "@ant-design/icons";
-import EmptyContent from "../../components/EmptyContent";
-import { EmptyText } from "../../components/Common/CellText";
-import {
-  CellEclipseBox,
-  TableBottomPaginationBlock,
-} from "../../components/Common/Table";
-import TableComponent from "../../components/Common/TableComponent";
-import fileStore from "../../stores/fileStore";
+import { Button, Comment, message, Modal } from "antd";
+import EmptyContent from "../../../components/EmptyContent";
+import { EmptyText } from "../../../components/Common/CellText";
+import TableComponent from "../../../components/Common/TableComponent";
 
 const ModalPreView = (props) => {
   const {
-    userStore,
-    selectUserStore,
-    typeModalSelectDepartment,
     data,
-    renderCustomTitleModalDepartment,
     onCancel,
     setPreViewVisible,
-    preViewVisible,
-    authenticationStore,
     loadingAnimationStore,
     fileStore,
   } = props;
@@ -62,19 +29,44 @@ const ModalPreView = (props) => {
   const tableColumns = useMemo(
     () => [
       {
-        title: "No",
-        key: "no",
+        title: "Group",
+        key: "group",
         render: (record) =>
-          record.stt ? (
-            <span>{record.stt}</span>
+          record.group ? (
+            <span>{record.group}</span>
+          ) : (
+            <EmptyText>Unclear</EmptyText>
+          ),
+      },
+      {
+        title: "Roll number",
+        key: "rollNumber",
+        render: (record) =>
+          record.rollNumber ? (
+            record.rollNumber
+          ) : (
+            <EmptyText>Unclear</EmptyText>
+          ),
+      },
+      {
+        title: "Email",
+        key: "email",
+        render: (record) =>
+          record.email ? record.email : <EmptyText>Unclear</EmptyText>,
+      },
+      {
+        title: "Member Code",
+        key: "memberCode",
+        render: (record) =>
+          record.memberCode ? (
+            record.memberCode
           ) : (
             <EmptyText>Unclear</EmptyText>
           ),
       },
       {
         title: "Full name",
-        width: 150,
-        key: "fullname",
+        key: "fullName",
         render: (record) =>
           record.fullName ? (
             <Comment
@@ -89,57 +81,12 @@ const ModalPreView = (props) => {
           ),
       },
       {
-        title: "Member code",
-        key: "rollNumber",
-        render: (record) =>
-          record.rollNumber ? (
-            record.rollNumber
-          ) : (
-            <EmptyText>Unclear</EmptyText>
-          ),
-      },
-      {
-        title: "Email",
-        key: "email",
-        render: (record) =>
-          record.email ? record?.email : <EmptyText>Unclear</EmptyText>,
-      },
-      {
-        title: "Status",
-        key: "status",
-        render: (record) =>
-          record.status ? (
-            <strong>{record.status}</strong>
-          ) : (
-            <EmptyText>Unclear</EmptyText>
-          ),
-      },
-      {
-        title: "Note",
-        key: "note",
-        render: (record) =>
-          record.note ? (
-            <strong>{record.note}</strong>
-          ) : (
-            <EmptyText>Unclear</EmptyText>
-          ),
-      },
-      {
         title: "Note Error",
         key: "note_error",
         width: 200,
         render: (record) => (
           <div style={{ color: "red" }}>
-            {record?.note &&
-              record?.note
-                .replace(/\.$/, "")
-                .split(".")
-                .map((sentence, index) => (
-                  <React.Fragment key={index}>
-                    {sentence.trim()}
-                    <br />
-                  </React.Fragment>
-                ))}
+            {record.note ? record.note : <EmptyText>No error</EmptyText>}
           </div>
         ),
       },
@@ -147,10 +94,10 @@ const ModalPreView = (props) => {
     []
   );
 
-  const HandelCreateUsers = async () => {
+  const HandelCreateGroups = async () => {
     try {
       loadingAnimationStore.showSpinner(true);
-      await fileStore.createUsersFromExcel(data.data);
+      await fileStore.createGroupsFromExcel(data.data);
       loadingAnimationStore.showSpinner(false);
       message.success("Đã tạo người dùng từ file Excel thành công.");
       setPreViewVisible(false);
@@ -178,7 +125,7 @@ const ModalPreView = (props) => {
           Quay lại
         </Button>,
         !checkErrorData && (
-          <Button type="primary" onClick={HandelCreateUsers}>
+          <Button type="primary" onClick={HandelCreateGroups}>
             Nhập excel
           </Button>
         ),

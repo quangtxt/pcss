@@ -42,3 +42,6 @@
 .ant-progress-outer {
     width: 75%;
 }
+.ant-picker-calendar-mode-switch {
+    display: none;
+}

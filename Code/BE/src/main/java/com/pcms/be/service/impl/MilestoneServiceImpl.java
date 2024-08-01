@@ -10,6 +10,7 @@ import com.pcms.be.domain.user.Member;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.functions.Git;
+import com.pcms.be.functions.MailTemplate;
 import com.pcms.be.functions.NotificationTemplate;
 import com.pcms.be.pojo.DTO.GitFolder;
 import com.pcms.be.pojo.DTO.MilestoneDTO;
@@ -20,6 +21,7 @@ import com.pcms.be.repository.*;
 import com.pcms.be.service.EmailService;
 import com.pcms.be.service.MilestoneService;
 import com.pcms.be.service.NotificationService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,7 +135,7 @@ public class MilestoneServiceImpl implements MilestoneService {
 
     @Override
     @Transactional
-    public void updateStatusMilestone() throws ServiceException {
+    public void updateStatusMilestone() throws ServiceException, MessagingException {
         OffsetDateTime now = OffsetDateTime.now();
         Optional<Semester> optSemester = semesterRepository.findByCurrent(now);
         if (optSemester.isEmpty()){
@@ -171,12 +173,11 @@ public class MilestoneServiceImpl implements MilestoneService {
                                 map.put("_MilestoneName-txt_", milestone.getName());
                                 String content = notificationService.createContentNotification(NotificationTemplate.MilestoneProcessNotification.cannotFindInGit, map);
                                 notificationService.saveNotification(m.getStudent().getUser(), content);
+                                String to = MailTemplate.MilestoneUnfinished.recipient.replace("_Email-txt_",m.getStudent().getUser().getEmail());
+                                String subject = MailTemplate.MilestoneUnfinished.subject.replace("_Name-txt_", m.getStudent().getUser().getName());
+                                String body = MailTemplate.MilestoneUnfinished.template.replace("_MilestoneName-txt_", milestone.getName());
+                                emailService.sendEmail(to, subject, body);
                             }
-                            //gửi mail
-//                            String to = MailTemplate.MilestoneUnfinished.recipient.replace("_Email-txt_",m.getStudent().getUser().getEmail());
-//                                String subject = MailTemplate.MilestoneUnfinished.subject.replace("_Name-txt_", m.getStudent().getUser().getName());
-//                                String body = MailTemplate.MilestoneUnfinished.template.replace("_MilestoneName-txt_", milestone.getName());
-//                                emailService.sendEmail(to, subject, body);
                             milestoneGroup.get().setStatus(false);
                             milestoneGroupRepository.save(milestoneGroup.get());
                         }else{

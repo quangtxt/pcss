@@ -4,7 +4,7 @@ import { Tag } from "antd";
 import { NOTIFICATION_STATUS } from "../../constants";
 
 export const StatusTag = (typePage, status, isText = false) => {
-  let text = "Không rõ";
+  let text = "Unclear";
   let color = null;
 
   if (status === NOTIFICATION_STATUS.REQUESTGROUP) {

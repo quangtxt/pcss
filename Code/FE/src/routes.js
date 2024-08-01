@@ -108,11 +108,6 @@ export const routes = [
     component: ProgressPage,
     name: "ProgressPage",
   },
-  {
-    path: "/student/progress",
-    component: ProgressPage,
-    name: "ProgressPage",
-  },
 
   //supervisor
   {

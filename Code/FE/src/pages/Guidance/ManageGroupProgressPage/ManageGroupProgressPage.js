@@ -8,7 +8,7 @@ import {
   Select,
   Progress,
   Drawer,
-  Space,
+  Collapse,
   Row,
   Col,
   Modal,
@@ -30,6 +30,7 @@ const { Title } = Typography;
 import MemberItem from "../../Registration/TeamPage/MemberItem";
 import MilestoneEvaluationModal from "./MilestoneEvaluationModal";
 import ViewAllEvaluationModal from "./ViewAllEvaluationModal";
+const { Panel } = Collapse;
 const ManageGroupProgressPage = (props) => {
   const {
     history,
@@ -336,7 +337,40 @@ const ManageGroupProgressPage = (props) => {
                     showHeader={false}
                   />
                 ) : (
-                  <></>
+                  <Collapse accordion>
+                    {record?.detail.map((item) => (
+                      <Panel
+                        header={
+                          <Row
+                            style={{
+                              width: "100%",
+                              // paddingLeft: "50px",
+                            }}
+                          >
+                            <Col span={4}>{item.name}</Col>
+                            <Col span={4}>
+                              {item?.fromDate?.format(DATE_FORMAT_SLASH)}
+                            </Col>
+                            <Col span={4}>
+                              {item?.toDate?.format(DATE_FORMAT_SLASH)}
+                            </Col>
+                            <Col span={12}>{item.time}</Col>
+                          </Row>
+                        }
+                        key={item.key}
+                      >
+                        {item.detail.map((detail, index) => (
+                          <Row key={index} style={{ paddingLeft: "24px" }}>
+                            <Col xs={8}>{detail.product}</Col>
+                            <Col xs={4}>
+                              {detail?.toDate?.format(DATE_FORMAT_SLASH)}
+                            </Col>
+                            <Col xs={12}>{detail.time}</Col>
+                          </Row>
+                        ))}
+                      </Panel>
+                    ))}
+                  </Collapse>
                 )}
               </>
             ),

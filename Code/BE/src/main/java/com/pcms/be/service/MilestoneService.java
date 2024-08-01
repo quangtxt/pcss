@@ -6,6 +6,7 @@ import com.pcms.be.pojo.DTO.MilestoneDTO;
 import com.pcms.be.pojo.DTO.SemesterMilestone2DTO;
 import com.pcms.be.pojo.request.CreatedMilestoneRequest;
 import com.pcms.be.pojo.request.EditMilestoneRequest;
+import jakarta.mail.MessagingException;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface MilestoneService {
 //    ResponseEntity<String> editMilestone(EditMilestoneRequest editMilestoneRequest) throws ServiceException;
 //    Optional<Milestone> findLatestMilestoneEndDate();
     void setCronForSchedule();
-    void updateStatusMilestone() throws ServiceException;
+    void updateStatusMilestone() throws ServiceException, MessagingException;
 
     List<SemesterMilestone2DTO> getMilestoneGuidancePhase(Long semester_id);
 }

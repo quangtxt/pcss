@@ -12,6 +12,7 @@ import PageTitle from "../../../components/PageTitle";
 import { Helmet } from "react-helmet/es/Helmet";
 import ViewProgress from "../../../components/ViewProgress/ViewProgress";
 import moment from "moment";
+import PopupImportExcel from "./PopupImportExcel";
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -22,7 +23,9 @@ const ManageGroupPage = (props) => {
   const [selectedSemesterId, setSelectedSemesterId] = useState(null);
   const [semesters, setSemesters] = useState([]);
   const [groups, setGroups] = useState([]);
-
+  const [isVisiblePopupImportExcel, setIsVisiblePopupImportExcel] = useState(
+    false
+  );
   useEffect(() => {
     getSemester();
   }, []);
@@ -43,7 +46,6 @@ const ManageGroupPage = (props) => {
   const GetGroupListBySemester = async (semesterId) => {
     try {
       const res = await groupStore.getGroupOfSupervisorBySemester(semesterId);
-      console.log("res.data", res.data);
       setGroups(res.data);
     } catch (e) {
       console.log(e);
@@ -151,7 +153,11 @@ const ManageGroupPage = (props) => {
                 }))}
               />
             </div>
-            <Button type="primary" className="mb-5">
+            <Button
+              type="primary"
+              className="mb-5"
+              onClick={setIsVisiblePopupImportExcel}
+            >
               Import group
             </Button>
           </div>
@@ -168,6 +174,11 @@ const ManageGroupPage = (props) => {
             />
           </div>
         </div>
+        <PopupImportExcel
+          isVisiblePopup={isVisiblePopupImportExcel}
+          setIsVisiblePopup={setIsVisiblePopupImportExcel}
+          handleClosePopup={() => setIsVisiblePopupImportExcel(false)}
+        />
       </ContentBlockWrapper>
     </DashboardLayout>
   );

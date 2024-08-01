@@ -6,16 +6,9 @@ import FileDownload from "js-file-download";
 import { message } from "antd";
 
 class FileStore {
-  @observable documentAttachment = undefined;
-
-  @action clearDocumentAttachment = () => {
-    this.documentAttachment = undefined;
-  };
-
-  /** File upload */
-  @action uploadFile = (formData) => {
+  @action sendDataExcelStudent = (formData) => {
     return new Promise((resolve, reject) => {
-      FileRequest.uploadFile(formData)
+      FileRequest.sendDataExcelStudent(formData)
         .then((response) => {
           resolve(response);
         })
@@ -24,66 +17,9 @@ class FileStore {
         });
     });
   };
-
-  @action downloadAttachment = (file_id) => {
+  @action createStudentsFromExcel = (userInfo) => {
     return new Promise((resolve, reject) => {
-      FileRequest.downloadAttachment(file_id)
-        .then((response) => {
-          this.documentAttachment = response.data;
-          resolve(response);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  };
-
-  @action downloadFile = (file_id) => {
-    return new Promise((resolve, reject) => {
-      FileRequest.downloadAttachment(file_id)
-        .then((response) => {
-          resolve(response);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  };
-
-  @action renameFile = (file_id, file_name) => {
-    return new Promise((resolve, reject) => {
-      FileRequest.renameFile(file_id, file_name)
-        .then((response) => resolve(response))
-        .catch((error) => reject(error));
-    });
-  };
-
-  @action uploadExcel = (formData) => {
-    return new Promise((resolve, reject) => {
-      FileRequest.uploadExcel(formData)
-        .then((response) => {
-          resolve(response);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  };
-
-  @action sendDataExcel = (formData) => {
-    return new Promise((resolve, reject) => {
-      FileRequest.sendDataExcel(formData)
-        .then((response) => {
-          resolve(response);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  };
-  @action createUsersFromExcel = (userInfo) => {
-    return new Promise((resolve, reject) => {
-      FileRequest.createUsersFromExcel(userInfo)
+      FileRequest.createStudentsFromExcel(userInfo)
         .then((response) => {
           resolve(response);
         })
@@ -93,9 +29,77 @@ class FileStore {
         });
     });
   };
-  @action downloadTemplateAccount = () => {
+  @action downloadTemplateAccountStudent = () => {
     return new Promise((resolve, reject) => {
-      FileRequest.downloadTemplateAccount()
+      FileRequest.downloadTemplateAccountStudent()
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          message.error(error.vi);
+          reject(error);
+        });
+    });
+  };
+  @action sendDataExcelSupervisor = (formData) => {
+    return new Promise((resolve, reject) => {
+      FileRequest.sendDataExcelSupervisor(formData)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action createSupervisorsFromExcel = (userInfo) => {
+    return new Promise((resolve, reject) => {
+      FileRequest.createSupervisorsFromExcel(userInfo)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action downloadTemplateAccountSupervisor = () => {
+    return new Promise((resolve, reject) => {
+      FileRequest.downloadTemplateAccountSupervisor()
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          message.error(error.vi);
+          reject(error);
+        });
+    });
+  };
+  @action sendDataExcelGroup = (formData) => {
+    return new Promise((resolve, reject) => {
+      FileRequest.sendDataExcelGroup(formData)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action createGroupsFromExcel = (userInfo) => {
+    return new Promise((resolve, reject) => {
+      FileRequest.createGroupsFromExcel(userInfo)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  @action downloadTemplateAccountGroup = () => {
+    return new Promise((resolve, reject) => {
+      FileRequest.downloadTemplateAccountGroup()
         .then((response) => {
           resolve(response);
         })

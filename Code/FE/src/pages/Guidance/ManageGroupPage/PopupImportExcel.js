@@ -13,13 +13,8 @@ import { withRouter } from "react-router-dom";
 import { inject, observer } from "mobx-react";
 import uuid from "uuid";
 
-import {
-  CheckOutlined,
-  InboxOutlined,
-  UploadOutlined,
-  VerticalAlignBottomOutlined,
-} from "@ant-design/icons";
-import { NoMarginBottom } from "../ProfilePage/ProfilePageStyled";
+import { InboxOutlined } from "@ant-design/icons";
+import { NoMarginBottom } from "../../ProfilePage/ProfilePageStyled";
 import ModalPreView from "./ModalPreView";
 
 const { Dragger } = Upload;
@@ -27,15 +22,7 @@ const { Dragger } = Upload;
 const { Title } = Typography;
 const PopupImportExcel = (props) => {
   const { isVisiblePopup, setIsVisiblePopup, handleClosePopup } = props;
-  const { TextArea } = Input;
-  const [form] = Form.useForm();
-  const [supervisor, setSupervisor] = useState();
-  const {
-    history,
-    loadingAnimationStore,
-    fileStore,
-    authenticationStore,
-  } = props;
+  const { history, loadingAnimationStore, fileStore } = props;
 
   const [fileExcel, setFileExcel] = useState(null);
   const [dataExcel, setDataExcel] = useState(null);
@@ -55,7 +42,7 @@ const PopupImportExcel = (props) => {
     const formData = new FormData();
     formData.append("file", fileExcel);
     try {
-      const response = await fileStore.sendDataExcelStudent(formData);
+      const response = await fileStore.sendDataExcelGroup(formData);
       console.log("response", response);
       setDataExcel(response);
       setPreViewVisible(true);
@@ -75,7 +62,7 @@ const PopupImportExcel = (props) => {
   const handleDownLoadTemplate = async () => {
     try {
       loadingAnimationStore.showSpinner(true);
-      const response = await fileStore.downloadTemplateAccountStudent();
+      const response = await fileStore.downloadTemplateAccountGroup();
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;

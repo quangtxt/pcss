@@ -27,6 +27,9 @@ public class Group implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "group_code")
+    private String groupCode;
+
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 

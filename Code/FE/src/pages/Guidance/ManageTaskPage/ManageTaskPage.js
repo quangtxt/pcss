@@ -198,13 +198,6 @@ const ManageTaskPage = (props) => {
         </Select>
       ),
     },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record, index) => (
-        <Button onClick={() => deleteRow(index)}>Xóa</Button>
-      ),
-    },
   ];
   return (
     <DashboardLayout>

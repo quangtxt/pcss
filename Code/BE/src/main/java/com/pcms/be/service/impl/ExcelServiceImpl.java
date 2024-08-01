@@ -9,6 +9,7 @@ import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.functions.Constants;
 import com.pcms.be.functions.ValidateData;
+import com.pcms.be.pojo.DTO.ExcelGroupDTO;
 import com.pcms.be.pojo.DTO.ExcelSupervisorDTO;
 import com.pcms.be.pojo.DTO.ExcelStudentDTO;
 import com.pcms.be.repository.SupervisorRepository;
@@ -77,14 +78,11 @@ public class ExcelServiceImpl implements ExcelService {
             excelStudentDTO.setFullName(fullName);
             excelStudentDTO.setEmail(email);
             String note = "";
-            if (userRepository.findByUsernameIgnoreCase(userName).isPresent()){
-                note = note.concat("User name: " + userName + " đã tồn tại trong hệ thống.");
+            if (userRepository.findByEmail(email).isPresent()) {
+                note = note.concat("Email: " + email + " already exists.");
             }
-            if (userRepository.findByEmail(email).isPresent()){
-                note = note.concat("Email: " + email + " đã tồn tại trong hệ thống.");
-            }
-            if (!validateData.isValidEmail(email)){
-                note = note.concat("Email: "+ email + " không đúng định dạng");
+            if (!validateData.isValidEmail(email)) {
+                note = note.concat("Email: " + email + " is not in correct format.");
             }
             excelStudentDTO.setNote(note);
             data.add(excelStudentDTO);
@@ -107,11 +105,11 @@ public class ExcelServiceImpl implements ExcelService {
         Workbook workbook = new XSSFWorkbook(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
         Campus campus = user.getCampus();
-        for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++){
+        for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
 
             String emailFE = sheet.getRow(i).getCell(8).getStringCellValue();
             String emailFPT = sheet.getRow(i).getCell(7).getStringCellValue();
-            String userName =  emailFE.split("@")[0];
+            String userName = emailFE.split("@")[0];
             String fullName = sheet.getRow(i).getCell(1).getStringCellValue();
             String phoneNumber = sheet.getRow(i).getCell(9).getStringCellValue();
             String genderTxt = sheet.getRow(i).getCell(2).getStringCellValue();
@@ -127,23 +125,56 @@ public class ExcelServiceImpl implements ExcelService {
             excelSupervisorDTO.setPhoneNumber(phoneNumber);
             excelSupervisorDTO.setGenderTxt(genderTxt);
             String note = "";
-            if (userRepository.findByUsernameIgnoreCase(userName).isPresent()){
-                note = note.concat("User name: " + userName + " đã tồn tại trong hệ thống.");
+            if (userRepository.findByEmail(emailFE).isPresent()) {
+                note = note.concat("Email: " + emailFE + " already exists.");
             }
-            if (userRepository.findByEmail(emailFE).isPresent()){
-                note = note.concat("Email: " + emailFE + " đã tồn tại trong hệ thống.");
+            if (!validateData.isValidEmail(emailFE)) {
+                note = note.concat("Email: " + emailFE + " is not in correct format.");
             }
-            if (!validateData.isValidEmail(emailFE)){
-                note = note.concat("Email: "+ emailFE + " không đúng định dạng.");
+            if (!validateData.isValidPhoneNumber(phoneNumber)) {
+                note = note.concat("Phone: " + phoneNumber + " is not in correct format.");
             }
-            if (!validateData.isValidPhoneNumber(phoneNumber)){
-                note = note.concat("Số điện thoại: " + phoneNumber + " không đúng định dạng.");
-            }
-            if (!validateData.isValidGender(genderTxt)){
-                note =  note.concat("Gender không đúng định dạng.");
+            if (!validateData.isValidGender(genderTxt)) {
+                note = note.concat("Gender is not in correct format.");
             }
             excelSupervisorDTO.setNote(note);
             data.add(excelSupervisorDTO);
+        }
+
+        return data;
+    }
+
+    @Override
+    public List<ExcelGroupDTO> getGroupFromFile(MultipartFile file) throws IOException, ServiceException {
+        List<ExcelGroupDTO> data = new ArrayList<>();
+        if (file.isEmpty()) {
+            return data;
+        }
+        Workbook workbook = new XSSFWorkbook(file.getInputStream());
+        Sheet sheet = workbook.getSheetAt(0);
+        for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
+
+            String group = sheet.getRow(i).getCell(0).getStringCellValue();
+            String rollNumber = sheet.getRow(i).getCell(1).getStringCellValue();
+            String email = sheet.getRow(i).getCell(2).getStringCellValue();
+            String memberCode = sheet.getRow(i).getCell(3).getStringCellValue();
+            String fullName = sheet.getRow(i).getCell(4).getStringCellValue();
+
+            ExcelGroupDTO excelGroupDTO = new ExcelGroupDTO();
+            excelGroupDTO.setGroup(group);
+            excelGroupDTO.setRollNumber(rollNumber);
+            excelGroupDTO.setEmail(email);
+            excelGroupDTO.setMemberCode(memberCode);
+            excelGroupDTO.setFullName(fullName);
+            String note = "";
+            if (userRepository.findByEmail(email).isPresent()) {
+                note = note.concat("Email: " + email + " already exists.");
+            }
+            if (!validateData.isValidEmail(email)) {
+                note = note.concat("Email: " + email + " is not in correct format.");
+            }
+            excelGroupDTO.setNote(note);
+            data.add(excelGroupDTO);
         }
 
         return data;
@@ -159,7 +190,7 @@ public class ExcelServiceImpl implements ExcelService {
             throw new RuntimeException(e);
         }
         Campus campus = user.getCampus();
-        for (ExcelStudentDTO s : data){
+        for (ExcelStudentDTO s : data) {
             Set<Role> roles = new HashSet<>();
             roles.add(roleRepository.findByName(Constants.RoleConstants.STUDENT).orElseThrow());
             User newUser = new User();
@@ -187,7 +218,7 @@ public class ExcelServiceImpl implements ExcelService {
             throw new RuntimeException(e);
         }
         Campus campus = user.getCampus();
-        for (ExcelSupervisorDTO m : data){
+        for (ExcelSupervisorDTO m : data) {
             Set<Role> roles = new HashSet<>();
             roles.add(roleRepository.findByName(Constants.RoleConstants.SUPERVISOR).orElseThrow());
             User newUser = new User();
@@ -202,7 +233,7 @@ public class ExcelServiceImpl implements ExcelService {
             Supervisor supervisor = new Supervisor();
             supervisor.setUser(newUser);
             boolean gender = m.getGenderTxt().trim().equalsIgnoreCase("m");
-            String phone =  m.getPhoneNumber();
+            String phone = m.getPhoneNumber();
             supervisor.setGender(gender);
             supervisor.setPhone(phone);
             supervisorRepository.save(supervisor);
@@ -210,9 +241,14 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     @Override
-    public void downloadTemplate(HttpServletResponse response) throws IOException {
+    public void saveGroups(List<ExcelGroupDTO> data) throws ServiceException {
+
+    }
+
+    @Override
+    public void downloadTemplateStudent(HttpServletResponse response) throws IOException {
         Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Dữ liệu nhân viên");
+        Sheet sheet = workbook.createSheet("Student");
 
 
         CellStyle boldCellStyle = workbook.createCellStyle();
@@ -248,6 +284,16 @@ public class ExcelServiceImpl implements ExcelService {
         // Ghi workbook vào response
         workbook.write(response.getOutputStream());
         workbook.close();
+    }
+
+    @Override
+    public void downloadTemplateSupervisor(HttpServletResponse response) throws IOException {
+
+    }
+
+    @Override
+    public void downloadTemplateGroup(HttpServletResponse response) throws IOException {
+
     }
 
     private String getCellValueAsString(Cell cell) {
@@ -290,11 +336,12 @@ public class ExcelServiceImpl implements ExcelService {
         }
         return username;
     }
+
     public boolean checkFormatExcel(MultipartFile file, List<String> formatExcel) throws IOException {
         Workbook workbook = new XSSFWorkbook(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
-        for (int i = 0; i < sheet.getRow(0).getLastCellNum(); i++){
-            if (!sheet.getRow(0).getCell(i).getStringCellValue().equals(formatExcel.get(i).trim())){
+        for (int i = 0; i < sheet.getRow(0).getLastCellNum(); i++) {
+            if (!sheet.getRow(0).getCell(i).getStringCellValue().equals(formatExcel.get(i).trim())) {
                 return false;
             }
         }

@@ -54,7 +54,6 @@ const PopupEditMeeting = (props) => {
           });
         }
       });
-      console.log("meetingList", meetingList);
     }
   });
   const handleEdit = async (values) => {

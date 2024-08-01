@@ -48,26 +48,31 @@ const ViewProgress = (props) => {
 
   const currentStepIndex = getCurrentStepIndex();
   return (
-    <Steps
-      labelPlacement="vertical"
-      current={currentStepIndex === -1 ? 0 : currentStepIndex}
+    <div
+      className="sticky z-40 top-0 p-4"
+      style={{ backgroundColor: "#f1f5f9" }}
     >
-      {milestones.map((milestone, index) => (
-        <Step
-          key={index}
-          title={milestone.milestone?.name}
-          status={
-            currentStepIndex === -1
-              ? "wait"
-              : index < currentStepIndex
-              ? "finish"
-              : index === currentStepIndex
-              ? "process"
-              : "wait"
-          }
-        />
-      ))}
-    </Steps>
+      <Steps
+        labelPlacement="vertical"
+        current={currentStepIndex === -1 ? 0 : currentStepIndex}
+      >
+        {milestones.map((milestone, index) => (
+          <Step
+            key={index}
+            title={milestone.milestone?.name}
+            status={
+              currentStepIndex === -1
+                ? "wait"
+                : index < currentStepIndex
+                ? "finish"
+                : index === currentStepIndex
+                ? "process"
+                : "wait"
+            }
+          />
+        ))}
+      </Steps>
+    </div>
   );
 };
 

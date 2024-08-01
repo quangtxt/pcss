@@ -203,14 +203,4 @@ export const GroupRequest = {
         status: status,
       },
     }),
-
-  getGroupsOfSupervisor: () =>
-    axios({
-      method: "get",
-      url: `${apiUrl}/api/v1/group-supervisor/getGroupsOfSupervisor`,
-      headers: {
-        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
-        "Content-Type": "application/json",
-      },
-    }),
 };

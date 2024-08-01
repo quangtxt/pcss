@@ -3,6 +3,7 @@ import LoadingSpinner from "./components/LoadingSpinner";
 import axios from "axios";
 import { ConfigProvider, message } from "antd";
 import viVN from "antd/es/locale/vi_VN";
+import enUS from "antd/es/locale/en_US";
 import moment from "moment";
 import "moment/locale/vi";
 import ThemeProvider from "./providers/ThemeProvider";
@@ -122,7 +123,7 @@ axios.interceptors.response.use(
   }
 );
 
-moment.locale("vi", {
+moment.locale("en", {
   week: {
     dow: 1,
   },
@@ -178,19 +179,11 @@ export const AppRouter = () => {
   );
 
   useEffect(() => {
-    // console.log('useEffect. check session login')
     if (!keycloak.token) return;
     (async () => {
       loadingAnimationStore.showSpinner(true);
       try {
         const { data } = await authenticationStore.checkCurrentUser();
-        // await Promise.all([
-        //   // aclStore.getACLDetailByUser(data.username),
-        //   // commandStore.getCommandList(),
-        //   // accountStore.getCurrentUserAccount(),
-        //   // moduleStore.getModuleList(),
-        //   // companyStore.getCompanyList(),
-        // ]);
       } catch (err) {
         history.push("/login");
         console.log(err);
@@ -200,31 +193,11 @@ export const AppRouter = () => {
       }
     })();
   }, [authenticationStore.appToken]);
-  useEffect(
-    () => {
-      if (!keycloak.token) return; // loadingAnimationStore.showSpinner(true)
-      (async () => {
-        try {
-          // await Promise.allSettled([
-          //   userStore.getMentionUserList(),
-          //   notificationStore.getUnreadNotificationCount(),
-          //   notificationStore.getUnreadNewsCount(),
-          //   authenticationStore.getCurrentUserAvatar(),
-          // ])
-        } catch (err) {
-          console.log(err);
-          // message.error(err?.vi || 'Đã có lỗi xảy ra!')
-        } finally {
-          // loadingAnimationStore.showSpinner(false)
-        }
-      })();
-    },
-    useSSO ? [keycloak.token] : [authenticationStore.appToken]
-  );
+
   return (
     <Provider {...rootStore}>
       <ThemeProvider>
-        <ConfigProvider locale={viVN}>
+        <ConfigProvider locale={enUS}>
           <Router history={history}>
             <Switch>
               {normalRoutes.map((route) => (
