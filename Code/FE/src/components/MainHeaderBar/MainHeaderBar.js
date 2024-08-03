@@ -17,6 +17,7 @@ import {
   CloseOutlined,
   LogoutOutlined,
   UserOutlined,
+  MenuOutlined,
 } from "@ant-design/icons";
 // Other
 import { inject, observer } from "mobx-react";
@@ -75,6 +76,8 @@ const MainHeaderBar = (props) => {
     }
   }, []);
 
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
   useEffect(() => {
     if (!utils.isIOSDevice()) {
       notificationStore.getUnreadNewsCount();
@@ -114,12 +117,27 @@ const MainHeaderBar = (props) => {
         onClick={() => history.push("/profile")}
         style={{ color: blue }}
       >
-        <UserOutlined style={{ color: blue, marginRight: "5px" }} />
-        Thông Tin Cá Nhân
+        <div className="flex items-center">
+          <UserOutlined style={{ color: blue, marginRight: "5px" }} />
+          Thông Tin Cá Nhân
+        </div>
       </Menu.Item>
+      {windowWidth <= 1080 && (
+        <Menu.Item
+          onClick={() => history.push("/notification")}
+          style={{ color: blue }}
+        >
+          <div className="flex items-center">
+            <BellFilled style={{ color: blue, marginRight: "5px" }} />
+            Thông báo
+          </div>
+        </Menu.Item>
+      )}
       <Menu.Item onClick={() => clickLogout()} danger>
-        <LogoutOutlined style={{ marginRight: "5px" }} />
-        Đăng Xuất
+        <div className="flex items-center">
+          <LogoutOutlined style={{ marginRight: "5px" }} />
+          Đăng Xuất
+        </div>
       </Menu.Item>
     </Menu>
   );
@@ -250,6 +268,11 @@ const MainHeaderBar = (props) => {
 
   return (
     <>
+      {/* {windowWidth < 1300 && (
+        <div>
+          <MenuOutlined style={{ color: "#fff" }} />
+        </div>
+      )} */}
       <div className={"logo"}>
         <img
           onClick={() => history.push("/dashboard")}
@@ -258,62 +281,65 @@ const MainHeaderBar = (props) => {
           className="logoImg"
         />
       </div>
-
-      <Tooltip placement="top" title={"Hướng dẫn sử dụng"}>
-        <a
-          href=""
-          target="_blank"
-          className="sidebarItem avatar"
-          style={{
-            fontWeight: 500,
-            fontSize: 14,
-            textDecoration: "underline",
-          }}
-        >
-          Guide
-        </a>
-      </Tooltip>
+      {windowWidth > 1080 && (
+        <Tooltip placement="top" title={"Hướng dẫn sử dụng"}>
+          <a
+            href=""
+            target="_blank"
+            className="sidebarItem avatar"
+            style={{
+              fontWeight: 500,
+              fontSize: 14,
+              textDecoration: "underline",
+            }}
+          >
+            Guide
+          </a>
+        </Tooltip>
+      )}
       <NotificationItem
         className="sidebarItem"
         showNotification={visibleNotification}
       >
-        <Tooltip placement="bottom" title={"Thông báo"}>
-          <Dropdown
-            overlay={notiWrapper}
-            placement="bottomRight"
-            trigger={["click"]}
-            visible={visibleNotification}
-            onVisibleChange={(flag) => setVisibleNotification(flag)}
-          >
-            <div
-              className={"notificationItemBox"}
-              onClick={() => {
-                if (!visibleNotification) {
-                  setChangedTabsNotification({
-                    status: true,
-                    onlyNewsNotification:
-                      changedTabsNotification.onlyNewsNotification,
-                    isOpen: true,
-                  });
-                }
-                setVisibleNotification(!visibleNotification);
-              }}
+        {windowWidth > 1080 && (
+          <Tooltip placement="bottom" title={"Thông báo"}>
+            <Dropdown
+              overlay={notiWrapper}
+              placement="bottomRight"
+              trigger={["click"]}
+              visible={visibleNotification}
+              onVisibleChange={(flag) => setVisibleNotification(flag)}
             >
-              <div style={{ position: "relative" }}>
-                <BellFilled style={{ color: "#fff", fontSize: 18 }} />
-                <span
-                  className={
-                    unreadTotalCount !== 0
-                      ? "numberNotification"
-                      : "noNotification"
+              <div
+                className={"notificationItemBox"}
+                onClick={() => {
+                  if (!visibleNotification) {
+                    setChangedTabsNotification({
+                      status: true,
+                      onlyNewsNotification:
+                        changedTabsNotification.onlyNewsNotification,
+                      isOpen: true,
+                    });
                   }
-                >
-                  {unreadTotalCount > 99 ? "99+" : unreadTotalCount}
-                </span>
+                  setVisibleNotification(!visibleNotification);
+                }}
+              >
+                <div style={{ position: "relative" }}>
+                  <BellFilled style={{ color: "#fff", fontSize: 18 }} />
+                  <span
+                    className={
+                      unreadTotalCount !== 0
+                        ? "numberNotification"
+                        : "noNotification"
+                    }
+                  >
+                    {unreadTotalCount > 99 ? "99+" : unreadTotalCount}
+                  </span>
+                </div>
               </div>
-            </div>
-          </Dropdown>
-        </Tooltip>
+            </Dropdown>
+          </Tooltip>
+        )}
       </NotificationItem>
       <div style={{ marginRight: 6 }}>
         <Dropdown
@@ -337,16 +363,18 @@ const MainHeaderBar = (props) => {
                 >
                   {currentUser && subStringAvatar(currentUser.username)}
                 </Avatar>
-                <span
-                  style={{
-                    margin: "0 7px",
-                    fontWeight: 500,
-                  }}
-                >
-                  Đ/c{" "}
-                  {currentUser &&
-                    utils.getNameInCapitalize(currentUser.username)}
-                </span>
+                {windowWidth > 1080 && (
+                  <span
+                    style={{
+                      margin: "0 7px",
+                      fontWeight: 500,
+                    }}
+                  >
+                    Đ/c{" "}
+                    {currentUser &&
+                      utils.getNameInCapitalize(currentUser.username)}
+                  </span>
+                )}
               </div>
             </div>
           </Tooltip>

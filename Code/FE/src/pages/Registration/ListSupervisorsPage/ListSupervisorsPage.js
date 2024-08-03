@@ -44,6 +44,11 @@ const ListSupervisorsPage = (props) => {
     };
   }, [authenticationStore.currentUser]);
 
+  const [
+    isVisiblePopupCreateSupervisors,
+    setIsVisiblePopupCreateSupervisors,
+  ] = useState(false);
+
   const onSearchByEmailOrName = (keyword) => {
     setFilter("supervisorListPageIndex", 0);
     setFilter("supervisorListKeyword", keyword);
@@ -96,14 +101,24 @@ const ListSupervisorsPage = (props) => {
       ></PageTitle>
       <ContentBlockWrapper>
         <TableSupervisors>
-          <div className="searchSupervisors">
-            <p>FE Email Or Name:</p>
-            <Search
-              allowClear
-              placeholder={"FE Email or Name"}
-              className="searchInput"
-              onSearch={onSearchByEmailOrName}
-            />
+          <div className="flex items-center justify-between mb-5">
+            <div className="searchSupervisors">
+              <p>FE Email Or Name:</p>
+              <Search
+                allowClear
+                placeholder={"FE Email or Name"}
+                className="searchInput"
+                onSearch={onSearchByEmailOrName}
+              />
+            </div>
+            <Button
+              type="primary"
+              ghost
+              className="flex items-center justify-center"
+              onClick={setIsVisiblePopupCreateSupervisors}
+            >
+              Create Supervisors
+            </Button>
           </div>
           <TableComponent
             rowKey={(record) => record.id || uuid()}

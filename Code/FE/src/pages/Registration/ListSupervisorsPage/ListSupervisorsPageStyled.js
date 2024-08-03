@@ -67,43 +67,42 @@ export const LoginWrapper = styled.div`
 `;
 
 export const TableSupervisors = styled.div`
-.searchSupervisors {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 20px;
-  p {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 0 !important;
-  }
-  .searchInput {
-    width: 300px;
-    .ant-input-affix-wrapper {
-      border-radius: 360px 0 0 360px;
-    }
-    input {
+  .searchSupervisors {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    p {
       font-size: 16px;
-      display: flex;
-      align-items: center;
-      
+      font-weight: 600;
+      margin-bottom: 0 !important;
     }
-    input::placeholder {
-      font-size: 16px;
+    .searchInput {
+      width: 300px;
+      .ant-input-affix-wrapper {
+        border-radius: 360px 0 0 360px;
+      }
+      input {
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+      }
+      input::placeholder {
+        font-size: 16px;
+      }
+      svg {
+        height: 16px;
+      }
+      button {
+        width: 35.19px;
+        height: 35.19px;
+        border-radius: 0 360px 360px 0 !important;
+      }
     }
-    svg {
-      height: 16px;
-    }
-    button { 
-      width: 37.94px;
-      height: 37.94px;
-      border-radius: 0 360px 360px 0 !important;
   }
-  }
-}
   table {
-    th, td {
+    th,
+    td {
       font-size: 16px;
     }
     th {
@@ -115,10 +114,13 @@ export const TableSupervisors = styled.div`
     th:nth-child(4) {
       width: 10%;
     }
-    th:nth-child(1), th:nth-child(4), td:nth-child(1){
+    th:nth-child(1),
+    th:nth-child(4),
+    td:nth-child(1) {
       text-align: center;
     }
-    th:nth-child(2), th:nth-child(3) {
+    th:nth-child(2),
+    th:nth-child(3) {
       width: 42.5%;
     }
     td:nth-child(4) {
