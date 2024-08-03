@@ -146,7 +146,7 @@ const PopupCreateMeeting = (props) => {
   };
 
   const getOptions = () => {
-    if (groupsOfSupervisor.length > 0) {
+    if (groupsOfSupervisor?.length > 0) {
       return groupsOfSupervisor.map((item) => ({
         value: item?.group.id,
         label: item?.group.vietnameseTitle,

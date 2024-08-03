@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { Badge, Calendar, Button, Menu, Dropdown, Select } from "antd";
+import { Badge, Calendar, Button, Menu, Dropdown } from "antd";
 import {
   CloseCircleOutlined,
   CheckCircleOutlined,
@@ -34,46 +34,39 @@ const ScheduleSupervisorPage = (props) => {
   const [meetingList, setMeetingList] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [groupsOfSupervisor, setGroupsOfSupervisor] = useState([]);
-
-  const [selectedSemesterId, setSelectedSemesterId] = useState(null);
-  const [semesters, setSemesters] = useState([]);
+  const [value, setValue] = useState(moment());
+  const [semesterId, setSemesterId] = useState(null);
 
   useEffect(() => {
     getSemester();
-  }, []);
-  useEffect(() => {
-    if (selectedSemesterId) {
-      GetGroupListBySemester(selectedSemesterId);
-    }
-  }, [selectedSemesterId, refresh]);
+    getGroupOfSupervisorBySemester(semesterId);
+  }, [refresh]);
+
+  const getGroupOfSupervisorBySemester = async (semesterId) => {
+    loadingAnimationStore.setTableLoading(true);
+    const res = await groupStore
+      .getGroupOfSupervisorBySemester(semesterId)
+      .finally(() => {
+        loadingAnimationStore.setTableLoading(false);
+      });
+    setGroupsOfSupervisor(res.data);
+    setRefresh(false);
+    const listMeeting = res.data.flatMap(
+      (groupOfSupervisor) => groupOfSupervisor.group.meetings
+    );
+    setMeetingList(listMeeting);
+  };
+
   const getSemester = async () => {
     try {
       const res = await semesterStore.getSemesters();
-      setSemesters(res.data);
-      setSemesterCurrent(res.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  const GetGroupListBySemester = async (semesterId) => {
-    try {
-      const res = await groupStore.getGroupOfSupervisorBySemester(semesterId);
-      setGroupsOfSupervisor(res.data);
-      setRefresh(false);
-      const listMeeting = res.data.flatMap(
-        (groupOfSupervisor) => groupOfSupervisor.group.meetings
-      );
-      setMeetingList(listMeeting);
+      setSemesterData(res.data);
     } catch (e) {
       console.log(e);
     }
   };
 
-  const getSemesterById = (id) => {
-    return semesters.find((semester) => semester.id === id);
-  };
-
-  const setSemesterCurrent = (semesters) => {
+  const setSemesterData = (semesters) => {
     if (semesters.length > 0) {
       const currentDate = moment();
       const closestSemester = semesters.reduce((prev, curr) => {
@@ -95,10 +88,12 @@ const ScheduleSupervisorPage = (props) => {
         }
       }, null);
       if (closestSemester) {
-        setSelectedSemesterId(closestSemester.id);
+        setSemesterId(closestSemester);
       }
     }
   };
+  console.log("semesterId", semesterId);
+
   const getListData = (value) => {
     let listData = [];
     const meetings = meetingList.filter((meeting) => {
@@ -143,21 +138,32 @@ const ScheduleSupervisorPage = (props) => {
 
     return listData;
   };
-
-  const getMonthData = (value) => {
-    if (value.month() === 8) {
-      return 1394;
-    }
+  const onPanelChange = (newValue, mode) => {
+    setValue(newValue);
   };
 
-  const monthCellRender = (value) => {
-    const num = getMonthData(value);
-    return num ? (
-      <div className="notes-month">
-        <section>{num}</section>
-        <span>Backlog number</span>
+  // const getMonthData = (value) => {
+  //   if (value.month() === 8) {
+  //     return 1394;
+  //   }
+  // };
+
+  // const monthCellRender = (value) => {
+  //   const num = getMonthData(value);
+  //   return num ? (
+  //     <div className="notes-month">
+  //       <section>{num}</section>
+  //       <span>Backlog number</span>
+  //     </div>
+  //   ) : null;
+  // };
+  const headerRender = ({ value }) => {
+    return (
+      <div class="flex justify-between">
+        <p>{value.format("DD MMMM YYYY")}</p>
+        {/* Thêm các thông tin khác trong header nếu cần */}
       </div>
-    ) : null;
+    );
   };
 
   const handleRemoveMeeting = async (meetingId) => {
@@ -179,106 +185,143 @@ const ScheduleSupervisorPage = (props) => {
   };
 
   const dateCellRender = (value) => {
-    const today = moment();
     const listData = getListData(value);
+    console.log("value", value);
+    const dateValue = value.date();
+    const isPastDay = value.isBefore(moment(), "day");
+    const isCurrentDay = value.isSame(moment(), "day");
+    const isCurrentWeek = value.isSame(moment(), "week");
+    const isNextWeek = value.isSame(moment().add(1, "week"), "week");
+    if (!isCurrentWeek && !isNextWeek) {
+      return null;
+    }
     const handleNoteClick = (meetingId) => {
       history.push(`/guidance/meeting/notes/${meetingId}`);
     };
     return (
-      <div className={`${value.isSame(today, "week") ? "bg-blue-100" : ""}`}>
-        <ul className="events">
-          {listData.length > 0 ? (
-            listData.map((item) => {
-              return (
-                <div
-                  style={{
-                    backgroundColor: "rgb(14 165 233)",
-                    margin: "0 0.75rem 0.75rem 0.75rem",
-                  }}
-                  className={`p-3 rounded shadow-lg `}
-                >
-                  <li key={item.content}>
-                    <div className="flex place-items-center">
-                      <div className="font-bold text-indigo-800 truncate ...">
-                        {item.group}
-                      </div>
-                      <div>
-                        {moment(item.endMeeting) > new Date() ? (
-                          <Dropdown
-                            overlay={
-                              <Menu
-                                onClick={(e) =>
-                                  handleMenuClick(e, item.meetingId)
-                                }
-                              >
-                                <Menu.Item key="edit-meeting">
-                                  Edit meeting
-                                </Menu.Item>
-                                <Menu.Item key="remove-meeting">
-                                  Remove meeting
-                                </Menu.Item>
-                              </Menu>
-                            }
-                          >
-                            <Button type="text" className="p-0">
-                              <MoreOutlined style={{ fontSize: "15px" }} />
-                            </Button>
-                          </Dropdown>
-                        ) : (
-                          <></>
-                        )}
-                      </div>
-                    </div>
-
-                    <div>
-                      <Badge
-                        className="font-semibold"
-                        style={{ whiteSpace: "wrap" }}
-                        status={
-                          moment(item.endMeeting) < new Date()
-                            ? "error"
-                            : "success"
-                        }
-                        text={item.content}
-                      ></Badge>
-                    </div>
-
-                    <div
-                      style={{ color: "rgb(136 19 55)" }}
-                      className="italic "
+      <div
+        onClick={() =>
+          !isPastDay && listData.length === 0 && handleDateClick(value)
+        }
+        style={{
+          backgroundColor: isCurrentDay
+            ? "#E6F7FF"
+            : isCurrentWeek
+            ? "#F0F9FF"
+            : "white",
+          cursor: isPastDay ? "not-allowed" : "pointer",
+          padding: "1rem",
+          borderRadius: "0.5rem",
+          opacity: isPastDay ? 0.6 : 1,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "1.5rem",
+          boxShadow:
+            "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        }}
+      >
+        <div style={{ fontSize: "1rem", fontWeight: 500, marginRight: "1rem" }}>
+          {dateValue}
+        </div>
+        <ul
+          className="events"
+          style={{ overflowY: "auto", maxHeight: "190px" }}
+        >
+          {listData.map((item) => (
+            <li key={item.meetingId}>
+              <div
+                className="meeting-item"
+                style={{
+                  backgroundColor:
+                    moment(item.endMeeting) < new Date()
+                      ? "rgba(255, 0, 0, 0.1)"
+                      : "rgba(0, 255, 0, 0.1)",
+                  padding: "1rem",
+                  borderRadius: "0.5rem",
+                  marginBottom: "1rem",
+                }}
+              >
+                <div className="flex justify-between items-center">
+                  <div className="font-bold text-indigo-800 truncate">
+                    {item.group}
+                  </div>
+                  {moment(item.endMeeting) > new Date() && (
+                    <Dropdown
+                      overlay={
+                        <Menu
+                          onClick={(e) => handleMenuClick(e, item.meetingId)}
+                        >
+                          <Menu.Item key="edit-meeting">Edit meeting</Menu.Item>
+                          <Menu.Item key="remove-meeting">
+                            Remove meeting
+                          </Menu.Item>
+                        </Menu>
+                      }
                     >
-                      {item.time}
-                    </div>
-                    <div>
-                      {item.type === "Online" ? (
-                        <a href={item.link} target="_blank">
-                          {item.place}
-                        </a>
-                      ) : (
-                        <div>{item.place}</div>
-                      )}
-                    </div>
-                    <div>
-                      {item.note === "No notes" ? (
-                        <a onClick={() => handleNoteClick(item.meetingId)}>
-                          {item.note}
-                        </a>
-                      ) : (
-                        <a onClick={() => handleNoteClick(item.meetingId)}>
-                          {item.note}
-                        </a>
-                      )}
-                    </div>
-                  </li>
+                      <Button type="text" className="p-0">
+                        <MoreOutlined style={{ fontSize: "15px" }} />
+                      </Button>
+                    </Dropdown>
+                  )}
                 </div>
-              );
-            })
-          ) : (
-            <div style={{ height: "70px" }}></div>
-          )}
+
+                <div>
+                  <Badge
+                    className="font-semibold"
+                    style={{ whiteSpace: "wrap" }}
+                    status={
+                      moment(item.endMeeting) < new Date() ? "error" : "success"
+                    }
+                    text={item.content}
+                  ></Badge>
+                </div>
+
+                <div style={{ color: "rgb(136 19 55)" }} className="italic">
+                  {item.time}
+                </div>
+
+                <div>
+                  {item.type === "Online" ? (
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {item.place}
+                    </a>
+                  ) : (
+                    <div>{item.place}</div>
+                  )}
+                </div>
+
+                <div>
+                  <a onClick={() => handleNoteClick(item.meetingId)}>
+                    {item.note}
+                  </a>
+                </div>
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
     );
+  };
+
+  const handleDateClick = (date) => {
+    // Handle clicking on a date to add a meeting
+    setIsVisiblePopup(true);
+  };
+
+  const dateFullCellRender = (value) => {
+    const isCurrentWeek = value.isSame(moment(), "week");
+    const isNextWeek = value.isSame(moment().add(1, "week"), "week");
+
+    if (isCurrentWeek || isNextWeek) {
+      return dateCellRender(value);
+    } else {
+      return null;
+    }
   };
 
   function navigateToCreate() {
@@ -308,6 +351,7 @@ const ScheduleSupervisorPage = (props) => {
             marginBottom: "15px",
           }}
         >
+          <h1>Calendar</h1>
           <Button
             style={{ marginTop: "20px " }}
             className="btnAdd"
@@ -321,7 +365,13 @@ const ScheduleSupervisorPage = (props) => {
         </div>
 
         <CalenderStudent>
-          <Calendar setRefresh={setRefresh} dateCellRender={dateCellRender} />
+          <Calendar
+            value={value}
+            mode="week"
+            onPanelChange={onPanelChange}
+            setRefresh={setRefresh}
+            dateFullCellRender={dateFullCellRender}
+          />
         </CalenderStudent>
       </ContentBlockWrapper>
 
