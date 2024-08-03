@@ -60,6 +60,17 @@ class GroupStore {
         });
     });
   };
+  @action getGroupByMemberId = () => {
+    return new Promise((resolve, reject) => {
+      GroupRequest.getGroupByMemberId()
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   @action getListInvitationToJoinGroup = () => {
     return new Promise((resolve, reject) => {
       GroupRequest.getListInvitationToJoinGroup()
@@ -150,11 +161,7 @@ class GroupStore {
   };
   @action getGroupList = () => {
     return new Promise((resolve, reject) => {
-      GroupRequest.getGroupList(
-        this.groupListPageSize,
-        this.groupListPageIndex
-        // this.groupListKeyword
-      )
+      GroupRequest.getGroupList(this.groupListPageSize, this.groupListPageIndex)
         .then((response) => {
           this.groupListTotalCount = response.data.totalCount;
           this.groupList = response.data.data;

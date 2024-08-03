@@ -45,3 +45,6 @@
 .ant-picker-calendar-mode-switch {
     display: none;
 }
+.highlight {
+    background-color: #ffffcc !important;
+  }

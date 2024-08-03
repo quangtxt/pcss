@@ -60,6 +60,34 @@ export const MeetingRequest = {
         content: content,
       },
     }),
+  editNote: (meetingId, title, content, noteId, authorId) =>
+    axios({
+      method: "put",
+      url: `${apiUrl}/api/v1/meeting/note/edit`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+      data: {
+        noteId: noteId,
+        authorId: authorId,
+        meetingId: meetingId,
+        title: title,
+        content: content,
+      },
+    }),
+  deleteNote: (noteId) =>
+    axios({
+      method: "delete",
+      url: `${apiUrl}/api/v1/meeting/note`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+      params: {
+        noteId: noteId,
+      },
+    }),
   updateMeeting: (listMeetings) =>
     axios({
       method: "put",

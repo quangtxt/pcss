@@ -288,12 +288,91 @@ public class ExcelServiceImpl implements ExcelService {
 
     @Override
     public void downloadTemplateSupervisor(HttpServletResponse response) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Sheet 1");
 
+
+        CellStyle boldCellStyle = workbook.createCellStyle();
+        Font boldFont = workbook.createFont();
+        boldFont.setBold(true);
+        boldCellStyle.setFont(boldFont);
+        boldCellStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        Row headerRow = sheet.createRow(0);
+        headerRow.setRowStyle(boldCellStyle);
+
+        Cell cell = headerRow.createCell(0);
+        cell.setCellValue("Empl_ID");
+        cell = headerRow.createCell(1);
+        cell.setCellValue("Name");
+        cell = headerRow.createCell(2);
+        cell.setCellValue("Gender");
+        cell = headerRow.createCell(3);
+        cell.setCellValue("Branch");
+        cell = headerRow.createCell(4);
+        cell.setCellValue("Parent Department");
+        cell = headerRow.createCell(5);
+        cell.setCellValue("Child Department");
+        cell = headerRow.createCell(6);
+        cell.setCellValue("Job title");
+        cell = headerRow.createCell(7);
+        cell.setCellValue("Email FPT");
+        cell = headerRow.createCell(8);
+        cell.setCellValue("Email FE");
+        cell = headerRow.createCell(9);
+        cell.setCellValue("Telephone");
+        cell = headerRow.createCell(10);
+        cell.setCellValue("Contract type");
+
+        // Set the values of cells row 2
+        Row mergedRow = sheet.createRow(1);
+        mergedRow.setRowStyle(boldCellStyle);
+
+        // Thiết lập header và body của response
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=sample-data.xlsx");
+
+        // Ghi workbook vào response
+        workbook.write(response.getOutputStream());
+        workbook.close();
     }
 
     @Override
     public void downloadTemplateGroup(HttpServletResponse response) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Sheet 1");
 
+
+        CellStyle boldCellStyle = workbook.createCellStyle();
+        Font boldFont = workbook.createFont();
+        boldFont.setBold(true);
+        boldCellStyle.setFont(boldFont);
+        boldCellStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        Row headerRow = sheet.createRow(0);
+        headerRow.setRowStyle(boldCellStyle);
+
+        Cell cell = headerRow.createCell(0);
+        cell.setCellValue("Class");
+        cell = headerRow.createCell(1);
+        cell.setCellValue("RollNumber");
+        cell = headerRow.createCell(2);
+        cell.setCellValue("Email");
+        cell = headerRow.createCell(3);
+        cell.setCellValue("MemberCode");
+        cell = headerRow.createCell(4);
+        cell.setCellValue("FullName");
+
+        Row mergedRow = sheet.createRow(1);
+        mergedRow.setRowStyle(boldCellStyle);
+
+        // Thiết lập header và body của response
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=sample-data.xlsx");
+
+        // Ghi workbook vào response
+        workbook.write(response.getOutputStream());
+        workbook.close();
     }
 
     private String getCellValueAsString(Cell cell) {

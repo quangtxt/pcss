@@ -15,6 +15,7 @@ import PopupViewDetail from "./PopupViewDetail";
 import TableComponent from "../../../components/Common/TableComponent";
 
 import { Container } from "../../../layouts/Container/Container";
+import CreateNotePage from "./CreateNotePage";
 
 const NotePage = (props) => {
   const {
@@ -26,25 +27,27 @@ const NotePage = (props) => {
     history,
     match,
   } = props;
-  const { meetingId } = match.params
+  const { meetingId } = match.params;
   const { currentUser } = authenticationStore;
   const EDITOR_REF = useRef();
   const [noteList, setNoteList] = useState();
   const [note, setNote] = useState();
   const [isVisiblePopup, setIsVisiblePopup] = useState(false);
-  
+  const [isVisiblePopupCreate, setIsVisiblePopupCreate] = useState(false);
 
   useEffect(() => {
     if (authenticationStore.currentUser) {
       getNoteListByMeeting();
     }
-  }, [authenticationStore.currentUser]);
+  }, [authenticationStore.currentUser, isVisiblePopupCreate]);
 
   const getNoteListByMeeting = async () => {
     loadingAnimationStore.setTableLoading(true);
-    const res = await meetingStore.getNoteListByMeeting(meetingId).finally(() => {
-      loadingAnimationStore.setTableLoading(false);
-    });
+    const res = await meetingStore
+      .getNoteListByMeeting(meetingId)
+      .finally(() => {
+        loadingAnimationStore.setTableLoading(false);
+      });
     setNoteList(res.data);
   };
   const columns = [
@@ -68,21 +71,28 @@ const NotePage = (props) => {
           }}
         >
           View
-        </Button> // Thêm nút View để navigating to detail page
+        </Button>
       ),
     },
   ];
   return (
     <DashboardLayout>
       <Helmet>
-        <title>Guidance || Create Note</title>
+        <title>Guidance || Note</title>
       </Helmet>
-      <PageTitle
-        location={props.location}
-        title={"Create Note"}
-        hiddenGoBack
-      ></PageTitle>
+
       <ContentBlockWrapper>
+        <div className="flex justify-between mb-3">
+          <h2>{currentUser?.group?.name} - List notes</h2>
+          <Button
+            type="primary"
+            onClick={() => {
+              setIsVisiblePopupCreate(true);
+            }}
+          >
+            Create new note
+          </Button>
+        </div>
         <TableComponent
           // onRow={(record, rowIndex) => {
           //   return {
@@ -100,10 +110,17 @@ const NotePage = (props) => {
         />
       </ContentBlockWrapper>
       <PopupViewDetail
+        meetingId={meetingId}
         note={note}
         isVisiblePopup={isVisiblePopup}
         setIsVisiblePopup={setIsVisiblePopup}
         handleClosePopup={() => setIsVisiblePopup(false)}
+      />
+      <CreateNotePage
+        meetingId={meetingId}
+        isVisiblePopup={isVisiblePopupCreate}
+        setIsVisiblePopup={setIsVisiblePopupCreate}
+        handleClosePopup={() => setIsVisiblePopupCreate(false)}
       />
     </DashboardLayout>
   );

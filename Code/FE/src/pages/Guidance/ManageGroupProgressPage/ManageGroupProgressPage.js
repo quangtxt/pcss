@@ -25,12 +25,13 @@ import ViewProgress from "../../../components/ViewProgress/ViewProgress";
 import moment from "moment";
 import utils from "../../../utils";
 import { DATE_FORMAT_SLASH, MEMBER_STATUS } from "../../../constants";
-const { TextArea } = Input;
-const { Title } = Typography;
 import MemberItem from "../../Registration/TeamPage/MemberItem";
 import MilestoneEvaluationModal from "./MilestoneEvaluationModal";
 import ViewAllEvaluationModal from "./ViewAllEvaluationModal";
+import ReportPopup from "./ReportPopup";
 const { Panel } = Collapse;
+const { TextArea } = Input;
+const { Title } = Typography;
 const ManageGroupProgressPage = (props) => {
   const {
     history,
@@ -106,6 +107,11 @@ const ManageGroupProgressPage = (props) => {
       }
     }
   };
+  const currentDate = moment();
+
+  const isCurrentMilestone = (record) => {
+    return currentDate.isBetween(record.fromDate, record.toDate, "day", "[]");
+  };
 
   const columnMilestoneGuidance = [
     {
@@ -162,10 +168,28 @@ const ManageGroupProgressPage = (props) => {
       width: 200,
     },
     {
-      title: "Requirement",
-      render: (record) => <div className="flex">submitted</div>,
+      title: "submit",
+      render: (record) => (
+        <div className="flex">
+          {record.product.toLowerCase().includes("report") && record.toDate ? (
+            <div>
+              submitted -
+              <Button className="ml-2" onClick={() => handleViewReport(record)}>
+                View
+              </Button>
+            </div>
+          ) : (
+            "submitted"
+          )}
+        </div>
+      ),
     },
   ];
+  const [showReportPreviewPopup, setShowReportPreviewPopup] = useState(false);
+
+  const handleViewReport = (record) => {
+    setShowReportPreviewPopup(true);
+  };
   const [visiblePopup, setVisiblePopup] = useState(false);
   const [visiblePopupAll, setVisiblePopupAll] = useState(false);
   const [currentMilestone, setCurrentMilestone] = useState("");
@@ -177,9 +201,13 @@ const ManageGroupProgressPage = (props) => {
   const handleCancel = () => {
     setVisiblePopup(false);
   };
+  const handleCancelReport = () => {
+    setShowReportPreviewPopup(false);
+  };
   const handleCancelPopupAll = () => {
     setVisiblePopupAll(false);
   };
+
   return (
     <DashboardLayout>
       <Helmet>
@@ -335,6 +363,9 @@ const ManageGroupProgressPage = (props) => {
                     expandable={false}
                     pagination={false}
                     showHeader={false}
+                    rowClassName={(record) =>
+                      isCurrentMilestone(record) ? "highlight" : ""
+                    }
                   />
                 ) : (
                   <Collapse accordion>
@@ -376,7 +407,12 @@ const ManageGroupProgressPage = (props) => {
             ),
             rowExpandable: (record) => record.detail?.length > 0,
             expandIconColumnIndex: 0,
+            rowClassName: (record) =>
+              isCurrentMilestone(record) ? "highlight" : "",
           }}
+          rowClassName={(record) =>
+            isCurrentMilestone(record) ? "highlight" : ""
+          }
         />
         <MilestoneEvaluationModal
           visible={visiblePopup}
@@ -384,6 +420,11 @@ const ManageGroupProgressPage = (props) => {
           currentMilestone={currentMilestone}
           group={group}
           handleCancel={handleCancel}
+        />
+        <ReportPopup
+          visible={showReportPreviewPopup}
+          setVisiblePopup={setShowReportPreviewPopup}
+          handleCancel={handleCancelReport}
         />
         <ViewAllEvaluationModal
           visible={visiblePopupAll}

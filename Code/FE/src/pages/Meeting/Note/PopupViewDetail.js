@@ -7,17 +7,49 @@ import RichEditor from "../../../components/RichEditor/RichEditor";
 import { toJS } from "mobx";
 
 const PopupViewDetail = (props) => {
-  const { isVisiblePopup, setIsVisiblePopup, handleClosePopup, note } = props;
+  const {
+    isVisiblePopup,
+    setIsVisiblePopup,
+    handleClosePopup,
+    note,
+    meetingId,
+    authenticationStore,
+    loadingAnimationStore,
+    meetingStore,
+  } = props;
+  const { currentUser } = authenticationStore;
   const { TextArea } = Input;
   const [form] = Form.useForm();
   const [supervisor, setSupervisor] = useState();
   const EDITOR_REF = useRef();
   useEffect(() => {
-    console.log("note", note);
     if (note) {
       form.setFieldsValue({ title: note?.title, content: note?.content });
     }
   }, [note]);
+
+  const handleSubmit = async (values) => {
+    try {
+      loadingAnimationStore.showSpinner(true);
+      const response = await meetingStore.editNote(
+        meetingId,
+        values.title,
+        EDITOR_REF.current.editor.getData(),
+        note?.id,
+        currentUser?.id
+      );
+      if (response.status === 200) {
+        message.success("Edit note successfully");
+        setIsVisiblePopup(false);
+      }
+    } catch (err) {
+      console.log(err);
+      loadingAnimationStore.showSpinner(false);
+      message.error(err.en || "Failed response status!");
+    } finally {
+      loadingAnimationStore.showSpinner(false);
+    }
+  };
   return (
     <Modal
       title="Note"
@@ -27,7 +59,7 @@ const PopupViewDetail = (props) => {
       onCancel={handleClosePopup}
       width={1000}
     >
-      <Form form={form}>
+      <Form form={form} onFinish={handleSubmit}>
         <div className="inputForm">
           <Form.Item label="Title" name="title">
             <Input style={{ maxWidth: "100%" }} disabled />
@@ -67,6 +99,7 @@ PopupViewDetail.propTypes = {};
 export default withRouter(
   inject(
     "loadingAnimationStore",
-    "authenticationStore"
+    "authenticationStore",
+    "meetingStore"
   )(observer(PopupViewDetail))
 );

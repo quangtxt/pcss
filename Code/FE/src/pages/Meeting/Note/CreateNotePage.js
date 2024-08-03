@@ -1,27 +1,32 @@
 import React, { memo, useCallback, useEffect, useState, useRef } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { UserOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Form, Input, message, Row, Col } from "antd";
-import ContentBlockWrapper from "../../../components/ContentBlockWrapper";
-import DashboardLayout from "../../../layouts/DashboardLayout";
-import { Helmet } from "react-helmet/es/Helmet";
-import { PortalContent } from "./CreateIdeaNoteStyled";
-import PageTitle from "../../../components/PageTitle";
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Row,
+  Col,
+  Typography,
+  Modal,
+} from "antd";
 import { FormActionFooter } from "./CreateIdeaNoteStyled";
-import EmptyPage from "../../EmptyPage/EmptyPage";
 import RichEditor from "../../../components/RichEditor/RichEditor";
 
-import { Container } from "../../../layouts/Container/Container";
+const { Title } = Typography;
 
 const CreateNotePage = (props) => {
   const {
     studentStore,
     loadingAnimationStore,
-    groupStore,
+    meetingId,
     meetingStore,
     authenticationStore,
     history,
+    isVisiblePopup,
+    setIsVisiblePopup,
+    handleClosePopup,
   } = props;
   const { currentUser } = authenticationStore;
   const EDITOR_REF = useRef();
@@ -40,15 +45,13 @@ const CreateNotePage = (props) => {
     try {
       loadingAnimationStore.showSpinner(true);
       const response = await meetingStore.createNote(
-        1,
+        meetingId,
         values.title,
         EDITOR_REF.current.editor.getData()
       );
       if (response.status === 200) {
-        //neu tao gr thanh cong
         message.success("Created note successfully");
-        // await authenticationStore.checkCurrentUser();
-        // history.push("/registration/team");
+        setIsVisiblePopup(false);
       }
     } catch (err) {
       console.log(err);
@@ -60,66 +63,62 @@ const CreateNotePage = (props) => {
   };
 
   return (
-    <DashboardLayout>
-      <Helmet>
-        <title>Guidance || Create Note</title>
-      </Helmet>
-      <PageTitle
-        location={props.location}
-        title={"Create Note"}
-        hiddenGoBack
-      ></PageTitle>
-      <ContentBlockWrapper>
-        <Container maxWidth={1000}>
-          <Form
-            scrollToFirstError={true}
-            name={"create-incoming-document"}
-            layout={"vertical"}
-            style={{ paddingTop: "2rem" }}
-            onFinish={handleSubmit}
-          >
-            <Row type={"flex"} gutter={30}>
-              <Col xs={24} md={24}>
-                <Form.Item
-                  label={"Title"}
-                  name={"title"}
-                  rules={[
-                    {
-                      required: true,
-                      message: " Vui lòng chọn nhóm sổ văn bản!",
-                    },
-                  ]}
-                >
-                  <Input></Input>
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row type={"flex"} gutter={30}>
-              <Col xs={24} md={24}>
-                <Form.Item label={"Content"} name={"content"}>
-                  <RichEditor
-                    EDITOR_REF={EDITOR_REF}
-                    placeholder={"Nhập nội dung"}
-                    editorContent={""}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
+    <Modal
+      footer={null}
+      title={<Title level={4}>Create Note</Title>}
+      className="custom-modal"
+      closable={true}
+      visible={isVisiblePopup}
+      onCancel={handleClosePopup}
+      width={1000}
+    >
+      <Form
+        scrollToFirstError={true}
+        name={"create-incoming-document"}
+        layout={"vertical"}
+        style={{ paddingTop: "2rem" }}
+        onFinish={handleSubmit}
+      >
+        <Row type={"flex"} gutter={30}>
+          <Col xs={24} md={24}>
+            <Form.Item
+              label={"Title"}
+              name={"title"}
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter title!",
+                },
+              ]}
+            >
+              <Input></Input>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row type={"flex"} gutter={30}>
+          <Col xs={24} md={24}>
+            <Form.Item label={"Content"} name={"content"}>
+              <RichEditor
+                EDITOR_REF={EDITOR_REF}
+                placeholder={"Enter content"}
+                editorContent={""}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
 
-            <FormActionFooter>
-              <Button>Huỷ bỏ</Button>
-              <Button
-                style={{ marginLeft: 10 }}
-                type={"primary"}
-                htmlType={"submit"}
-              >
-                Tạo note
-              </Button>
-            </FormActionFooter>
-          </Form>
-        </Container>
-      </ContentBlockWrapper>
-    </DashboardLayout>
+        <FormActionFooter>
+          <Button onClick={() => history.goBack()}>Huỷ bỏ</Button>
+          <Button
+            style={{ marginLeft: 10 }}
+            type={"primary"}
+            htmlType={"submit"}
+          >
+            Tạo note
+          </Button>
+        </FormActionFooter>
+      </Form>
+    </Modal>
   );
 };
 export default memo(

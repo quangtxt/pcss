@@ -61,28 +61,26 @@ const ListGroupPage = (props) => {
       let listStudentInvite;
       listStudentInvite = res.data;
       setStudentsToInvite(listStudentInvite);
-      console.log("list", listStudentInvite);
     }
-    if (authenticationStore.currentUser) {
-      loadingAnimationStore.setTableLoading(true);
-      if (activeTab === "tab1") {
-        groupStore.getGroupList().finally(() => {
-          loadingAnimationStore.setTableLoading(false);
-        });
-      }
-      getStudentList().finally(() => {
+    loadingAnimationStore.setTableLoading(true);
+    if (activeTab === "tab1") {
+      groupStore.getGroupList().finally(() => {
         loadingAnimationStore.setTableLoading(false);
       });
     }
-    return () => {
-      groupStore.clearStore();
-    };
-  }, [activeTab, authenticationStore.currentUser, groupStore, loadingAnimationStore]);
+    getStudentList().finally(() => {
+      loadingAnimationStore.setTableLoading(false);
+    });
+  }, [
+    activeTab,
+    authenticationStore.currentUser,
+    groupStore,
+    loadingAnimationStore,
+  ]);
 
   const onChange = (key) => {
     setActiveTab(key);
   };
-
   const showConfirm = () => {
     confirm({
       title: "Do you want to automatically group students?",
@@ -146,7 +144,7 @@ const ListGroupPage = (props) => {
     },
     {
       title: "Major",
-      render: (record) => record?.specificMajor.name,
+      render: (record) => record?.specificMajor?.name,
     },
   ];
 

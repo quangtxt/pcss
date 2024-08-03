@@ -26,7 +26,7 @@ export const FileRequest = {
   downloadTemplateAccountStudent: () =>
     axios({
       method: "get",
-      url: `${apiUrl}/api/v1/template-account`,
+      url: `${apiUrl}/api/v1/template/student`,
       headers: {
         Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
         "Content-Type": "application/json",
@@ -56,7 +56,7 @@ export const FileRequest = {
   downloadTemplateAccountSupervisor: () =>
     axios({
       method: "get",
-      url: `${apiUrl}/api/v1/template-account`,
+      url: `${apiUrl}/api/v1/template/supervisor`,
       headers: {
         Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
         "Content-Type": "application/json",
@@ -86,7 +86,7 @@ export const FileRequest = {
   downloadTemplateAccountGroup: () =>
     axios({
       method: "get",
-      url: `${apiUrl}/api/v1/template-account`,
+      url: `${apiUrl}/api/v1/template/group`,
       headers: {
         Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
         "Content-Type": "application/json",

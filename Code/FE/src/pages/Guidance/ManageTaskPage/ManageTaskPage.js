@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { Button, Table, Input, Select } from "antd";
+import { Button, Table, Input, Select, message } from "antd";
 import { CloseCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import uuid from "uuid";
 import DashboardLayout from "../../../layouts/DashboardLayout";
@@ -30,43 +30,11 @@ const ManageTaskPage = (props) => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const createSheet = async () => {
-    try {
-      // Tạo mới một Google Sheet
-      const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
-      await doc.useServiceAccountAuth({
-        client_email: CLIENT_EMAIL,
-        private_key: PRIVATE_KEY,
-      });
-      await doc.loadInfo();
-      const newSheet = await doc.addSheet({ title: "Backlog" });
-      setSheet(newSheet);
-    } catch (err) {
-      setError("Lỗi khi tải sheet. Vui lòng thử lại sau.");
-      console.error("Lỗi khi tạo sheet:", err);
-    }
-  };
 
-  const importExcel = async (file) => {
-    try {
-      // Import dữ liệu từ tệp Excel lên Google Sheet
-      const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
-      await doc.useServiceAccountAuth({
-        client_email: CLIENT_EMAIL,
-        private_key: PRIVATE_KEY,
-      });
-      await doc.loadInfo();
-      const sheet = doc.sheetsByIndex[0];
-      await sheet.setHeaderRow(["Tên", "Mô tả", "Trạng thái"]);
-      await sheet.addRows(excelData);
-      setRows(await sheet.getRows());
-    } catch (err) {
-      console.error("Lỗi khi import Excel:", err);
-    }
-  };
   useEffect(() => {
     const initializeSheet = async () => {
       try {
+        loadingAnimationStore.showSpinner(true);
         //Kết nối đến Google Sheets API
         const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
         await doc.useServiceAccountAuth({
@@ -81,15 +49,16 @@ const ManageTaskPage = (props) => {
 
         //Lấy dữ liệu hàng từ Sheet
         const rows = await sheet.getRows();
-        console.log("rows", rows);
         const numericRows = rows.filter((row) => {
           const numericValue = parseInt(row["#"]);
           return !isNaN(numericValue);
         });
         setRows(numericRows);
+        loadingAnimationStore.showSpinner(false);
         setLoading(false);
       } catch (err) {
         console.error("Lỗi khi tải sheet:", err);
+        loadingAnimationStore.showSpinner(false);
         setLoading(false);
       }
     };
@@ -101,10 +70,21 @@ const ManageTaskPage = (props) => {
     updatedRows[index][key] = value;
     setRows(updatedRows);
   };
-  const deleteRow = (index) => {
-    const updatedRows = [...rows];
-    updatedRows.splice(index, 1);
-    setRows(updatedRows);
+
+  const updateSheet = async () => {
+    try {
+      loadingAnimationStore.showSpinner(true);
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        await row.save();
+      }
+      loadingAnimationStore.showSpinner(false);
+      message.success("Sheet updated successfully");
+    } catch (err) {
+      console.error("Error updating sheet:", err);
+      loadingAnimationStore.showSpinner(false);
+      message.error("Error updating sheet");
+    }
   };
   const [editingIndex, setEditingIndex] = useState(null);
 
@@ -210,6 +190,7 @@ const ManageTaskPage = (props) => {
         hiddenGoBack
       ></PageTitle>
       <ContentBlockWrapper>
+        <Button onClick={updateSheet}>Update Sheet</Button>
         <Table
           dataSource={rows}
           columns={columns}

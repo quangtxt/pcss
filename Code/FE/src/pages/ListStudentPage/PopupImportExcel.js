@@ -79,7 +79,7 @@ const PopupImportExcel = (props) => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "template.xlsx");
+      link.setAttribute("download", "template-student.xlsx");
       document.body.appendChild(link);
       link.click();
       window.URL.revokeObjectURL(url);
