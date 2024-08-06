@@ -20,8 +20,8 @@ import java.nio.charset.StandardCharsets;
 public class EmailService {
     private final MailSender javaMailSender;
 
-    @Value("${spring.mail.from}")
-    private String from;
+//    @Value("${spring.mail.from}")
+//    private String from;
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
     public void sendEmail(String to, String subject, String body) throws MessagingException {
 //        MimeMessage message = javaMailSender.createMimeMessage();

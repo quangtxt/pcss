@@ -250,6 +250,12 @@ const ProgressPage = (props) => {
                     className="flex items-center justify-center"
                     type="primary"
                   >
+                    View Schedule
+                  </Button>
+                  <Button
+                    className="flex items-center justify-center"
+                    type="primary"
+                  >
                     View Group Detail
                   </Button>
                 </div>
@@ -287,45 +293,44 @@ const ProgressPage = (props) => {
             </FontSize14px>
           </ContentInformation>
         </div>
-        {windowWidth > 1080 && (
-          <ContentInformation className="w-4/12 p-8">
-            <Title className="text-center" level={4}>
-              GROUP {group?.name}
-            </Title>
-            <FontSize14px>
-              <div className="mb-2">English name: {group?.name}</div>
-              <div className="mb-2">
-                Vietnamese name: {group?.vietnameseTitle}
-              </div>
-              <div className="mb-2">
-                Created at: {moment(group?.createdAt).format(DATE_FORMAT_SLASH)}
-              </div>
-              <div className="mb-2">Abbreviations: {group?.abbreviations}</div>
-              <div className="mb-2">
-                Profession: Information Technology A (K15 trở đi)
-              </div>
-              <div className="mb-2">Specialty: Lập trình .NET</div>
-              <div>Description: </div>
-              <div className="mb-2">{group?.description}</div>
-              <div className="mb-2">Keywords: {group?.keywords}</div>
-              <div>Members:</div>
-              <div className="members">
-                {members.map((member, index) => (
-                  <div>{member?.student.user.name}</div>
-                ))}
-              </div>
-              <div className="mb-2"></div>
-              <div className="flex items-center justify-center">
-                <Button
-                  className="flex items-center justify-center"
-                  type="primary"
-                >
-                  View Group Detail
-                </Button>
-              </div>
-            </FontSize14px>
-          </ContentInformation>
-        )}
+
+        <ContentInformation className="w-4/12 p-8">
+          <Title className="text-center" level={4}>
+            GROUP {group?.name}
+          </Title>
+          <FontSize14px>
+            <div className="mb-2">English name: {group?.name}</div>
+            <div className="mb-2">
+              Vietnamese name: {group?.vietnameseTitle}
+            </div>
+            <div className="mb-2">
+              Created at: {moment(group?.createdAt).format(DATE_FORMAT_SLASH)}
+            </div>
+            <div className="mb-2">Abbreviations: {group?.abbreviations}</div>
+            <div className="mb-2">
+              Profession: Information Technology A (K15 trở đi)
+            </div>
+            <div className="mb-2">Specialty: Lập trình .NET</div>
+            <div>Description: </div>
+            <div className="mb-2">{group?.description}</div>
+            <div className="mb-2">Keywords: {group?.keywords}</div>
+            <div>Members:</div>
+            <div className="members">
+              {members.map((member, index) => (
+                <div>{member?.student.user.name}</div>
+              ))}
+            </div>
+            <div className="mb-2"></div>
+            <div className="flex items-center justify-center">
+              <Button
+                className="flex items-center justify-center"
+                type="primary"
+              >
+                View Group Detail
+              </Button>
+            </div>
+          </FontSize14px>
+        </ContentInformation>
       </div>
     </DashboardLayout>
   );

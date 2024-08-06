@@ -59,6 +59,39 @@ class SupervisorStore {
         });
     });
   };
+  @action createSupervisor = (
+    fullName,
+    gender,
+    branch,
+    parentDepartment,
+    childDepartment,
+    jobTitle,
+    fptEmail,
+    fuEmail,
+    phone,
+    contractType
+  ) => {
+    return new Promise((resolve, reject) => {
+      SupervisorRequest.createSupervisor(
+        fullName,
+        gender,
+        branch,
+        parentDepartment,
+        childDepartment,
+        jobTitle,
+        fptEmail,
+        fuEmail,
+        phone,
+        contractType
+      )
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
 
   @action setFilter = (filterName, filterValue) => {
     if (typeof filterName !== "string") return;
