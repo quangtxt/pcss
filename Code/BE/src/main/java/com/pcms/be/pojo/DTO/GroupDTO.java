@@ -23,4 +23,5 @@ public class GroupDTO {
     public OffsetDateTime createdAt;
     public OffsetDateTime updatedAt;
     private String status;
+    private String groupCode;
 }

@@ -85,32 +85,6 @@ const MainHeaderBar = (props) => {
     }
   }, [changedTabsNotification]);
 
-  // useEffect(() => {
-  //   if (!utils.isIOSDevice()) {
-  //     if (even.data.type === "NEWS") {
-  //       if (changedTabsNotification.isOpen) {
-  //         setChangedTabsNotification({
-  //           status: true,
-  //           onlyNewsNotification: true,
-  //           isOpen: true,
-  //         });
-  //       } else {
-  //         notificationStore.getUnreadNewsCount();
-  //       }
-  //     } else {
-  //       if (changedTabsNotification.isOpen) {
-  //         setChangedTabsNotification({
-  //           status: true,
-  //           onlyNewsNotification: false,
-  //           isOpen: true,
-  //         });
-  //       } else {
-  //         notificationStore.getUnreadNotificationCount();
-  //       }
-  //     }
-  //   }
-  // }, [changedTabsNotification]);
-
   const menu = (
     <Menu>
       <Menu.Item
