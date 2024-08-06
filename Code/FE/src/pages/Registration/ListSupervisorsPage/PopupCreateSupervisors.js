@@ -51,9 +51,9 @@ const PopupCreateSupervisors = (props) => {
   const handleSubmit = async (values) => {
     try {
       loadingAnimationStore.showSpinner(true);
-      await studentStore.createStudent(values.email, values.name);
+      await supervisorStore.createSupervisor(values.fullName, values.fptEmail);
       handleClosePopup;
-      message.success("Add student successfully!!!");
+      message.success("Add supervisor successfully!!!");
     } catch (err) {
       console.log(err);
       loadingAnimationStore.showSpinner(false);
@@ -90,19 +90,20 @@ const PopupCreateSupervisors = (props) => {
         onFinish={handleSubmit}
       >
         <Form.Item
-          label="Email"
-          name="email"
-          rules={[{ required: true, message: "Please input!" }]}
-        >
-          <Input style={{ maxWidth: "100%" }} placeholder="Enter email" />
-        </Form.Item>
-        <Form.Item
           label="Full Name"
-          name="name"
+          name="fullName"
           rules={[{ required: true, message: "Please input!" }]}
         >
           <Input style={{ maxWidth: "100%" }} placeholder="Enter full name" />
         </Form.Item>
+        <Form.Item
+          label="FPT Email"
+          name="fptEmail"
+          rules={[{ required: true, message: "Please input!" }]}
+        >
+          <Input style={{ maxWidth: "100%" }} placeholder="Enter email" />
+        </Form.Item>
+
         <div className="flex items-center justify-center gap-2">
           <Button type="danger" onClick={handleClosePopup}>
             Cancel

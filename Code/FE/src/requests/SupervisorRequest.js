@@ -40,4 +40,37 @@ export const SupervisorRequest = {
         Id: supervisorId,
       },
     }),
+
+  createSupervisor: (
+    fullName,
+    gender,
+    branch,
+    parentDepartment,
+    childDepartment,
+    jobTitle,
+    fptEmail,
+    fuEmail,
+    phone,
+    contractType
+  ) =>
+    axios({
+      method: "post",
+      url: `${apiUrl}/api/v1/staff/addSupervisors`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+      data: {
+        fullName: fullName,
+        gender: gender,
+        branch: branch,
+        parentDepartment: parentDepartment,
+        childDepartment: childDepartment,
+        jobTitle: jobTitle,
+        fptEmail: fptEmail,
+        fuEmail: fuEmail,
+        phone: phone,
+        contractType: contractType,
+      },
+    }),
 };
