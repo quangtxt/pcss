@@ -45,11 +45,6 @@ const ListSupervisorsPage = (props) => {
     };
   }, [authenticationStore.currentUser]);
 
-  const [
-    isVisiblePopupCreateSupervisors,
-    setIsVisiblePopupCreateSupervisors,
-  ] = useState(false);
-
   const onSearchByEmailOrName = (keyword) => {
     setFilter("supervisorListPageIndex", 0);
     setFilter("supervisorListKeyword", keyword);
@@ -112,14 +107,6 @@ const ListSupervisorsPage = (props) => {
                 onSearch={onSearchByEmailOrName}
               />
             </div>
-            <Button
-              type="primary"
-              ghost
-              className="flex items-center justify-center"
-              onClick={setIsVisiblePopupCreateSupervisors}
-            >
-              Create Supervisors
-            </Button>
           </div>
           <TableComponent
             rowKey={(record) => record.id || uuid()}
@@ -148,11 +135,6 @@ const ListSupervisorsPage = (props) => {
           />
         </div>
       </ContentBlockWrapper>
-      <PopupCreateSupervisors
-        isVisiblePopup={isVisiblePopupCreateSupervisors}
-        setIsVisiblePopup={setIsVisiblePopupCreateSupervisors}
-        handleClosePopup={() => setIsVisiblePopupCreateSupervisors(false)}
-      />
     </DashboardLayout>
   );
 };
