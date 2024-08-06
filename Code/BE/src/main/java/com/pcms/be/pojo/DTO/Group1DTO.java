@@ -19,4 +19,5 @@ public class Group1DTO {
     public OffsetDateTime updatedAt;
     private String status;
     private List<MeetingDTO> meetings;
+    private String groupCode;
 }

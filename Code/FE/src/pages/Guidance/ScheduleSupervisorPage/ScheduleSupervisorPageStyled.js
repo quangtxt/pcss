@@ -281,4 +281,42 @@ export const CalenderStudent = styled.div`
   .notes-month section {
     font-size: 28px;
   }
+  .meeting-item {
+    margin: 0;
+  }
+  .meeting-item {
+    margin: 0;
+  }
+
+  .flex {
+    display: flex;
+  }
+
+  .justify-between {
+    justify-content: space-between;
+  }
+
+  .items-center {
+    align-items: center;
+  }
+
+  .font-bold {
+    font-weight: bold;
+  }
+
+  .text-indigo-800 {
+    color: #3b82f6;
+  }
+
+  .italic {
+    font-style: italic;
+  }
+
+  .pointer {
+    cursor: pointer;
+  }
+
+  .pointer-not-allowed {
+    cursor: not-allowed;
+  }
 `;

@@ -112,6 +112,17 @@ class MeetingStore {
     });
   };
 
+  @action getMeetingByMeeting = (meetingId) => {
+    return new Promise((resolve, reject) => {
+      MeetingRequest.getMeetingByMeeting(meetingId)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   /** Clear store */
   @action clearStore = () => {};
 }
