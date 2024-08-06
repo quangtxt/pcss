@@ -100,7 +100,7 @@ const SchedulePage = (props) => {
 
   const getMilestoneGuidance = async () => {
     try {
-      const res = await semesterStore.getMilestoneGuidancePhase(semesterId.id);
+      const res = await semesterStore.getMilestoneGuidancePhase(semesterId?.id);
       setMilestone(res.data);
     } catch (e) {
       console.log(e);
