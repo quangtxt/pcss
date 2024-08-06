@@ -1,10 +1,8 @@
 package com.pcms.be.service.impl;
 
 import com.pcms.be.domain.Campus;
-import com.pcms.be.domain.user.Supervisor;
-import com.pcms.be.domain.user.Role;
-import com.pcms.be.domain.user.Student;
-import com.pcms.be.domain.user.User;
+import com.pcms.be.domain.Semester;
+import com.pcms.be.domain.user.*;
 import com.pcms.be.errors.ErrorCode;
 import com.pcms.be.errors.ServiceException;
 import com.pcms.be.functions.Constants;
@@ -12,10 +10,7 @@ import com.pcms.be.functions.ValidateData;
 import com.pcms.be.pojo.DTO.ExcelGroupDTO;
 import com.pcms.be.pojo.DTO.ExcelSupervisorDTO;
 import com.pcms.be.pojo.DTO.ExcelStudentDTO;
-import com.pcms.be.repository.SupervisorRepository;
-import com.pcms.be.repository.RoleRepository;
-import com.pcms.be.repository.StudentRepository;
-import com.pcms.be.repository.UserRepository;
+import com.pcms.be.repository.*;
 import com.pcms.be.service.ExcelService;
 import com.pcms.be.service.UserService;
 import com.pcms.be.utils.StringUtils;
@@ -25,20 +20,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ExcelServiceImpl implements ExcelService {
+    private final MemberRepository memberRepository;
+    private final GroupRepository groupRepository;
+    private final SemesterRepository semesterRepository;
     public static final List<String> formatExcel_listStudent = new ArrayList<>(List.of("RollNumber", "Email", "MemberCode", "FullName", "Status", "Note"));
     private final UserRepository userRepository;
     private final UserService userService;
@@ -46,6 +43,7 @@ public class ExcelServiceImpl implements ExcelService {
     private final RoleRepository roleRepository;
     private final StudentRepository studentRepository;
     private final SupervisorRepository supervisorRepository;
+
 
     @Override
     public List<ExcelStudentDTO> getStudentsFromFile(MultipartFile file) throws IOException, ServiceException {
@@ -241,8 +239,29 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     @Override
+    @Transactional
     public void saveGroups(List<ExcelGroupDTO> data) throws ServiceException {
-
+        Group group = new Group();
+        groupRepository.save(group);
+        OffsetDateTime now = OffsetDateTime.now();
+        Optional<Semester> semester = semesterRepository.findByCurrent(now);
+        if (semester.isEmpty()){
+            throw new ServiceException(ErrorCode.SEMESTER_NOT_FOUND_BY_CURRENT);
+        }else{
+            Set<Member> members = new HashSet<>();
+            for (ExcelGroupDTO st : data){
+                Optional<Student> student = studentRepository.findByEmail(st.getEmail());
+                Member member = new Member();
+                member.setRole(Constants.MemberRole.MEMBER);
+                member.setGroup(group);
+                member.setStatus(Constants.MemberStatus.INGROUP);
+                student.ifPresent(member::setStudent);
+                memberRepository.save(member);
+                members.add(member);
+            }
+            group.setName("FPT_University_Group_Capstone_"+group.getId());
+            groupRepository.save(group);
+        }
     }
 
     @Override
