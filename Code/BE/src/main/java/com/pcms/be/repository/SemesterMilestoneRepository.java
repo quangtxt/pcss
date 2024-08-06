@@ -32,8 +32,10 @@ public interface SemesterMilestoneRepository extends JpaRepository<Semester_Mile
             "ORDER BY ABS(TIMESTAMPDIFF(SECOND, NOW(), sm.end_date)) ASC\n" +
             "LIMIT 1;", nativeQuery = true)
     Optional<Semester_Milestone> findLatestSemesterMilestoneAndDifferentCron(LocalDateTime offsetDateTime);
-    @Query(value = "SELECT sm.*\n" +
-            "FROM Semester_Milestone sm\n" +
-            "Where sm.end_date = :endDate", nativeQuery = true)
+    @Query(value = "SELECT sm.* FROM semester_milestone sm\n" +
+            "INNER JOIN Milestone m\n" +
+            "ON sm.milestone_id = m.id\n" +
+            "WHERE sm.end_date = :endDate AND m.name IS NULL\n" +
+            ";", nativeQuery = true)
     List<Semester_Milestone> findByEndDate(LocalDateTime endDate);
 }

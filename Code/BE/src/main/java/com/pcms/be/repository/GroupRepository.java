@@ -36,4 +36,18 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
             "WHERE g.semester_id IS NULL", nativeQuery = true)
     List<Group> findAllNewGroup();
 
+    @Query(value = "SELECT g.* FROM v_group g\n" +
+            "WHERE g.id NOT IN (\n" +
+            "SELECT DISTINCT gs.group_id\n" +
+            "FROM v_group_supervisor gs)\n" +
+            "UNION\n" +
+            "SELECT g.* FROM v_group g\n" +
+            "WHERE g.id IN(\n" +
+            "SELECT gs.group_id \n" +
+            "FROM v_group_supervisor gs\n" +
+            "GROUP BY gs.group_id\n" +
+            "HAVING COUNT(gs.supervisor_id) < 2\n" +
+            "ORDER BY COUNT(gs.supervisor_id));", nativeQuery = true)
+    List<Group> findAllByHavingCountTotalSupervisorLessThanTwo();
+
 }
