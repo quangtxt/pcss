@@ -16,6 +16,7 @@ import TableComponent from "../../../components/Common/TableComponent";
 
 import { Container } from "../../../layouts/Container/Container";
 import CreateNotePage from "./CreateNotePage";
+import moment from "moment";
 
 const NotePage = (props) => {
   const {
@@ -32,12 +33,15 @@ const NotePage = (props) => {
   const EDITOR_REF = useRef();
   const [noteList, setNoteList] = useState();
   const [note, setNote] = useState();
+  const [meeting, setMeeting] = useState();
   const [isVisiblePopup, setIsVisiblePopup] = useState(false);
   const [isVisiblePopupCreate, setIsVisiblePopupCreate] = useState(false);
+  const currentDate = moment();
 
   useEffect(() => {
     if (authenticationStore.currentUser) {
       getNoteListByMeeting();
+      getMeetingByMeeting();
     }
   }, [authenticationStore.currentUser, isVisiblePopupCreate]);
 
@@ -49,6 +53,17 @@ const NotePage = (props) => {
         loadingAnimationStore.setTableLoading(false);
       });
     setNoteList(res.data);
+  };
+
+  const getMeetingByMeeting = async () => {
+    loadingAnimationStore.setTableLoading(true);
+    const res = await meetingStore
+      .getMeetingByMeeting(meetingId)
+      .finally(() => {
+        loadingAnimationStore.setTableLoading(false);
+      });
+    setMeeting(res.data);
+    console.log("setMeeting", res.data);
   };
   const columns = [
     {
@@ -84,14 +99,19 @@ const NotePage = (props) => {
       <ContentBlockWrapper>
         <div className="flex justify-between mb-3">
           <h2>{currentUser?.group?.name} - List notes</h2>
-          <Button
-            type="primary"
-            onClick={() => {
-              setIsVisiblePopupCreate(true);
-            }}
-          >
-            Create new note
-          </Button>
+          {moment(meeting?.startAt) < currentDate &&
+          moment(meeting?.endAt) < currentDate ? (
+            <></>
+          ) : (
+            <Button
+              type="primary"
+              onClick={() => {
+                setIsVisiblePopupCreate(true);
+              }}
+            >
+              Create new note
+            </Button>
+          )}
         </div>
         <TableComponent
           // onRow={(record, rowIndex) => {

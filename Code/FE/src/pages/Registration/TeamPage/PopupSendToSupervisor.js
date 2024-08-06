@@ -101,9 +101,8 @@ const PopupSendToSupervisor = (props) => {
 
   const handleSend = async () => {
     try {
-      console.log("ListSupervisor : ", listSupervisor);
       loadingAnimationStore.showSpinner(true);
-      const response = await groupStore.submitGroup(group?.id, listSupervisor);
+      const response = await groupStore.submitGroup(group?.id, SupervisorList);
       if (response.status === 200) {
         //sua gr thanh cong
         // setRefresh(true);

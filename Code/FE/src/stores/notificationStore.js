@@ -68,7 +68,7 @@ class NotificationStore {
 
   @action getUnreadNotificationCount = () => {
     return new Promise((resolve, reject) => {
-      NotificationRequest.getUserNotification(0, 3, false, false)
+      NotificationRequest.getUserNotification(0, 5, false, false)
         .then((response) => {
           this.notificationList = response.data.content;
           this.notificationListTotalPage = response.data.total_page;

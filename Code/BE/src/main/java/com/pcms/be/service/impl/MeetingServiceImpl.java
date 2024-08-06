@@ -242,7 +242,7 @@ public class MeetingServiceImpl implements MeetingService {
             if (meeting.isEmpty()){
                 throw new ServiceException(ErrorCode.MEETING_NOT_FOUND);
             }else{
-                MeetingDTO meetingDTO = modelMapper.map(meeting, MeetingDTO.class);
+                MeetingDTO meetingDTO = modelMapper.map(meeting.get(), MeetingDTO.class);
                 return ResponseEntity.ok(meetingDTO);
             }
         }catch (Exception e) {

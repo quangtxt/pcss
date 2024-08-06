@@ -75,6 +75,7 @@ const PopupCreateMeeting = (props) => {
     groupStore,
     authenticationStore,
     groupsOfSupervisor,
+    selectedDate,
   } = props;
   const [meetings, setMeetings] = useState([]);
   const { TextArea } = Input;
@@ -84,7 +85,24 @@ const PopupCreateMeeting = (props) => {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [selectedRange, setSelectedRange] = useState(false);
 
-  useEffect(() => {});
+  useEffect(() => {
+    if (selectedDate) {
+      form.setFieldsValue({
+        meetingTime: [
+          moment(selectedDate).startOf("day"),
+          moment(selectedDate).endOf("day"),
+        ],
+      });
+    }
+  }, [selectedDate]);
+
+  useEffect(() => {
+    if (!isVisiblePopup) {
+      form.resetFields();
+      setSelectedRange(false);
+      setSelectedGroup(null);
+    }
+  }, [isVisiblePopup, form]);
   const handleCreate = async (values) => {
     try {
       const { meetingTime, week, type, location } = values;
@@ -146,7 +164,7 @@ const PopupCreateMeeting = (props) => {
   };
 
   const getOptions = () => {
-    if (groupsOfSupervisor.length > 0) {
+    if (groupsOfSupervisor?.length > 0) {
       return groupsOfSupervisor.map((item) => ({
         value: item?.group.id,
         label: item?.group.vietnameseTitle,

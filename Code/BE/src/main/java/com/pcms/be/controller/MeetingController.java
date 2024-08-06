@@ -116,7 +116,7 @@ public class MeetingController {
         }
     }
 
-    @GetMapping("/getByMeetingId")
+    @GetMapping("/getByMeetingId/{meetingId}")
     public ResponseEntity<MeetingDTO> getByMeetingId(@PathVariable int meetingId) throws ServiceException{
         return meetingService.getByMeetingId(meetingId);
     }

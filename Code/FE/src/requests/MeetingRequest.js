@@ -107,4 +107,13 @@ export const MeetingRequest = {
         "Content-Type": "application/json",
       },
     }),
+  getMeetingByMeeting: (meetingId) =>
+    axios({
+      method: "get",
+      url: `${apiUrl}/api/v1/meeting/getByMeetingId/${meetingId}`,
+      headers: {
+        Authorization: `Bearer ${JSON.parse(authenticationStore.appToken)}`,
+        "Content-Type": "application/json",
+      },
+    }),
 };
