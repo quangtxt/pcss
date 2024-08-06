@@ -237,10 +237,10 @@ public class MilestoneServiceImpl implements MilestoneService {
         List<Milestone> milestones = milestoneRepository.findAllByParent(id);
         List<Milestone> result = new ArrayList<>();
         for (Milestone m : milestones){
-            if (m.parent == null){
+            if (m.getName() == null){
                 result.add(m);
             }else {
-                result.addAll(getTotalSubmissionByRootMilestone(Integer.parseInt(m.getParent().toString())));
+                result.addAll(getTotalSubmissionByRootMilestone(Integer.parseInt(m.getId().toString())));
             }
         }
         return result;
