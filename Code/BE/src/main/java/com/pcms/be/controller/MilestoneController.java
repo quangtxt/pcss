@@ -37,4 +37,8 @@ public class MilestoneController {
         return ResponseEntity.ok(milestoneService.getMilestoneGuidancePhase(id));
     }
 
+    @GetMapping("/process")
+    public ResponseEntity<String> getProcessOfMilestone(@RequestParam int groupId, @RequestParam int milestoneId){
+        return milestoneService.getProcessOfMilestone(milestoneId, groupId);
+    }
 }
