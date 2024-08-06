@@ -11,6 +11,7 @@ import PageTitle from "../../../components/PageTitle";
 import { Helmet } from "react-helmet/es/Helmet";
 import { ForContent, TableSupervisors } from "./ListSupervisorsPageStyled";
 import TableComponent from "../../../components/Common/TableComponent";
+import PopupCreateSupervisors from "./PopupCreateSupervisors";
 
 const { Search } = Input;
 
@@ -147,11 +148,11 @@ const ListSupervisorsPage = (props) => {
           />
         </div>
       </ContentBlockWrapper>
-      {/* <PopupViewDetail
-        isVisiblePopup={isVisiblePopup}
-        setIsVisiblePopup={setIsVisiblePopup}
-        handleClosePopup={() => setIsVisiblePopup(false)}
-      /> */}
+      <PopupCreateSupervisors
+        isVisiblePopup={isVisiblePopupCreateSupervisors}
+        setIsVisiblePopup={setIsVisiblePopupCreateSupervisors}
+        handleClosePopup={() => setIsVisiblePopupCreateSupervisors(false)}
+      />
     </DashboardLayout>
   );
 };

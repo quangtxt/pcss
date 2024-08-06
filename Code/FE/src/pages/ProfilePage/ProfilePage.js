@@ -26,6 +26,7 @@ import {
   TextForm,
 } from "./ProfilePageStyled";
 import { FlexBox } from "../ListGroupPage/ListGroupPageStyled";
+import { response } from "msw";
 
 const ProfilePage = (props) => {
   const {
@@ -42,6 +43,7 @@ const ProfilePage = (props) => {
   const [isChangingEmail, setIsChangingEmail] = useState(false);
   const [isChangingPass, setIsChangingPass] = useState(false);
   const [showGender] = useState(false);
+  const [gender, setGender] = useState(null);
   const { Title } = Typography;
 
   useEffect(() => {
@@ -79,6 +81,8 @@ const ProfilePage = (props) => {
       loadingAnimationStore.showSpinner(true);
       const response = await studentStore.getStudentProfileById(userId);
       if (response.status === 200) {
+        console.log("aaaa", response);
+        setGender(response.data.gender ? "male" : "female");
         form.setFieldsValue({
           // alternativeEmail: response.data.alternativeEmail,
           facebook: response.data.facebook,
@@ -169,15 +173,33 @@ const ProfilePage = (props) => {
                   rules={[{ required: true, message: "Please input!" }]}
                   disabled
                 >
-                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                  <Input
+                    style={{
+                      maxWidth: "100%",
+                      border: isDisable ? "" : "none",
+                      pointerEvents: isDisable ? "all" : "none",
+                    }}
+                  />
                 </Form.Item>
               </TextForm>
               <MarginLeftLabel>
                 <Form.Item label="Email" name="email">
-                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                  <Input
+                    style={{
+                      maxWidth: "100%",
+                      border: isDisable ? "" : "none",
+                      pointerEvents: isDisable ? "all" : "none",
+                    }}
+                  />
                 </Form.Item>
                 <Form.Item label="Facebook" name="facebook">
-                  <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                  <Input
+                    style={{
+                      maxWidth: "100%",
+                      border: isDisable ? "" : "none",
+                      pointerEvents: isDisable ? "all" : "none",
+                    }}
+                  />
                 </Form.Item>
               </MarginLeftLabel>
             </ContentInformation>
@@ -199,25 +221,61 @@ const ProfilePage = (props) => {
               <MarginLeftLabel>
                 <TextForm>
                   <Form.Item label="Name" name="fullName">
-                    <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                    <Input
+                      style={{
+                        maxWidth: "100%",
+                        border: isDisable ? "" : "none",
+                        pointerEvents: isDisable ? "all" : "none",
+                      }}
+                    />
                   </Form.Item>
                   <Form.Item label="Gender" name="gender">
                     <Radio.Group disabled={!isDisable}>
                       <Radio value="male"> Male </Radio>
                       <Radio value="female"> Female </Radio>
                     </Radio.Group>
+                    {/* <p
+                      className="ml-3"
+                      style={{ display: isDisable ? "flex" : "none" }}
+                    >
+                      {gender === "male" ? "Male" : "Female"}
+                    </p> */}
                   </Form.Item>
                   <Form.Item label="Roll Number" name="rollNumber">
-                    <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                    <Input
+                      style={{
+                        maxWidth: "100%",
+                        border: isDisable ? "" : "none",
+                        pointerEvents: isDisable ? "all" : "none",
+                      }}
+                    />
                   </Form.Item>
                   <Form.Item label="Semester" name="semester">
-                    <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                    <Input
+                      style={{
+                        maxWidth: "100%",
+                        border: isDisable ? "" : "none",
+                        pointerEvents: isDisable ? "all" : "none",
+                      }}
+                    />
                   </Form.Item>
                   <Form.Item label="Profession" name="profession">
-                    <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                    <Input
+                      style={{
+                        maxWidth: "100%",
+                        border: isDisable ? "" : "none",
+                        pointerEvents: isDisable ? "all" : "none",
+                      }}
+                    />
                   </Form.Item>
                   <Form.Item label="Specialty" name="specialty">
-                    <Input style={{ maxWidth: "100%" }} readOnly={!isDisable} />
+                    <Input
+                      style={{
+                        maxWidth: "100%",
+                        border: isDisable ? "" : "none",
+                        pointerEvents: isDisable ? "all" : "none",
+                      }}
+                    />
                   </Form.Item>
 
                   <NoMarginBottom>
