@@ -17,5 +17,6 @@ public class CreateSemesterRequest {
     private String code;
     private String name;
     private OffsetDateTime start_at;
+    private OffsetDateTime end_at;
     private List<SemesterMilestoneDTO> milestone;
 }

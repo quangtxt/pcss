@@ -108,6 +108,11 @@ public class SemesterServiceImpl implements SemesterService {
         semester.setName(createdSemesterRequest.getName());
         semester.setCode(createdSemesterRequest.getCode());
         semester.setBeginAt(createdSemesterRequest.getStart_at());
+        if (createdSemesterRequest.getEnd_at() != null){
+            semester.setEndAt(createdSemesterRequest.getEnd_at());
+        }else{
+            semester.setEndAt(createdSemesterRequest.getStart_at().plusDays(31*17));
+        }
         semesterRepository.save(semester);
 
         if (!createdSemesterRequest.getMilestone().isEmpty()) {

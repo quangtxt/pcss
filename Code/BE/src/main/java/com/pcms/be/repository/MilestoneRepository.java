@@ -13,4 +13,6 @@ public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
     List<Milestone> findAllMilestoneRoot();
     @Query(value = "SELECT m.* FROM Milestone m WHERE m.name is null", nativeQuery = true)
     List<Milestone> findAllSubmission();
+    @Query(value = "SELECT m.* FROM Milestone m WHERE m.parent = :parent", nativeQuery = true)
+    List<Milestone> findAllByParent(int parent);
 }
