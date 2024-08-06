@@ -182,17 +182,8 @@ public class MilestoneServiceImpl implements MilestoneService {
                             milestoneGroupRepository.save(milestoneGroup.get());
                         }else{
                             milestoneGroup.get().setStatus(checkSubmission(gitFolder, sm.getMilestone()));
-//                            milestoneGroup.get().setStatus(true);
                             milestoneGroupRepository.save(milestoneGroup.get());
                         }
-//                        if (milestoneGroup.isPresent()){
-//                            if (gitFolder == null ||gitFolder.isEmpty()){
-//                                milestoneGroup.get().setStatus(false);
-//                            }else {
-//                                milestoneGroup.get().setStatus(checkSubmission(gitFolder, milestone));
-//                                milestoneGroupRepository.save(milestoneGroup.get());
-//                            }
-//                        }
                     }
                 }
             }
@@ -299,31 +290,6 @@ public class MilestoneServiceImpl implements MilestoneService {
         return fileName;
     }
 
-//    private boolean checkSubmissionFolder(List<GitFolder> gitFolders, String pathRoot) throws ServiceException {
-//        List<GitFolder> sample = new ArrayList<>(gitFolders);
-//        for (GitFolder g : sample) {
-//            if (g.getName().contains(".gitkeep")) {
-//                gitFolders.remove(g);
-//            }
-//        }
-//        if (gitFolders.isEmpty()) {
-//            return false;
-//        }
-//        List<String> listPath = new ArrayList<>();
-//        for (GitFolder g : gitFolders) {
-//            if (g.getType().equals("blob")) {
-//                return true;
-//            } else {
-//                String path = pathRoot + "/" + g.getPath();
-//                listPath.add(path);
-//            }
-//        }
-//        for (String str : listPath) {
-//            return checkSubmissionFolder(getObjectByCallApiToGit(str), str);
-//        }
-//
-//        return false;
-//    }
 
     private String getCronExpressionFromOffsetDateTime(OffsetDateTime offsetDateTime) {
         // Lấy các thành phần của OffsetDateTime

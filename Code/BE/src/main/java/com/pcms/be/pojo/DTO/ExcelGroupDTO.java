@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ExcelGroupDTO {
-    String group;
+    String class_student;
     String rollNumber;
     String email;
     String memberCode;
