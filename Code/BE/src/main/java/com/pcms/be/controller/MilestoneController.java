@@ -1,6 +1,7 @@
 package com.pcms.be.controller;
 
 import com.pcms.be.domain.Milestone;
+import com.pcms.be.errors.ServiceException;
 import com.pcms.be.pojo.DTO.SemesterMilestone2DTO;
 import com.pcms.be.pojo.response.MilestoneTemplateRp;
 import com.pcms.be.repository.MilestoneRepository;
@@ -40,5 +41,10 @@ public class MilestoneController {
     @GetMapping("/process")
     public ResponseEntity<String> getProcessOfMilestone(@RequestParam int groupId, @RequestParam int milestoneId){
         return milestoneService.getProcessOfMilestone(milestoneId, groupId);
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<Boolean> getMilestoneStatus(@RequestParam int groupId, @RequestParam int milestoneId) throws ServiceException {
+        return milestoneService.getStatusOfMilestone(groupId, milestoneId);
     }
 }

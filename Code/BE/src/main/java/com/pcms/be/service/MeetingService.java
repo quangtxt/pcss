@@ -5,6 +5,7 @@ import com.pcms.be.errors.ServiceException;
 import com.pcms.be.pojo.DTO.MeetingDTO;
 import com.pcms.be.pojo.request.CreateMeetingRequest;
 import com.pcms.be.pojo.request.EditMeetingRequest;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface MeetingService {
     List<MeetingDTO> updateMeeting(List<EditMeetingRequest> editMeetingRequests) throws ServiceException;
 
     MeetingDTO removeMeeting(int meetingId)throws ServiceException;
+
+    ResponseEntity<MeetingDTO> getByMeetingId(int meetingId) throws ServiceException;
 }
