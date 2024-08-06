@@ -27,7 +27,5 @@ public interface GroupService {
     SubmitGroupResponse submitGroup(SubmitGroupRequest submitGroupRequest) throws ServiceException;
     ResponseEntity<String> automaticallyCreateGroups() throws ServiceException;
     ResponseEntity<Map<String, Object>> getGroups(Pageable pageable, String keyword);
-//    ResponseEntity<String> checkFormatGitLab() throws ServiceException;
-//
-//    ResponseEntity<String> checkFormatGitLabV2() throws ServiceException;
+    ResponseEntity<String> addGit(int groupId, String gitId) throws ServiceException;
 }

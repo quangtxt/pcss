@@ -215,7 +215,38 @@ public class MilestoneServiceImpl implements MilestoneService {
         return semesterMilestone2DTOS;
     }
 
-    public List<GitFolder> getObjectByCallApiToGit(String hrefGit) throws ServiceException {
+    @Override
+    public ResponseEntity<String> getProcessOfMilestone(int milestoneId, int groupId) {
+        List<Milestone> milestones = milestoneRepository.findAllByParent(milestoneId);
+        if (milestones.isEmpty()){
+            return ResponseEntity.ok("0/0");
+        }else{
+            List<Milestone> submissions = getTotalSubmissionByRootMilestone(milestoneId);
+            int total = submissions.size();
+            int process = 0;
+            for (Milestone milestone : submissions){
+                Optional<MilestoneGroup> milestoneGroup = milestoneGroupRepository.findByGroupIdAndMilestoneId(groupId, milestoneId);
+                if (milestoneGroup.isPresent() && milestoneGroup.get().isStatus()){
+                    process++;
+                }
+            }
+            return ResponseEntity.ok(process+ "/" + total);
+        }
+    }
+    public List<Milestone> getTotalSubmissionByRootMilestone(int id){
+        List<Milestone> milestones = milestoneRepository.findAllByParent(id);
+        List<Milestone> result = new ArrayList<>();
+        for (Milestone m : milestones){
+            if (m.parent == null){
+                result.add(m);
+            }else {
+                result.addAll(getTotalSubmissionByRootMilestone(Integer.parseInt(m.getParent().toString())));
+            }
+        }
+        return result;
+    }
+
+    public static List<GitFolder> getObjectByCallApiToGit(String hrefGit) throws ServiceException {
         try {
             RestTemplate restTemplate = new RestTemplate();
 

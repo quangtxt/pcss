@@ -157,4 +157,13 @@ public class GroupController {
             throw new ApiException(e.getErrorCode(), e.getParams());
         }
     }
+
+    @PostMapping("/addGit")
+    public ResponseEntity<String> addGit(@RequestParam String gitId, @RequestParam int groupId) throws ServiceException{
+        try {
+            return groupService.addGit(groupId, gitId);
+        } catch (ServiceException e) {
+            throw new ApiException(e.getErrorCode(), e.getParams());
+        }
+    }
 }
