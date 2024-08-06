@@ -333,6 +333,7 @@ public class GroupServiceImpl implements GroupService {
         List<Group> groups = groupRepository.findAllNewGroup();
         setMilestoneGroup(groups);
         setSemesterForGroup();
+        setMentorForEachGroup();
         return ResponseEntity.ok("Automatically grouped successfully");
     }
     @Transactional
