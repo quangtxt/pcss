@@ -116,4 +116,9 @@ public class MeetingController {
         }
     }
 
+    @GetMapping("/getByMeetingId")
+    public ResponseEntity<MeetingDTO> getByMeetingId(@RequestBody int meetingId) throws ServiceException{
+        return null;
+    }
+
 }

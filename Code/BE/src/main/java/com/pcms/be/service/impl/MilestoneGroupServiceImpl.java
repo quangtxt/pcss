@@ -21,27 +21,5 @@ public class MilestoneGroupServiceImpl implements MilestoneGroupService {
     private final NotificationService notificationService;
     @Override
     public void checkingProcess() {//chua test
-//        OffsetDateTime now = OffsetDateTime.now();
-//        OffsetDateTime dueDate = now.plus(3, ChronoUnit.DAYS);
-//        List<Submission> submissions = submissionRepository.findAllSubmissionByDueDate(dueDate);
-//        Set<Milestone> milestones = new HashSet<>();
-//        List<MilestoneGroup> milestoneGroups = new ArrayList<>();
-//        for (Submission s : submissions){
-//           milestones.add(s.getMilestone());
-//        }
-//        for (Milestone m : milestones){
-//            List<MilestoneGroup> milestoneGroup = milestoneGroupRepository.findAllByMilestoneId(Integer.parseInt(m.getId().toString()));
-//            for (MilestoneGroup mg : milestoneGroup){
-//                if (!mg.isStatus()){
-//                    Map<String, String> map = new HashMap<>();
-//                    map.put("_MilestoneName-txt_", m.getName());
-//                    String content = notificationService.createContentNotification(NotificationTemplate.MilestoneProcessNotification.unfinishedSubmissionTemplate, map);
-//                    Group group = mg.getGroup();
-//                    for (Member mb : group.getMembers()){
-//                        notificationService.saveNotification(mb.getStudent().getUser(), content);
-//                    }
-//                }
-//            }
-//        }
     }
 }

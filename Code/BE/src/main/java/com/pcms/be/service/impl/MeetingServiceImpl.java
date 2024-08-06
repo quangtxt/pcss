@@ -18,6 +18,7 @@ import com.pcms.be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -231,6 +232,21 @@ public class MeetingServiceImpl implements MeetingService {
             return modelMapper.map(meeting.get(), MeetingDTO.class);
         } catch (Exception e) {
             throw new ServiceException(ErrorCode.FAILED_DELETE_MEETING);
+        }
+    }
+
+    @Override
+    public ResponseEntity<MeetingDTO> getByMeetingId(int meetingId) throws ServiceException {
+        try {
+            Optional<Meeting> meeting = meetingRepository.findById(Long.valueOf(meetingId));
+            if (meeting.isEmpty()){
+                throw new ServiceException(ErrorCode.MEETING_NOT_FOUND);
+            }else{
+                MeetingDTO meetingDTO = modelMapper.map(meeting, MeetingDTO.class);
+                return ResponseEntity.ok(meetingDTO);
+            }
+        }catch (Exception e) {
+            throw new ServiceException(ErrorCode.MEETING_NOT_FOUND);
         }
     }
 

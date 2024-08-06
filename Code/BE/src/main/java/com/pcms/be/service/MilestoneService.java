@@ -22,4 +22,5 @@ public interface MilestoneService {
 
     List<SemesterMilestone2DTO> getMilestoneGuidancePhase(Long semester_id);
     ResponseEntity<String> getProcessOfMilestone(int milestoneId, int groupId);
+    ResponseEntity<Boolean> getStatusOfMilestone(int groupId, int milestoneId) throws ServiceException;
 }

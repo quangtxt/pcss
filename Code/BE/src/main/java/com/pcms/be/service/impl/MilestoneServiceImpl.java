@@ -224,6 +224,13 @@ public class MilestoneServiceImpl implements MilestoneService {
             return ResponseEntity.ok(process+ "/" + total);
         }
     }
+
+    @Override
+    public ResponseEntity<Boolean> getStatusOfMilestone(int groupId, int milestoneId) throws ServiceException {
+        Optional<MilestoneGroup> milestoneGroup = milestoneGroupRepository.findByGroupIdAndMilestoneId(groupId, milestoneId);
+        return milestoneGroup.map(group -> ResponseEntity.ok(group.isStatus())).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     public List<Milestone> getTotalSubmissionByRootMilestone(int id){
         List<Milestone> milestones = milestoneRepository.findAllByParent(id);
         List<Milestone> result = new ArrayList<>();
