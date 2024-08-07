@@ -9,6 +9,7 @@ import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import CreateNotePage from "./pages/Meeting/Note/CreateNotePage";
 import DetailProfileSupervisorPage from "./pages/DetailProfileSupervisorPage";
 import ListStudentPage from "./pages/ListStudentPage";
+import ListSupervisorPage from "./pages/ListSupervisorPage";
 import ListGroupPage from "./pages/ListGroupPage";
 import NotePage from "./pages/Meeting/Note/NotePage";
 import SchedulePage from "./pages/Guidance/SchedulePage";
@@ -141,6 +142,11 @@ export const routes = [
     path: "/group/list",
     component: ListGroupPage,
     name: "ListGroupPage",
+  },
+  {
+    path: "/supervisor/list",
+    component: ListSupervisorPage,
+    name: "ListSupervisorPage",
   },
   //admin
   {

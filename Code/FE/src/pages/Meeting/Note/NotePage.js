@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState, useRef } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import { UserOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Form, Input, message, Row, Col } from "antd";
+import { Button, Form, Input, message, Row, Col, Modal } from "antd";
 import ContentBlockWrapper from "../../../components/ContentBlockWrapper";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 import { Helmet } from "react-helmet/es/Helmet";
@@ -37,13 +37,14 @@ const NotePage = (props) => {
   const [isVisiblePopup, setIsVisiblePopup] = useState(false);
   const [isVisiblePopupCreate, setIsVisiblePopupCreate] = useState(false);
   const currentDate = moment();
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     if (authenticationStore.currentUser) {
       getNoteListByMeeting();
       getMeetingByMeeting();
     }
-  }, [authenticationStore.currentUser, isVisiblePopupCreate]);
+  }, [authenticationStore.currentUser, isVisiblePopupCreate, refresh]);
 
   const getNoteListByMeeting = async () => {
     loadingAnimationStore.setTableLoading(true);
@@ -53,6 +54,7 @@ const NotePage = (props) => {
         loadingAnimationStore.setTableLoading(false);
       });
     setNoteList(res.data);
+    setRefresh(false);
   };
 
   const getMeetingByMeeting = async () => {
@@ -63,8 +65,35 @@ const NotePage = (props) => {
         loadingAnimationStore.setTableLoading(false);
       });
     setMeeting(res.data);
-    console.log("setMeeting", res.data);
+    setRefresh(false);
   };
+
+  const showConfirmModal = (action, noteId, handleRemoveNote) => {
+    Modal.confirm({
+      title: `Are you sure to delete this meeting?`,
+      onOk: () => {
+        if (action === "delete") {
+          handleRemoveNote(noteId);
+          message.success("Delete action was successfully");
+        }
+      },
+      onCancel: () => {
+        message.info("Delete action was cancelled");
+      },
+      okText: "Yes",
+      cancelText: "No",
+    });
+  };
+
+  const handleRemoveNote = async (noteId) => {
+    try {
+      await meetingStore.deleteNote(noteId);
+      setRefresh(true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const columns = [
     {
       title: "No.",
@@ -79,14 +108,24 @@ const NotePage = (props) => {
     {
       title: "Action",
       render: (record) => (
-        <Button
-          onClick={() => {
-            setNote(record);
-            setIsVisiblePopup(true);
-          }}
-        >
-          View
-        </Button>
+        <div className="flex justify-start">
+          <Button
+            onClick={() => {
+              setNote(record);
+              setIsVisiblePopup(true);
+            }}
+          >
+            View
+          </Button>
+          <Button
+            className="ml-3"
+            onClick={() => {
+              showConfirmModal("delete", record?.id, handleRemoveNote);
+            }}
+          >
+            Delete
+          </Button>
+        </div>
       ),
     },
   ];
