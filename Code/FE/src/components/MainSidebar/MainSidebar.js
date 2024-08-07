@@ -114,13 +114,18 @@ const MainSidebar = (props) => {
         </Menu.Item>
       )}
       {isStaff && (
-        <Menu.Item key={"/registration/student"}>
-          <Link to={"/registration/student"}>Manager Student</Link>
+        <Menu.Item key={"/student/list"}>
+          <Link to={"/student/list"}>Manager Student</Link>
         </Menu.Item>
       )}
       {isStaff && (
-        <Menu.Item key={"/registration/supervisor"}>
-          <Link to={"/registration/supervisor"}>Manager Supervisor</Link>
+        <Menu.Item key={"/supervisor/list"}>
+          <Link to={"/supervisor/list"}>Manager Supervisor</Link>
+        </Menu.Item>
+      )}
+      {isStaff && (
+        <Menu.Item key={"/group/list"}>
+          <Link to={"/group/list"}>Manager Group</Link>
         </Menu.Item>
       )}
       {isStudent && (
