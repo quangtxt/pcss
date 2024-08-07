@@ -30,17 +30,18 @@ const CreateNotePage = (props) => {
   } = props;
   const { currentUser } = authenticationStore;
   const EDITOR_REF = useRef();
+  const [form] = Form.useForm();
 
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 6 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 14 },
-    },
-  };
+  // // Reset form fields and editor content when the popup is closed
+  // useEffect(() => {
+  //   if (!isVisiblePopup) {
+  //     form.resetFields();
+  //     if (EDITOR_REF.current) {
+  //       EDITOR_REF.current.editor.setData("");
+  //     }
+  //   }
+  // }, [isVisiblePopup, form]);
+
   const handleSubmit = async (values) => {
     try {
       loadingAnimationStore.showSpinner(true);
@@ -62,6 +63,10 @@ const CreateNotePage = (props) => {
     }
   };
 
+  const handlePopupClose = () => {
+    setIsVisiblePopup(false);
+  };
+
   return (
     <Modal
       footer={null}
@@ -69,7 +74,7 @@ const CreateNotePage = (props) => {
       className="custom-modal"
       closable={true}
       visible={isVisiblePopup}
-      onCancel={handleClosePopup}
+      onCancel={handlePopupClose}
       width={1000}
     >
       <Form
@@ -78,6 +83,7 @@ const CreateNotePage = (props) => {
         layout={"vertical"}
         style={{ paddingTop: "2rem" }}
         onFinish={handleSubmit}
+        form={form}
       >
         <Row type={"flex"} gutter={30}>
           <Col xs={24} md={24}>
@@ -91,7 +97,7 @@ const CreateNotePage = (props) => {
                 },
               ]}
             >
-              <Input></Input>
+              <Input />
             </Form.Item>
           </Col>
         </Row>
@@ -108,7 +114,7 @@ const CreateNotePage = (props) => {
         </Row>
 
         <FormActionFooter>
-          <Button onClick={() => history.goBack()}>Huỷ bỏ</Button>
+          <Button onClick={handlePopupClose}>Huỷ bỏ</Button>
           <Button
             style={{ marginLeft: 10 }}
             type={"primary"}
