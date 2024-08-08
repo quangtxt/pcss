@@ -147,10 +147,10 @@ const ModalPreView = (props) => {
     []
   );
 
-  const HandelCreateUsers = async () => {
+  const HandelCreateStudent = async () => {
     try {
       loadingAnimationStore.showSpinner(true);
-      await fileStore.createUsersFromExcel(data.data);
+      await fileStore.createStudentsFromExcel(data.data);
       loadingAnimationStore.showSpinner(false);
       message.success("Đã tạo người dùng từ file Excel thành công.");
       setPreViewVisible(false);
@@ -178,7 +178,7 @@ const ModalPreView = (props) => {
           Quay lại
         </Button>,
         !checkErrorData && (
-          <Button type="primary" onClick={HandelCreateUsers}>
+          <Button type="primary" onClick={HandelCreateStudent}>
             Nhập excel
           </Button>
         ),
